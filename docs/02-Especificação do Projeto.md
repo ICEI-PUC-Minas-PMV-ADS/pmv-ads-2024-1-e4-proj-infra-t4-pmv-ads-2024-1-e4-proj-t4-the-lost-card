@@ -59,52 +59,6 @@ A definição exata do problema e outros pontos relevantes a serem tratados no p
 </tbody>
 </table>
 
-<table>
-<thead>
-  <tr>
-    <th>Persona 3</th>
-    <th colspan="2">Luis Carlos Menezes</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td><img src="./img/persona3.png" width="272" height="275"></td>
-    <td>● Idade: 30 anos
-    <br>● Ocupação: Arqueólogo e professor universitário</td>
-    <td>● Apaixonado por história e arqueologia. Ele passa horas lendo sobre civilizações antigas e explorando museus.</td>
-  </tr>
-  <tr>
-    <td>Motivação:<br>&emsp;● Busca emoção e desafio. Ele quer experimentar a adrenalina de explorar masmorras virtuais, assim como faz nas escavações arqueológicas.<br></td>
-    <td>Objetivo:<br>&emsp;● Encontrar artefatos raros e desvendar os segredos das masmorras.</td>
-    <td>Frustração:<br>&emsp;● Quando ele morre repetidamente nas masmorras, perdendo todo o progresso e os itens coletados.</td>
-  </tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-  <tr>
-    <th>Persona 4</th>
-    <th colspan="2">Khatia Vanesa Santos</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td><img src="./img/persona4.png" width="272" height="275"></td>
-    <td>● Idade: 27 anos
-    <br>● Ocupação: Quimica e Empreendedora</td>
-    <td>● Adora misturar ingredientes e criar "poções" para vender em sua lojinha online. Ela compartilha suas experiências alquímicas em seu blog.</td>
-  </tr>
-  <tr>
-    <td>Motivação:<br>&emsp;● quer desvendar os mistérios das masmorras. Ela acredita que a alquimia pode ser a chave para resolver enigmas.<br></td>
-    <td>Objetivo:<br>&emsp;● Descobrir os segredos das masmorras e documentar suas descobertas sobre o jogo em seu blog. Ela sonha ser reconhecida pela empresa do jogo, por ter ajudado a comunidade. Quem sabe ser recompesada dando seu nome a uma poção dentro do jogo.</td>
-    <td>Frustração:<br>&emsp;● Quando ela não consegue encontrar ingredientes raros ou quando suas poções não têm o efeito desejado.</td>
-  </tr>
-</tbody>
-</table>
-
-
-
 ## Histórias de Usuários
 
 Com base na análise das personas forma identificadas as seguintes histórias de usuários:
@@ -155,26 +109,22 @@ As tabelas que se seguem apresentam os requisitos funcionais e não funcionais q
 
 | ID   | Descrição do Requisito                                                            | Prioridade |
 |------|-----------------------------------------------------------------------------------|------------|
-| RF-1 | Combate baseado em turnos.                                                        | ALTA       |
-| RF-2 | Permitir a evolução do player com itens conquistados.                             | ALTA       |
-| RF-3 | Novas habilidades devem ser liberadas gradualmente.                               | ALTA       |
-| RF-4 | Permitir evolução de atributos bases                                              | ALTA       |
-| RF-5 | Poder recomeçar uma masmorra assim que finalizada mantendo as cartas conquistadas | ALTA       |
-| RF-6 | Ter como ver suas conquistas                                                      | MÉDIA      |
-| RF-7 | Grimório com as cartas que já foram descobertas                                   | MÉDIA      |
-| RF-8 | Bestiário                                                                         | MÉDIA      |
-| RF-9 | Masmorras Completadas                                                             | MÉDIA      |
+| RF-1 | Autenticação de usuários.                                                         | ALTA       |
+| RF-2 | Enviar e receber mensagens sobre a sessão de jogo.                                | ALTA       |
+| RF-3 | Rastrear progresso do jogador.                                                    | ALTA       |
+| RF-4 | Busca de sessões de jogo.                                                         | ALTA       |
+| RF-5 | Exibir progresso do jogador                                                       | MÉDIA      |
+| RF-6 | Criação de sessões de jogo.                                                       | ALTA       |
 
 ### Requisitos não Funcionais
 
 | ID    | Descrição do Requisito                                                                   | Prioridade |
 |-------|------------------------------------------------------------------------------------------|------------|
-| RNF-1 | O jogo deve estar disponível para dispositivos móveis                                    | ALTA       |
-| RNF-2 | O jogo deve estar disponível para plataformas web                                        | ALTA       |
-| RNF-3 | As informações relevantes dos jogadores precisam estar protegidas de acessos indevidos   | ALTA       |
-| RNF-4 | O codigo precisa ser criado para facilitar manuntenção e extensão futura                 | MEDIA      |
-| RNF-5 | A interface precisa expressar as regras do jogo de maneira intuitiva e facil de aprender | ALTA       |
-| RNF-6 | A aplicação deve responder os comandos em tempo real                                     | ALTA       |
+| RNF-1 | A autenticação deve estar disponível para multiplas plataformas.                         | ALTA       |
+| RNF-2 | A aplicação deve ser responsiva o suficiente para não afetar a jogabilidade.             | ALTA       |
+| RNF-3 | As informações relevantes dos jogadores precisam estar protegidas de acessos indevidos.  | ALTA       |
+| RNF-4 | O codigo precisa ser criado para facilitar manuntenção e extensão futura.                | MÉDIA      |
+| RNF-5 | A interface precisa expressar as regras do jogo de maneira intuitiva e facil de aprender.| ALTA       |
 
 ## Restrições
 
