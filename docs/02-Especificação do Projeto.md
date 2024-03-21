@@ -59,6 +59,51 @@ A definição exata do problema e outros pontos relevantes a serem tratados no p
 </tbody>
 </table>
 
+
+<table>
+<thead>
+  <tr>
+    <th>Persona 3</th>
+    <th colspan="2">Luis Carlos Menezes</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td><img src="./img/persona3.png" width="272" height="275"></td>
+    <td>● Idade: 30 anos
+    <br>● Ocupação: Arqueólogo e professor universitário</td>
+    <td>● Apaixonado por história e arqueologia. Ele passa horas lendo sobre civilizações antigas e explorando museus.</td>
+  </tr>
+  <tr>
+    <td>Motivação:<br>&emsp;● Busca emoção e desafio. Ele quer experimentar a adrenalina de explorar masmorras virtuais, assim como faz nas escavações arqueológicas.<br></td>
+    <td>Objetivo:<br>&emsp;● Encontrar artefatos raros e desvendar os segredos das masmorras.</td>
+    <td>Frustração:<br>&emsp;● Quando ele morre repetidamente nas masmorras, perdendo todo o progresso e os itens coletados.</td>
+  </tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+  <tr>
+    <th>Persona 4</th>
+    <th colspan="2">Khatia Vanesa Santos</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td><img src="./img/persona4.png" width="272" height="275"></td>
+    <td>● Idade: 27 anos
+    <br>● Ocupação: Quimica e Empreendedora</td>
+    <td>● Adora misturar ingredientes e criar "poções" para vender em sua lojinha online. Ela compartilha suas experiências alquímicas em seu blog.</td>
+  </tr>
+  <tr>
+    <td>Motivação:<br>&emsp;● quer desvendar os mistérios das masmorras. Ela acredita que a alquimia pode ser a chave para resolver enigmas.<br></td>
+    <td>Objetivo:<br>&emsp;● Descobrir os segredos das masmorras e documentar suas descobertas sobre o jogo em seu blog. Ela sonha ser reconhecida pela empresa do jogo, por ter ajudado a comunidade. Quem sabe ser recompesada dando seu nome a uma poção dentro do jogo.</td>
+    <td>Frustração:<br>&emsp;● Quando ela não consegue encontrar ingredientes raros ou quando suas poções não têm o efeito desejado.</td>
+  </tr>
+</tbody>
+</table>
+
 ## Histórias de Usuários
 
 Com base na análise das personas forma identificadas as seguintes histórias de usuários:
