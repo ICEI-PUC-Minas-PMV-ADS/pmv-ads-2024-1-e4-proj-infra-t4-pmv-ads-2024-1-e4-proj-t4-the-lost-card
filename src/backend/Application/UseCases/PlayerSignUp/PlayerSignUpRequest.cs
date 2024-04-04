@@ -1,8 +1,8 @@
-﻿using Application.Contracts.LostCardDb;
+﻿using Application.Contracts.LostCardDatabase;
 using Application.Services;
 using Domain.Entities;
 using FluentResults;
-using MediatR;
+using Mediator;
 
 namespace Application.UseCases.PlayerSignUp;
 
@@ -21,12 +21,12 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
         this.playerRepository = playerRepository;
     }
 
-    public async Task<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
     {
         var existingUser = await playerRepository.Find(request.Email, cancellationToken);
 
         if (existingUser is not null)
-            return Result.Fail("User already registred");
+            return Result.Fail("Usuario ja existe");
 
         var (passwordHash, passwordSalt) = cryptographyService.GenerateSaltedSHA512Hash(request.PlainTextPassword);
 

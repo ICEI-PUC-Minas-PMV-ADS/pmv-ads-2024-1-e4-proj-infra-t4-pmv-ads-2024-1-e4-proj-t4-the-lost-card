@@ -5,14 +5,15 @@ namespace Application;
 
 public static class DependencyInjection
 {
-    private static readonly Type _thisType = typeof(DependencyInjection);
     public static IServiceCollection AddLostCardsApp(this IServiceCollection services)
     {
         services.AddSingleton<ICryptographyService, CryptographyService>();
 
-        services.AddMediatR(cfg => cfg
-            .RegisterServicesFromAssemblyContaining(_thisType)
-        );
+        services.AddMediator(opt =>
+        {
+            opt.Namespace = "Application.Mediator";
+            opt.ServiceLifetime = ServiceLifetime.Scoped;
+        });
 
         return services;
     }
