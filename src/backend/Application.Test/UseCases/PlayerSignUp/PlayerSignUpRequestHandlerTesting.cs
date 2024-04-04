@@ -12,6 +12,13 @@ public class PlayerSignUpRequestHandlerTesting
     private readonly IPlayerRepository playerRepository = Substitute.For<IPlayerRepository>();
     private readonly ICryptographyService cryptographyService = Substitute.For<ICryptographyService>();
 
+    private readonly PlayerSignUpRequestHandler handler;
+
+    public PlayerSignUpRequestHandlerTesting()
+    {
+        handler = new(cryptographyService, playerRepository);
+    }
+
     [Fact]
     public async Task PlayerSignUpRequestHandler_WhenPlayerCanSignUp_ReturnSuccessResult()
     {
@@ -20,8 +27,6 @@ public class PlayerSignUpRequestHandlerTesting
         var email = "test@test.com";
 
         var request = new PlayerSignUpRequest(name, email, password);
-
-        var handler = new PlayerSignUpRequestHandler(cryptographyService, playerRepository);
 
         var result = await handler.Handle(request, CancellationToken.None);
 
@@ -44,8 +49,6 @@ public class PlayerSignUpRequestHandlerTesting
         playerRepository.Find(email).Returns(alredyRegistredPlayer);
 
         var request = new PlayerSignUpRequest(name, email, password);
-
-        var handler = new PlayerSignUpRequestHandler(cryptographyService, playerRepository);
 
         var result = await handler.Handle(request, CancellationToken.None);
 
