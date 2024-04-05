@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Presentation.Serialization;
 using System.Threading.Tasks;
 
 namespace Presentation;
@@ -21,15 +22,7 @@ public static class Endpoints
         
         var responseResult = await req.HttpContext.RequestServices.GetService<ISender>().Send(request, cancellationToken);
 
-        if (responseResult.IsSuccess)
-            return new ObjectResult(responseResult.Value);
-
-        var problemDetails = new ProblemDetails
-        {
-            Detail = "Algum problema ocorreu"
-        };
-
-        return new ObjectResult(problemDetails) { StatusCode = StatusCodes.Status403Forbidden };
+        return HttpSerialization.Serialize(responseResult);
     }
 
     [FunctionName("SignIn")]
@@ -41,14 +34,6 @@ public static class Endpoints
 
         var responseResult = await req.HttpContext.RequestServices.GetService<ISender>().Send(request, cancellationToken);
 
-        if (responseResult.IsSuccess)
-            return new ObjectResult(responseResult.Value);
-
-        var problemDetails = new ProblemDetails
-        {
-            Detail = "Algum problema ocorreu"
-        };
-
-        return new ObjectResult(problemDetails) { StatusCode = StatusCodes.Status403Forbidden };
+        return HttpSerialization.Serialize(responseResult);
     }
 }

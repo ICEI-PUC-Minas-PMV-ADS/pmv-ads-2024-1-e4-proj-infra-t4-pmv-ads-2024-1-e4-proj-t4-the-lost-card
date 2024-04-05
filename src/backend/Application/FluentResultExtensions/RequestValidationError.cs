@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace Application.Errors;
+namespace Application.FluentResultExtensions;
 
 public class RequestValidationError : Error
 {
