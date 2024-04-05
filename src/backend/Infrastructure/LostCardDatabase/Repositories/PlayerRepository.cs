@@ -23,7 +23,7 @@ public class PlayerRepository : IPlayerRepository
         return lostCardDbContext.Players.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public Task<Player?> FindByEmail(string email, CancellationToken cancellationToken = default)
+    public Task<Player?> Find(string email, CancellationToken cancellationToken = default)
     {
         return lostCardDbContext.Players.FirstOrDefaultAsync(p => p.Email == email, cancellationToken);
     }

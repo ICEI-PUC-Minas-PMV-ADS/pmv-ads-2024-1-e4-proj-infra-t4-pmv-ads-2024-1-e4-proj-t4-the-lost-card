@@ -11,12 +11,13 @@ public class PlayerSignUpRequestHandlerTesting
 {
     private readonly IPlayerRepository playerRepository = Substitute.For<IPlayerRepository>();
     private readonly ICryptographyService cryptographyService = Substitute.For<ICryptographyService>();
+    private readonly ILostCardDbUnitOfWork lostCardDbUnitOfWork = Substitute.For<ILostCardDbUnitOfWork>();
 
     private readonly PlayerSignUpRequestHandler handler;
 
     public PlayerSignUpRequestHandlerTesting()
     {
-        handler = new(cryptographyService, playerRepository);
+        handler = new(cryptographyService, playerRepository, lostCardDbUnitOfWork);
     }
 
     [Fact]
@@ -33,6 +34,7 @@ public class PlayerSignUpRequestHandlerTesting
         cryptographyService.Received().GenerateSaltedSHA512Hash(password);
 
         await playerRepository.Received().Create(Arg.Any<Player>(), CancellationToken.None);
+        await lostCardDbUnitOfWork.Received().SaveChangesAsync(CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Errors);

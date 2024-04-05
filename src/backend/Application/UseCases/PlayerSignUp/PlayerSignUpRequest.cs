@@ -37,7 +37,7 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
 
     public async ValueTask<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
     {
-        var existingUser = await playerRepository.FindByEmail(request.Email, cancellationToken);
+        var existingUser = await playerRepository.Find(request.Email, cancellationToken);
 
         if (existingUser is not null)
             return new Error("User already registred");
