@@ -3,10 +3,22 @@ using Application.Services;
 using Domain.Entities;
 using FluentResults;
 using Mediator;
+using FluentValidation;
 
 namespace Application.UseCases.PlayerSignUp;
 
-public sealed record PlayerSignUpRequest(string Name, string Email, string PlainTextPassword) : IRequest<Result<PlayerSignUpResponse>>;
+public sealed record PlayerSignUpRequest(string Name, string Email, string PlainTextPassword) : IRequest<Result<PlayerSignUpResponse>>
+{
+    public sealed class Validator : AbstractValidator<PlayerSignUpRequest>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Name).NotEmpty().Length(3, 255);
+            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.PlainTextPassword).NotEmpty().Length(3, 255);
+        }
+    }
+}
 
 public sealed record PlayerSignUpResponse(string Id);
 
@@ -28,7 +40,7 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
         var existingUser = await playerRepository.FindByEmail(request.Email, cancellationToken);
 
         if (existingUser is not null)
-            return Result.Fail("Usuario ja existe");
+            return new Error("User already registred");
 
         var (passwordHash, passwordSalt) = cryptographyService.GenerateSaltedSHA512Hash(request.PlainTextPassword);
 
