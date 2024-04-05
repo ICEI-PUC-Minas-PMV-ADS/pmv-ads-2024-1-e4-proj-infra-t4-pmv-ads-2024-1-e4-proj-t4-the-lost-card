@@ -1,12 +1,12 @@
 ﻿using Application.FluentResultExtensions;
 using FluentResults;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Behaviours;
 
 public class ExceptionHandlingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : MediatR.IRequest<TResponse>
+    where TRequest : IRequest<TResponse>
     where TResponse : ResultBase, new()
 {
     private readonly ILogger<ExceptionHandlingBehaviour<TRequest, TResponse>> logger;
@@ -16,19 +16,19 @@ public class ExceptionHandlingBehaviour<TRequest, TResponse> : IPipelineBehavior
         this.logger = logger;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
     {
         try
         {
-            return await next();
+            return await next(message, cancellationToken);
         }
         catch (Exception e)
         {
-            const string message = "An unhandled exception has occured";
+            const string errorMessage = "An unhandled exception has occured";
 
-            logger.LogError(exception: e, message);
+            logger.LogError(exception: e, errorMessage);
 
-            return Result.Fail(new Error(message)).To<TResponse>();
+            return Result.Fail(new Error(errorMessage)).To<TResponse>();
         }
     }
 }

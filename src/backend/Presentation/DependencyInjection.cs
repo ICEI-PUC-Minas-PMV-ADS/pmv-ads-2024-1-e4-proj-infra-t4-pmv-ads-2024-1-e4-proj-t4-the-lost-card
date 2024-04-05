@@ -1,6 +1,6 @@
 ﻿using Application;
+using Infrastructure;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using System;
 
 [assembly: FunctionsStartup(typeof(Presentation.DependencyInjection))]
 
@@ -11,5 +11,6 @@ public class DependencyInjection : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         builder.Services.AddLostCardsApp();
+        builder.Services.AddInfrastructure();
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Application.Services;
 using FluentResults;
-using MediatR;
+using Mediator;
 
 namespace Application.Behaviours;
 
 class RequestInfoBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : MediatR.IRequest<TResponse>, IRequestMetadata
+    where TRequest : IRequest<TResponse>, IRequestMetadata
     where TResponse : ResultBase, new()
 {
     private readonly IRequestInfoService requestInfoService;
@@ -15,9 +15,9 @@ class RequestInfoBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TR
         this.requestInfoService = requestInfoService;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
     {
-        request.RequestInfo = await requestInfoService.SetRequestInfo(cancellationToken);
-        return await next();
+        message.RequestInfo = await requestInfoService.SetRequestInfo(cancellationToken);
+        return await next(message, cancellationToken);
     }
 }

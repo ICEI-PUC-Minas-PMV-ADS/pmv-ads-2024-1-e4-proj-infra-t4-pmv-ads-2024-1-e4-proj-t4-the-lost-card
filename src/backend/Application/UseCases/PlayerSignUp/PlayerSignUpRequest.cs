@@ -1,9 +1,9 @@
-﻿using Application.Contracts.LostCardDb;
+﻿using Application.Contracts.LostCardDatabase;
 using Application.Services;
 using Domain.Entities;
 using FluentResults;
+using Mediator;
 using FluentValidation;
-using MediatR;
 
 namespace Application.UseCases.PlayerSignUp;
 
@@ -33,7 +33,7 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
         this.playerRepository = playerRepository;
     }
 
-    public async Task<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
     {
         var existingUser = await playerRepository.Find(request.Email, cancellationToken);
 

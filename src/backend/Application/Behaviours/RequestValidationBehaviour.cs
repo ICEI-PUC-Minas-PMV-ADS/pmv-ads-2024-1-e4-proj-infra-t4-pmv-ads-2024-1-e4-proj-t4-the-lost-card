@@ -2,7 +2,7 @@
 using Application.FluentResultExtensions;
 using FluentResults;
 using FluentValidation;
-using MediatR;
+using Mediator;
 
 namespace Application.Behaviours;
 
@@ -18,23 +18,26 @@ public class RequestValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
         this.validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
     {
         if (!validators.Any())
-            return await next();
+            return await next(message, cancellationToken);
 
-        var validationContext = new ValidationContext<TRequest>(request);
+        var validationContext = new ValidationContext<TRequest>(message);
 
         var validatinResults = await Task.WhenAll(validators.Select(v => v.ValidateAsync(validationContext, cancellationToken)));
 
         var fieldReasonDictionary = validatinResults
-            .SelectMany(result => result.Errors)
-            .GroupBy(error => error.PropertyName)
-            .ToDictionary(errorGroup => errorGroup.Key, errorGroup => errorGroup.Select(e => e.ErrorMessage).ToArray());
+                                    .SelectMany(result => result.Errors)
+                                    .GroupBy(error => error.PropertyName)
+                                    .ToDictionary(
+                                        errorGroup => errorGroup.Key, 
+                                        errorGroup => errorGroup.Select(e => e.ErrorMessage).ToArray()
+                                    );
 
         if (fieldReasonDictionary.Count != 0)
             return Result.Fail(new RequestValidationError { FieldReasonDictionary = fieldReasonDictionary }).To<TResponse>();
 
-        return await next();
+        return await next(message, cancellationToken);
     }
 }
