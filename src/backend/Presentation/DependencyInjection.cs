@@ -1,6 +1,9 @@
 ﻿using Application;
+using Application.Behaviours.RequestPreprocessor;
 using Infrastructure;
+using Mediator;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Presentation.DependencyInjection))]
 
@@ -12,5 +15,7 @@ public class DependencyInjection : FunctionsStartup
     {
         builder.Services.AddLostCardsApp();
         builder.Services.AddInfrastructure();
+
+        builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreprocessorPipelineBehaviour<,>));
     }
 }
