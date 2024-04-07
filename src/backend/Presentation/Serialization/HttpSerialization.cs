@@ -25,17 +25,29 @@ public class HttpSerialization
             var validationProblemDetails = new ValidationProblemDetails(validationError.FieldReasonDictionary)
             {
                 Detail = firstError.Message,
-                Status = 500,
+                Status = StatusCodes.Status400BadRequest,
                 Title = "Validation error"
             };
 
             return new ObjectResult(validationProblemDetails) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
+        if (firstError is AuthError authError)
+        {
+            var validationProblemDetails = new ProblemDetails()
+            {
+                Detail = authError.Message,
+                Status = StatusCodes.Status401Unauthorized,
+                Title = authError.Message
+            };
+
+            return new ObjectResult(validationProblemDetails) { StatusCode = StatusCodes.Status401Unauthorized };
+        }
+
         var problemDetails = new ProblemDetails
         {
-            Detail = firstError.Message,
-            Status = 500,
+            Detail = firstError?.Message,
+            Status = StatusCodes.Status500InternalServerError,
             Title = "Unhandled error",
         };
 

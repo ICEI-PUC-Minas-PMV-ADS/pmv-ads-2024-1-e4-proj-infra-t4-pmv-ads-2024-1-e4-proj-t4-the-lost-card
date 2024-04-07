@@ -1,5 +1,4 @@
-﻿using Application.Errors;
-using Application.FluentResultExtensions;
+﻿using Application.FluentResultExtensions;
 using FluentResults;
 using FluentValidation;
 using Mediator;
@@ -31,7 +30,7 @@ public class RequestValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
                                     .SelectMany(result => result.Errors)
                                     .GroupBy(error => error.PropertyName)
                                     .ToDictionary(
-                                        errorGroup => errorGroup.Key, 
+                                        errorGroup => errorGroup.Key,
                                         errorGroup => errorGroup.Select(e => e.ErrorMessage).ToArray()
                                     );
 

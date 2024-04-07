@@ -22,11 +22,13 @@ public class DependencyInjection : FunctionsStartup
 
         builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreprocessorPipelineBehaviour<,>));
 
-        builder.Services.AddOptions<TokenService.Options>()
-            .Configure<IConfiguration>((tso, config) =>
-        {
-            tso.TokenKey = Encoding.UTF8.GetBytes(config.GetValue<string>("JWT_SECRET_KEY")!);
-        });
-        builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services
+            .AddOptions<TokenService.Options>()
+            .Configure<IConfiguration>((tso, config) => tso.TokenKey = Encoding.UTF8.GetBytes(config.GetValue<string>("JWT_SECRET_KEY")!));
+
+        builder.Services.AddScoped<TokenService>();
+        builder.Services.AddScoped(sp => sp.GetRequiredService<TokenService>() as ITokenService);
+        builder.Services.AddScoped<IRequestMetadataService, RequestMetadataService>();
+        builder.Services.AddHttpContextAccessor();
     }
 }

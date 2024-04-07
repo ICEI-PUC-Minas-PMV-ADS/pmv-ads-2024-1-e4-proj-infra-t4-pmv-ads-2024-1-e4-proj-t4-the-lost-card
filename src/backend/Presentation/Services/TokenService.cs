@@ -2,16 +2,16 @@
 using Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System;
 
 namespace Presentation.Services;
 
 
 public sealed class TokenService : ITokenService
-{ 
+{
     private readonly byte[] TokenKey;
 
     public TokenService(IOptions<Options> options)
@@ -22,7 +22,7 @@ public sealed class TokenService : ITokenService
     public string GetToken(Player user)
     {
         var claims = new HashSet<Claim> {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id!.ToString()!)
         };
 
         if (user.CurrentRoom is not null)
@@ -42,8 +42,29 @@ public sealed class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 
+    public ClaimsPrincipal? ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var validationParameters = new TokenValidationParameters()
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            IssuerSigningKey = new SymmetricSecurityKey(TokenKey)
+        };
+
+        try
+        {
+            return tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+        }
+        catch (SecurityTokenException)
+        {
+
+            return null;
+        }
+    }
+
     public class Options
     {
-        public byte[] TokenKey { get; set; }
+        public byte[] TokenKey { get; set; } = Array.Empty<byte>();
     }
 }

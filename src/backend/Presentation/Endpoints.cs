@@ -20,7 +20,7 @@ public static class Endpoints
     {
         var request = await req.ReadFromJsonAsync<PlayerSignUpRequest>(cancellationToken: cancellationToken);
         
-        var responseResult = await req.HttpContext.RequestServices.GetService<ISender>().Send(request, cancellationToken);
+        var responseResult = await req.HttpContext.RequestServices.GetRequiredService<ISender>().Send(request!, cancellationToken);
 
         return HttpSerialization.Serialize(responseResult);
     }
@@ -32,7 +32,7 @@ public static class Endpoints
     {
         var request = await req.ReadFromJsonAsync<PlayerSignInRequest>(cancellationToken: cancellationToken);
 
-        var responseResult = await req.HttpContext.RequestServices.GetService<ISender>().Send(request, cancellationToken);
+        var responseResult = await req.HttpContext.RequestServices.GetRequiredService<ISender>().Send(request!, cancellationToken);
 
         return HttpSerialization.Serialize(responseResult);
     }
