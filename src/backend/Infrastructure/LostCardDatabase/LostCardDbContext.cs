@@ -13,7 +13,7 @@ public class LostCardDbContext : DbContext, ILostCardDbUnitOfWork
     }
 
     public DbSet<Player> Players { get; set; } = null!;
-
+    public DbSet<Achievements> Achievements { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PlayerMapping());

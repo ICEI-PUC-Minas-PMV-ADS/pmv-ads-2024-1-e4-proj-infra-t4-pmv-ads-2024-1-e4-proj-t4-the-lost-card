@@ -16,5 +16,7 @@ public class PlayerMapping : IEntityTypeConfiguration<Player>
         builder.Property(x => x.Email);
         builder.Property(x => x.CurrentRoom);
         builder.Property(x => x.JoinedRoomAt);
+        builder.Property(x => x.Progrees);
+        builder.HasMany<Achievements>(x => x.Achivements);
     }
 }

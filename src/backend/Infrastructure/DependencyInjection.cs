@@ -34,6 +34,7 @@ public static class DependencyInjection
 
         services.AddScoped(sp => sp.GetRequiredService<LostCardDbContext>() as ILostCardDbUnitOfWork);
         services.AddScoped<IPlayerRepository, PlayerRepository>();
+        services.AddScoped<IAchievementRepository, AchievementRepository>();
 
         return services;
     }
