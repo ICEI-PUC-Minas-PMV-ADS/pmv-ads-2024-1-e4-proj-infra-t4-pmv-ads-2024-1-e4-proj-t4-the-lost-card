@@ -11,6 +11,7 @@ public static class DependencyInjection
     public static IServiceCollection AddLostCardsApp(this IServiceCollection services)
     {
         services.AddSingleton<ICryptographyService, CryptographyService>();
+        services.AddSingleton<IGameRoomService, GameRoomService>();
 
         services.AddMediator(opt =>
         {

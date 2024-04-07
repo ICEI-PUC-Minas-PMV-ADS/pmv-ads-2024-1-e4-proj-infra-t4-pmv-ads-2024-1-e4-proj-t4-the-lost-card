@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.Services;
 
-internal class RequestMetadataService : IRequestMetadataService
+public class RequestMetadataService : IRequestMetadataService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly TokenService tokenService;
@@ -41,7 +41,7 @@ internal class RequestMetadataService : IRequestMetadataService
         var userClaims = tokenService.ValidateToken(token);
 
         var requesterIdClaim = userClaims?.FindFirst(ClaimTypes.NameIdentifier);
-        int? requesterId = requesterIdClaim?.Value is null ? null : int.Parse(requesterIdClaim.Value);
+        Guid? requesterId = requesterIdClaim?.Value is null ? null : Guid.Parse(requesterIdClaim.Value);
 
         var roomGuidClaim = userClaims?.FindFirst(ClaimTypes.GroupSid);
 
