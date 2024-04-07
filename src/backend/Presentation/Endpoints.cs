@@ -1,4 +1,5 @@
-﻿using Application.UseCases.PlayerSignIn;
+﻿using Application.UseCases.GetPlayerAchievements;
+using Application.UseCases.PlayerSignIn;
 using Application.UseCases.PlayerSignUp;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,18 @@ public static class Endpoints
         System.Threading.CancellationToken cancellationToken)
     {
         var request = await req.ReadFromJsonAsync<PlayerSignInRequest>(cancellationToken: cancellationToken);
+
+        var responseResult = await req.HttpContext.RequestServices.GetRequiredService<ISender>().Send(request!, cancellationToken);
+
+        return HttpSerialization.Serialize(responseResult);
+    }
+    
+    [FunctionName("PlayerAchievments")]
+    public static async Task<IActionResult> PlayerAchievments(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "players/achievements")] HttpRequest req,
+        System.Threading.CancellationToken cancellationToken)
+    {
+        var request = await req.ReadFromJsonAsync<GetPlayerAchievementsRequest>(cancellationToken: cancellationToken);
 
         var responseResult = await req.HttpContext.RequestServices.GetRequiredService<ISender>().Send(request!, cancellationToken);
 
