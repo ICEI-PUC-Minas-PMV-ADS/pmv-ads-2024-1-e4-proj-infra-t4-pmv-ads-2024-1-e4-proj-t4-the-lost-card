@@ -1,32 +1,46 @@
-﻿using Application.Contracts.LostCardDb;
+﻿using Application.Contracts.LostCardDatabase;
 using Application.Services;
 using Domain.Entities;
 using FluentResults;
-using MediatR;
+using Mediator;
+using FluentValidation;
 
 namespace Application.UseCases.PlayerSignUp;
 
-public sealed record PlayerSignUpRequest(string Name, string Email, string PlainTextPassword) : IRequest<Result<PlayerSignUpResponse>>;
+public sealed record PlayerSignUpRequest(string Name, string Email, string PlainTextPassword) : IRequest<Result<PlayerSignUpResponse>>
+{
+    public sealed class Validator : AbstractValidator<PlayerSignUpRequest>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Name).NotEmpty().Length(3, 255);
+            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.PlainTextPassword).NotEmpty().Length(3, 255);
+        }
+    }
+}
 
 public sealed record PlayerSignUpResponse(string Id);
 
 public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpRequest, Result<PlayerSignUpResponse>>
 {
     private readonly IPlayerRepository playerRepository;
+    private readonly ILostCardDbUnitOfWork unitOfWork;
     private readonly ICryptographyService cryptographyService;
 
-    public PlayerSignUpRequestHandler(ICryptographyService cryptographyService, IPlayerRepository playerRepository)
+    public PlayerSignUpRequestHandler(ICryptographyService cryptographyService, IPlayerRepository playerRepository, ILostCardDbUnitOfWork unitOfWork)
     {
         this.cryptographyService = cryptographyService;
         this.playerRepository = playerRepository;
+        this.unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
     {
         var existingUser = await playerRepository.Find(request.Email, cancellationToken);
 
         if (existingUser is not null)
-            return Result.Fail("User already registred");
+            return new Error("User already registred");
 
         var (passwordHash, passwordSalt) = cryptographyService.GenerateSaltedSHA512Hash(request.PlainTextPassword);
 
@@ -40,6 +54,8 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
 
         await playerRepository.Create(player, cancellationToken);
 
-        return new PlayerSignUpResponse(player.Id).ToResult();
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new PlayerSignUpResponse(player.Id!.ToString()!).ToResult();
     }
 }

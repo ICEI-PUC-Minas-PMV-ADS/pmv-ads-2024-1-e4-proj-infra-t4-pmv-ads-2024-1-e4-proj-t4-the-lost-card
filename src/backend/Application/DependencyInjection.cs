@@ -1,18 +1,29 @@
-﻿using Application.Services;
+﻿using Application.Behaviours;
+using Application.Services;
+using FluentValidation;
+using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
 public static class DependencyInjection
 {
-    private static readonly Type _thisType = typeof(DependencyInjection);
     public static IServiceCollection AddLostCardsApp(this IServiceCollection services)
     {
         services.AddSingleton<ICryptographyService, CryptographyService>();
+        services.AddSingleton<IGameRoomService, GameRoomService>();
 
-        services.AddMediatR(cfg => cfg
-            .RegisterServicesFromAssemblyContaining(_thisType)
-        );
+        services.AddMediator(opt =>
+        {
+            opt.Namespace = "Application.Mediator";
+            opt.ServiceLifetime = ServiceLifetime.Scoped;
+        });
+
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestAuthBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehaviour<,>));
+
+        services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
 
         return services;
     }
