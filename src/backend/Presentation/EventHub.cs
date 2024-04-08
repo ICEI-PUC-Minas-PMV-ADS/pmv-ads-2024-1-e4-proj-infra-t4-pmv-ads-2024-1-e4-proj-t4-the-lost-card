@@ -1,19 +1,35 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.UseCases.GameRooms;
+using Application.UseCases.GameRooms.Leave;
+using FluentResults;
+using Mediator;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Presentation.Services;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Presentation;
 
 public class EventHub : ServerlessHub
 {
-    private const string NewMessageTarget = "newMessage";
-    private const string NewConnectionTarget = "newConnection";
+    private readonly RequestMetadataService requestMetadataService;
+    private readonly ISender sender;
+    private readonly IOptions<JsonOptions> jsonOptions;
+
+    public EventHub(RequestMetadataService requestMetadataService, ISender sender, IOptions<JsonOptions> jsonOptions)
+    {
+        this.requestMetadataService = requestMetadataService;
+        this.sender = sender;
+        this.jsonOptions = jsonOptions;
+    }
 
     [FunctionName("negotiate")]
     public SignalRConnectionInfo Negotiate([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req)
@@ -25,98 +41,36 @@ public class EventHub : ServerlessHub
         );
     }
 
-    [FunctionName(nameof(OnConnected))]
-    public async Task OnConnected([SignalRTrigger] InvocationContext invocationContext, ILogger logger)
-    {
-        invocationContext.Headers.TryGetValue("Authorization", out var auth);
-        await Clients.All.SendAsync(NewConnectionTarget, new NewConnection(invocationContext.ConnectionId, auth));
-        logger.LogInformation($"{invocationContext.ConnectionId} has connected");
-    }
 
-    [FunctionName(nameof(Broadcast))]
-    public async Task Broadcast([SignalRTrigger] InvocationContext invocationContext, string message, ILogger logger)
+    [FunctionName(nameof(OnServerDispatch))]
+    public async Task OnServerDispatch([SignalRTrigger] InvocationContext invocationContext, string rawNotification, CancellationToken cancellationToken)
     {
-        await Clients.All.SendAsync(NewMessageTarget, new NewMessage(invocationContext, message));
-        logger.LogInformation($"{invocationContext.ConnectionId} broadcast {message}");
-    }
+        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Clients, Groups, UserGroups);
+        await requestMetadataService.SetRequestMetadata(cancellationToken);
 
-    [FunctionName(nameof(SendToGroup))]
-    public async Task SendToGroup([SignalRTrigger] InvocationContext invocationContext, string groupName, string message)
-    {
-        await Clients.Group(groupName).SendAsync(NewMessageTarget, new NewMessage(invocationContext, message));
-    }
-
-    [FunctionName(nameof(SendToUser))]
-    public async Task SendToUser([SignalRTrigger] InvocationContext invocationContext, string userName, string message)
-    {
-        await Clients.User(userName).SendAsync(NewMessageTarget, new NewMessage(invocationContext, message));
-    }
-
-    [FunctionName(nameof(SendToConnection))]
-    public async Task SendToConnection([SignalRTrigger] InvocationContext invocationContext, string connectionId, string message)
-    {
-        await Clients.Client(connectionId).SendAsync(NewMessageTarget, new NewMessage(invocationContext, message));
-    }
-
-    [FunctionName(nameof(JoinGroup))]
-    public async Task JoinGroup([SignalRTrigger] InvocationContext invocationContext, string connectionId, string groupName)
-    {
-        await Groups.AddToGroupAsync(connectionId, groupName);
-    }
-
-    [FunctionName(nameof(LeaveGroup))]
-    public async Task LeaveGroup([SignalRTrigger] InvocationContext invocationContext, string connectionId, string groupName)
-    {
-        await Groups.RemoveFromGroupAsync(connectionId, groupName);
-    }
-
-    [FunctionName(nameof(JoinUserToGroup))]
-    public async Task JoinUserToGroup([SignalRTrigger] InvocationContext invocationContext, string userName, string groupName)
-    {
-        await UserGroups.AddToGroupAsync(userName, groupName);
-    }
-
-    [FunctionName(nameof(LeaveUserFromGroup))]
-    public async Task LeaveUserFromGroup([SignalRTrigger] InvocationContext invocationContext, string userName, string groupName)
-    {
-        await UserGroups.RemoveFromGroupAsync(userName, groupName);
-    }
-
-    [FunctionName("SignalRTest")]
-    public async Task SignalRTest([SignalRTrigger] InvocationContext invocationContext, string message, ILogger logger)
-    {
-        logger.LogInformation($"Receive {message} from {invocationContext.ConnectionId}.");
+        var request = JsonSerializer.Deserialize<GameRoomHubRequestBase>(rawNotification, options: jsonOptions.Value.SerializerOptions);
+        var response = await sender.Send(request!, cancellationToken);
+        if (response is Result<GameRoomHubResponse> typedResponse)
+        {
+            if (typedResponse.IsSuccess)
+            {
+                var responseRaw = JsonSerializer.Serialize(typedResponse.Value, options: jsonOptions.Value.SerializerOptions);
+                await Clients.Group(requestMetadataService.RequestMetadata!.RoomId.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
+            }
+            else
+            {
+                var responseRaw = JsonSerializer.Serialize(typedResponse.Value, options: jsonOptions.Value.SerializerOptions);
+                await Clients.Group(requestMetadataService.RequestMetadata!.RoomId.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
+            }
+        }
     }
 
     [FunctionName(nameof(OnDisconnected))]
-    public void OnDisconnected([SignalRTrigger] InvocationContext invocationContext)
+    public async Task OnDisconnected([SignalRTrigger] InvocationContext invocationContext, CancellationToken cancellationToken)
     {
-    }
-
-    private class NewConnection
-    {
-        public string ConnectionId { get; }
-
-        public string Authentication { get; }
-
-        public NewConnection(string connectionId, string authentication)
-        {
-            ConnectionId = connectionId;
-            Authentication = authentication;
-        }
-    }
-
-    private class NewMessage
-    {
-        public string ConnectionId { get; }
-        public string Sender { get; }
-        public string Text { get; }
-
-        public NewMessage(InvocationContext invocationContext, string message)
-        {
-            Sender = string.IsNullOrEmpty(invocationContext.UserId) ? string.Empty : invocationContext.UserId;
-            ConnectionId = invocationContext.ConnectionId;
-            Text = message;
-        }
+        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Clients, Groups, UserGroups);
+        await requestMetadataService.SetRequestMetadata(cancellationToken);
+        if (requestMetadataService.RequestMetadata?.HubConnectionId is not null)
+            await sender.Send(new LeaveGameRoomHubRequest(), cancellationToken);
     }
 }

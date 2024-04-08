@@ -12,8 +12,10 @@ public record JoinGameRoomHubRequest(
 ) : GameRoomHubRequest<JoinGameRoomHubResponse>, IJsonDerivedType<GameRoomHubRequestBase>, IRequestMetadata
 {
     public string Discriminator => nameof(JoinGameRoomHubRequest);
-    public IRequestMetadata.Metadata RequestMetadata { get; set; } = default!;
-    public bool RequiresAuthorization => throw new NotImplementedException();
+
+    public IRequestMetadata.Metadata? RequestMetadata { get; set; }
+
+    public bool RequiresAuthorization => true;
 
     public record CreationOptionsClass(string RoomName = "Public lobby");
 }
@@ -46,9 +48,9 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         this.requestInfoService = requestInfoService;
     }
 
-    public async Task<Result<GameRoomHubResponse>> Handle(JoinGameRoomHubRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GameRoomHubResponse>> Handle(JoinGameRoomHubRequest request, CancellationToken cancellationToken)
     {
-        if (request.RequestMetadata.RequesterId is null)
+        if (request.RequestMetadata?.RequesterId is null)
             return Result.Fail("Requester not found");
 
         var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetadata.RequesterId!.Value, cancellationToken);
@@ -104,7 +106,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         {
             AdminId = requester.Id,
             Name = creationOptions.RoomName,
-            Players = new HashSet<GameRoom.PlayerInfo> { new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata.HubConnectionId!) }
+            Players = new HashSet<GameRoom.PlayerInfo> { new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata!.HubConnectionId!) }
         };
 
         await gameRoomService.SaveFreshRoom(newRoom, cancellationToken);

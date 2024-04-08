@@ -1,5 +1,7 @@
 ﻿using Application.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Azure.SignalR.Management;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using System;
 using System.Linq;
@@ -9,11 +11,15 @@ using System.Threading.Tasks;
 
 namespace Presentation.Services;
 
-public class RequestMetadataService : IRequestMetadataService
+public class RequestMetadataService : IRequestMetadataService, IGameRoomHubService
 {
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly TokenService tokenService;
-    private InvocationContext? _signalRContext = default;
+    private InvocationContext? signalRContext = default;
+    private IHubClients? signalRClients = default;
+    private IGroupManager? signalRGroups = default;
+    private IUserGroupManager? signalRGUserGroups = default;
+
     public IRequestMetadata.Metadata? RequestMetadata { get; private set; }
 
     public RequestMetadataService(IHttpContextAccessor httpContextAccessor, TokenService tokenService)
@@ -22,11 +28,23 @@ public class RequestMetadataService : IRequestMetadataService
         this.tokenService = tokenService;
     }
 
-    public void SetSignalRConnectionInfo(InvocationContext? callerContext)
+    public void SetSignalRConnectionInfo(InvocationContext callerContext, IHubClients hubClients, IGroupManager groupManager, IUserGroupManager userGroupManager)
     {
-        _signalRContext = callerContext;
+        signalRContext = callerContext;
+        signalRClients = hubClients;
+        signalRGroups = groupManager;
+        signalRGUserGroups = userGroupManager;
     }
 
+    public Task JoinGroup(string connectionId, string groupId, CancellationToken cancellationToken = default)
+    {
+        return signalRGroups!.AddToGroupAsync(connectionId, groupId, cancellationToken);
+    }
+
+    public Task LeaveGroup(string connectionId, string groupId, CancellationToken cancellationToken = default)
+    {
+        return signalRGroups!.RemoveFromGroupAsync(connectionId, groupId, cancellationToken);
+    }
 
     public Task<IRequestMetadata.Metadata?> SetRequestMetadata(CancellationToken cancellationToken = default)
     {
@@ -50,7 +68,7 @@ public class RequestMetadataService : IRequestMetadataService
         if (Guid.TryParse(roomGuidClaim?.Value, out var parsedGuid))
             roomGuid = parsedGuid;
 
-        RequestMetadata = new IRequestMetadata.Metadata(requesterId, _signalRContext?.ConnectionId, roomGuid, DateTime.Now);
+        RequestMetadata = new IRequestMetadata.Metadata(requesterId, signalRContext?.ConnectionId, roomGuid, DateTime.Now);
 
         return Task.FromResult((IRequestMetadata.Metadata?)RequestMetadata);
     }
@@ -62,7 +80,7 @@ public class RequestMetadataService : IRequestMetadataService
 
     private string? GetToken()
     {
-        if (_signalRContext is not null && _signalRContext.Query.TryGetValue("access_token", out var queryToken))
+        if (signalRContext is not null && signalRContext.Query.TryGetValue("access_token", out var queryToken))
             return queryToken;
 
         if (httpContextAccessor.HttpContext?.Request.Headers.Authorization.FirstOrDefault() is { } headerToken)

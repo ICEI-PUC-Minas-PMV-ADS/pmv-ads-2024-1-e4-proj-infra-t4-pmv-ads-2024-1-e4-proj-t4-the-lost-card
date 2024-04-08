@@ -10,9 +10,9 @@ public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubRespo
 {
     public string Discriminator => nameof(LeaveGameRoomHubRequest);
 
-    public IRequestMetadata.Metadata RequestMetaData { get; set; } = default!;
+    public IRequestMetadata.Metadata? RequestMetadata { get; set; }
 
-    public bool RequiresAuthorization => throw new NotImplementedException();
+    public bool RequiresAuthorization => true;
 }
 
 public record LeaveGameRoomHubResponse(string NewToken) : GameRoomHubResponse, IJsonDerivedType<GameRoomHubResponse>
@@ -40,19 +40,19 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         this.tokenService = tokenService;
     }
 
-    public async Task<Result<GameRoomHubResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GameRoomHubResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
     {
-        if (request.RequestMetaData.RequesterId is null)
+        if (request.RequestMetadata?.RequesterId is null)
             return Result.Fail("Requester not found");
 
-        var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetaData.RequesterId!.Value, cancellationToken);
+        var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetadata.RequesterId!.Value, cancellationToken);
 
         if (requester is null)
             return Result.Fail("Requester not found");
 
         var room = await gameRoomService.GetRoomFromCache(requester.CurrentRoom!.Value, cancellationToken);
 
-        await gameRoomHubService.LeaveGroup(request.RequestMetaData!.HubConnectionId!, requester.CurrentRoom!.ToString()!, cancellationToken);
+        await gameRoomHubService.LeaveGroup(request.RequestMetadata!.HubConnectionId!, requester.CurrentRoom!.ToString()!, cancellationToken);
 
         requester.CurrentRoom = null;
         dbUnitOfWork.PlayerRepository.Update(requester);

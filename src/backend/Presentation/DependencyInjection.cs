@@ -28,7 +28,9 @@ public class DependencyInjection : FunctionsStartup
 
         builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped(sp => sp.GetRequiredService<TokenService>() as ITokenService);
-        builder.Services.AddScoped<IRequestMetadataService, RequestMetadataService>();
+        builder.Services.AddScoped<RequestMetadataService>();
+        builder.Services.AddScoped(sp => sp.GetRequiredService<RequestMetadataService>() as IRequestMetadataService);
+        builder.Services.AddScoped(sp => sp.GetRequiredService<RequestMetadataService>() as IGameRoomHubService);
         builder.Services.AddHttpContextAccessor();
     }
 }
