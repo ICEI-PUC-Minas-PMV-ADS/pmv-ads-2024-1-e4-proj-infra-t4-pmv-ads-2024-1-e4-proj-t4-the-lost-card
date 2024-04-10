@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.LostCardDatabase;
+using Application.FluentResultExtensions;
 using Application.Services;
 using Domain.Entities;
 using Domain.Extensions.Serialization;
@@ -28,21 +29,18 @@ public record JoinGameRoomHubResponse(string NewToken) : GameRoomHubResponse, IJ
 public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHubRequest, JoinGameRoomHubResponse>
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
-    private readonly IGameRoomService gameRoomService;
     private readonly IGameRoomHubService gameRoomHubService;
     private readonly ITokenService tokenService;
     private readonly IRequestInfoService requestInfoService;
 
     public JoinGameRoomRequestHandler(
         ILostCardDbUnitOfWork dbUnitOfWork,
-        IGameRoomService gameRoomService,
         IGameRoomHubService gameRoomHubService,
         ITokenService tokenService,
         IRequestInfoService requestInfoService
     )
     {
         this.dbUnitOfWork = dbUnitOfWork;
-        this.gameRoomService = gameRoomService;
         this.gameRoomHubService = gameRoomHubService;
         this.tokenService = tokenService;
         this.requestInfoService = requestInfoService;
@@ -58,12 +56,12 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         if (requester is null)
             return Result.Fail("Requester not found");
 
-        //if (requester.CurrentRoom is not null)
-        //    return Result.Fail("Requester already on a room");
+        if (requester.CurrentRoom is not null)
+            return new ApplicationError("Requester already on a room");
 
         var creationOptions = request.CreationOptions ?? (request.RoomGuid is null ? new JoinGameRoomHubRequest.CreationOptionsClass() : null);
 
-        Guid? roomGuid = request.RoomGuid;
+        var roomGuid = request.RoomGuid;
 
         if (creationOptions is not null && roomGuid is null)
         {
@@ -71,14 +69,14 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         }
         else
         {
-            var room = await gameRoomService.GetRoomFromCache(request.RoomGuid!.Value, cancellationToken);
+            var room = await dbUnitOfWork.GameRoomRepository.Find(request.RoomGuid!.Value, cancellationToken);
 
             if (room is null)
                 return Result.Fail("Room not found");
 
             // TODO: Adicionar verificacao de banimento e se o player ja entrou na sala
             room.Players.Add(new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata.HubConnectionId!));
-            await gameRoomService.Update(room, cancellationToken);
+            dbUnitOfWork.GameRoomRepository.Update(room);
         }
 
         requester.CurrentRoom = roomGuid;
@@ -109,7 +107,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             Players = new HashSet<GameRoom.PlayerInfo> { new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata!.HubConnectionId!) }
         };
 
-        await gameRoomService.SaveFreshRoom(newRoom, cancellationToken);
+        await dbUnitOfWork.GameRoomRepository.Crea(newRoom, cancellationToken);
 
         return newRoom.Guid;
     }

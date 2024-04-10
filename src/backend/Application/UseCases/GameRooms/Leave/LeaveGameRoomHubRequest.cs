@@ -1,8 +1,8 @@
 ﻿using Application.Contracts.LostCardDatabase;
+using Application.FluentResultExtensions;
 using Application.Services;
 using Domain.Extensions.Serialization;
 using FluentResults;
-using Mediator;
 
 namespace Application.UseCases.GameRooms.Leave;
 
@@ -24,19 +24,16 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
     private readonly IGameRoomHubService gameRoomHubService;
-    private readonly IGameRoomService gameRoomService;
     private readonly ITokenService tokenService;
 
     public LeaveGameRoomHubRequestHandler(
         ILostCardDbUnitOfWork dbUnitOfWork,
         IGameRoomHubService gameRoomHubService,
-        IGameRoomService gameRoomService,
         ITokenService tokenService
     )
     {
         this.dbUnitOfWork = dbUnitOfWork;
         this.gameRoomHubService = gameRoomHubService;
-        this.gameRoomService = gameRoomService;
         this.tokenService = tokenService;
     }
 
@@ -50,7 +47,7 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         if (requester is null)
             return Result.Fail("Requester not found");
 
-        var room = await gameRoomService.GetRoomFromCache(requester.CurrentRoom!.Value, cancellationToken);
+        var room = await dbUnitOfWork.GameRoomRepository.Find(requester.CurrentRoom!.Value, cancellationToken);
 
         await gameRoomHubService.LeaveGroup(request.RequestMetadata!.HubConnectionId!, requester.CurrentRoom!.ToString()!, cancellationToken);
 
@@ -59,10 +56,12 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
         if (room is null)
-            return Result.Fail("Room not found");
+            return new NotFoundError("Room not found");
 
         room.Players.RemoveWhere(p => p.PlayerId == requester.Id);
-        await gameRoomService.Update(room, cancellationToken);
+
+        dbUnitOfWork.GameRoomRepository.Update(room);
+        await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
         var newToken = tokenService.GetToken(requester);
 
