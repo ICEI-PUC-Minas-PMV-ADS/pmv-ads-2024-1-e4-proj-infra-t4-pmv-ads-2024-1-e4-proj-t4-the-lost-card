@@ -107,7 +107,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             Players = new HashSet<GameRoom.PlayerInfo> { new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata!.HubConnectionId!) }
         };
 
-        await dbUnitOfWork.GameRoomRepository.Crea(newRoom, cancellationToken);
+        await dbUnitOfWork.GameRoomRepository.Create(newRoom, cancellationToken);
 
         return newRoom.Guid;
     }
