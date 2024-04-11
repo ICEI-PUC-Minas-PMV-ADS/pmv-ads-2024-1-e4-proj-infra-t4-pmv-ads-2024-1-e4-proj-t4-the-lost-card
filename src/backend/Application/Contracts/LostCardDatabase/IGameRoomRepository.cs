@@ -6,6 +6,7 @@ public interface IGameRoomRepository
 {
     Task Create(GameRoom gameRoom, CancellationToken cancellationToken = default);
     Task<GameRoom?> Find(Guid id, CancellationToken cancellation = default);
+    Task<IEnumerable<GameRoom>> Find(CancellationToken cancellation = default);
     void Update(GameRoom gameRoom);
     void Remove(GameRoom gameRoom);
 }

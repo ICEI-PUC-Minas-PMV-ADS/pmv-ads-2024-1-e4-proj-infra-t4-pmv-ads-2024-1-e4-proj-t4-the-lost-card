@@ -1,4 +1,4 @@
-﻿using Application.Services;
+﻿using Application.Contracts.LostCardDatabase;
 using FluentResults;
 using Mediator;
 
@@ -13,16 +13,16 @@ public record QueryGameRoomsResponse(Guid RoomGuid, string RoomName, int Current
 
 public class QueryGameRoomsRequestHandler : IRequestHandler<QueryGameRoomsRequest, Result<IEnumerable<QueryGameRoomsResponse>>>
 {
-    private readonly IGameRoomService gameRoomService;
+    private readonly ILostCardDbUnitOfWork dbUnitOfWork;
 
-    public QueryGameRoomsRequestHandler(IGameRoomService gameRoomService)
+    public QueryGameRoomsRequestHandler(ILostCardDbUnitOfWork dbUnitOfWork)
     {
-        this.gameRoomService = gameRoomService;
+        this.dbUnitOfWork = dbUnitOfWork;
     }
 
     public async ValueTask<Result<IEnumerable<QueryGameRoomsResponse>>> Handle(QueryGameRoomsRequest request, CancellationToken cancellationToken)
     {
-        var openRooms = await gameRoomService.GetOpenRooms(cancellationToken);
-        return openRooms.Select(o => new QueryGameRoomsResponse(o.Key, o.Value.RoomName, o.Value.CurrentPlayers)).ToResult();
+        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(cancellationToken);
+        return openRooms.Select(o => new QueryGameRoomsResponse(o.Guid, o.Name, o.Players.Count)).ToResult();
     }
 }

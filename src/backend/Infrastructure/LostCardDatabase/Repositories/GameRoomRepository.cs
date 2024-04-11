@@ -23,6 +23,11 @@ internal class GameRoomRepository : IGameRoomRepository
         return lostCardDbContext.GameRooms.FirstOrDefaultAsync(gr => gr.Guid == id, cancellation);
     }
 
+    public async Task<IEnumerable<GameRoom>> Find(CancellationToken cancellation = default)
+    {
+        return await lostCardDbContext.GameRooms.ToArrayAsync(cancellation);
+    }
+
     public void Remove(GameRoom gameRoom)
     {
         lostCardDbContext.Remove(gameRoom);
