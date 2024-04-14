@@ -5,9 +5,18 @@
 		<Nullable>enable</Nullable>
 		<UserSecretsId>8b7d194e-df6a-4bfe-b5ed-29227e578c26</UserSecretsId>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <Optimize>False</Optimize>
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <Optimize>False</Optimize>
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
 		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="4.3.0" />
-		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.2.0" />
+		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.10.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
 	</ItemGroup>
@@ -16,6 +25,9 @@
 		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Update="content\HubDebugHelper.html">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="host.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

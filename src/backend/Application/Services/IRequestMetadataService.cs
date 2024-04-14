@@ -3,7 +3,7 @@
 public interface IRequestMetadata
 {
     public record Metadata(
-        int? RequesterId,
+        Guid? RequesterId,
         string? HubConnectionId,
         Guid? RoomId,
         DateTime RecievedAt

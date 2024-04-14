@@ -18,9 +18,9 @@ public class PlayerRepository : IPlayerRepository
         await lostCardDbContext.AddAsync(player, cancellationToken);
     }
 
-    public Task<Player?> Find(Guid id, CancellationToken cancellationToken = default)
+    public ValueTask<Player?> Find(Guid id, CancellationToken cancellationToken = default)
     {
-        return lostCardDbContext.Players.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        return lostCardDbContext.Players.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
     }
 
     public Task<Player?> Find(string email, CancellationToken cancellationToken = default)

@@ -9,7 +9,7 @@ public class PlayerMapping : IEntityTypeConfiguration<Player>
     public void Configure(EntityTypeBuilder<Player> builder)
     {
         builder.HasKey(c => c.Id);
-        builder.HasPartitionKey(c => c.Id);
+        builder.HasPartitionKey(c => c.PartitionKey);
         builder.Property(x => x.Name);
         builder.Property(x => x.PasswordSalt);
         builder.Property(x => x.PasswordHash);

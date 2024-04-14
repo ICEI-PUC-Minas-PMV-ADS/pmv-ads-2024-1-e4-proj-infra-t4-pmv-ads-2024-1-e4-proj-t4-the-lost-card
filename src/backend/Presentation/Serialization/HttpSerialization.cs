@@ -34,7 +34,7 @@ public class HttpSerialization
 
         if (firstError is AuthError authError)
         {
-            var validationProblemDetails = new ProblemDetails()
+            var validationProblemDetails = new ProblemDetails
             {
                 Detail = authError.Message,
                 Status = StatusCodes.Status401Unauthorized,
@@ -42,6 +42,30 @@ public class HttpSerialization
             };
 
             return new ObjectResult(validationProblemDetails) { StatusCode = StatusCodes.Status401Unauthorized };
+        }
+
+        if (firstError is NotFoundError notFoundError)
+        {
+            var validationProblemDetails = new ProblemDetails
+            {
+                Detail = notFoundError.Message,
+                Status = StatusCodes.Status404NotFound,
+                Title = notFoundError.Message
+            };
+
+            return new ObjectResult(validationProblemDetails) { StatusCode = StatusCodes.Status404NotFound };
+        }
+
+        if (firstError is ApplicationError applicationError)
+        {
+            var validationProblemDetails = new ProblemDetails
+            {
+                Detail = applicationError.Message,
+                Status = StatusCodes.Status403Forbidden,
+                Title = applicationError.Message
+            };
+
+            return new ObjectResult(validationProblemDetails) { StatusCode = StatusCodes.Status403Forbidden };
         }
 
         var problemDetails = new ProblemDetails
