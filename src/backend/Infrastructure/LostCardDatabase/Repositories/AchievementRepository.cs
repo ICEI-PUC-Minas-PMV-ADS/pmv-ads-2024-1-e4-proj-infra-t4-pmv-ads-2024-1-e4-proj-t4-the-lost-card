@@ -20,9 +20,4 @@ public class AchievementRepository : IAchievementRepository
     {
         lostCardsContext.Remove(id);
     }
-
-    public void AddPlayerNewAchievement(Player player)
-    {
-        lostCardsContext.Players.Update(player);
-    }
 }
