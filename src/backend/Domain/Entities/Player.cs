@@ -9,4 +9,6 @@ public class Player : Entity
     public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     public Guid? CurrentRoom { get; set; }
     public DateTime? JoinedRoomAt { get; set; }
+    public decimal Progrees { get; set; }
+    public IEnumerable<Achievements> Achivements {get;set;} = Enumerable.Empty<Achievements>();
 }
