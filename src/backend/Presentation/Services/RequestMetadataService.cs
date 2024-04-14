@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Azure.SignalR.Management;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -51,21 +52,19 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
         if (RequestMetadata is not null)
             return Task.FromResult((IRequestMetadata.Metadata?)RequestMetadata);
 
-        var token = GetToken();
+        var claims = ReadClaims();
 
-        if (token is null)
+        if (claims is null || !claims.Any())
             return Task.FromResult(default(IRequestMetadata.Metadata?));
 
-        var userClaims = tokenService.ValidateToken(token);
+        var requesterIdClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        Guid? requesterId = default;
+        if (requesterIdClaim?.Value is not null && Guid.TryParse(requesterIdClaim.Value, out var parsedRequesterId))
+            requesterId = parsedRequesterId;
 
-        var requesterIdClaim = userClaims?.FindFirst(ClaimTypes.NameIdentifier);
-        Guid? requesterId = requesterIdClaim?.Value is null ? null : Guid.Parse(requesterIdClaim.Value);
-
-        var roomGuidClaim = userClaims?.FindFirst(ClaimTypes.GroupSid);
-
+        var roomGuidClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.GroupSid);
         Guid? roomGuid = default;
-
-        if (Guid.TryParse(roomGuidClaim?.Value, out var parsedGuid))
+        if (roomGuidClaim?.Value is not null && Guid.TryParse(roomGuidClaim.Value, out var parsedGuid))
             roomGuid = parsedGuid;
 
         RequestMetadata = new IRequestMetadata.Metadata(requesterId, signalRContext?.ConnectionId, roomGuid, DateTime.Now);
@@ -75,16 +74,22 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
 
     public void SetRoomGuid(Guid roomGuid)
     {
-        throw new NotImplementedException();
+        if (RequestMetadata is null)
+            RequestMetadata = new IRequestMetadata.Metadata(null, null, roomGuid, DateTime.Now);
+        else
+            RequestMetadata = new IRequestMetadata.Metadata(RequestMetadata.RequesterId, RequestMetadata.HubConnectionId, roomGuid, DateTime.Now);
     }
 
-    private string? GetToken()
+    public IEnumerable<Claim>? ReadClaims()
     {
-        if (signalRContext is not null && signalRContext.Query.TryGetValue("access_token", out var queryToken))
-            return queryToken;
+        if (signalRContext is not null)
+            return signalRContext.Claims.Select(kvp => new Claim(kvp.Key, kvp.Value));
 
         if (httpContextAccessor.HttpContext?.Request.Headers.Authorization.FirstOrDefault() is { } headerToken)
-            return headerToken[7..];
+        {
+            var claimsPrincipal = tokenService.ValidateToken(headerToken[7..]);
+            return claimsPrincipal?.Claims;
+        }
 
         return null;
     }

@@ -2,48 +2,44 @@
 using Application.FluentResultExtensions;
 using Application.Services;
 using Domain.Entities;
-using Domain.Extensions.Serialization;
 using FluentResults;
+using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.Join;
 
 public record JoinGameRoomHubRequest(
     Guid? RoomGuid = default,
     JoinGameRoomHubRequest.CreationOptionsClass? CreationOptions = default
-) : GameRoomHubRequest<JoinGameRoomHubResponse>, IJsonDerivedType<GameRoomHubRequestBase>, IRequestMetadata
+) : GameRoomHubRequest<JoinGameRoomHubResponse>, IRequestMetadata
 {
-    public string Discriminator => nameof(JoinGameRoomHubRequest);
-
+    [JsonIgnore]
     public IRequestMetadata.Metadata? RequestMetadata { get; set; }
 
+    [JsonIgnore]
     public bool RequiresAuthorization => true;
 
     public record CreationOptionsClass(string RoomName = "Public lobby");
 }
 
-public record JoinGameRoomHubResponse(string NewToken) : GameRoomHubResponse, IJsonDerivedType<GameRoomHubResponse>
-{
-    public string Discriminator => nameof(JoinGameRoomHubResponse);
-}
+public record JoinGameRoomHubResponse(string NewToken) : GameRoomHubResponse;
 
 public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHubRequest, JoinGameRoomHubResponse>
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
     private readonly IGameRoomHubService gameRoomHubService;
     private readonly ITokenService tokenService;
-    private readonly IRequestInfoService requestInfoService;
+    private readonly IRequestMetadataService requestMetadataService;
 
     public JoinGameRoomRequestHandler(
         ILostCardDbUnitOfWork dbUnitOfWork,
         IGameRoomHubService gameRoomHubService,
         ITokenService tokenService,
-        IRequestInfoService requestInfoService
-    )
+        IRequestMetadataService requestMetadataService)
     {
         this.dbUnitOfWork = dbUnitOfWork;
         this.gameRoomHubService = gameRoomHubService;
         this.tokenService = tokenService;
-        this.requestInfoService = requestInfoService;
+        this.requestMetadataService = requestMetadataService;
     }
 
     public async ValueTask<Result<GameRoomHubResponse>> Handle(JoinGameRoomHubRequest request, CancellationToken cancellationToken)
@@ -85,7 +81,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
 
         var roomGuidStr = roomGuid!.Value.ToString()!;
 
-        requestInfoService.SetRoomGuid(roomGuid!.Value);
+        requestMetadataService.SetRoomGuid(roomGuid!.Value);
 
         await gameRoomHubService.JoinGroup(
             request.RequestMetadata.HubConnectionId!,
@@ -104,11 +100,11 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         {
             AdminId = requester.Id,
             Name = creationOptions.RoomName,
-            Players = new HashSet<GameRoom.PlayerInfo> { new GameRoom.PlayerInfo(requester.Id, request.RequestMetadata!.HubConnectionId!) }
+            Players = new HashSet<GameRoom.PlayerInfo> { new(requester.Id, request.RequestMetadata!.HubConnectionId!) }
         };
 
         await dbUnitOfWork.GameRoomRepository.Create(newRoom, cancellationToken);
 
-        return newRoom.Guid;
+        return newRoom.Id;
     }
 }

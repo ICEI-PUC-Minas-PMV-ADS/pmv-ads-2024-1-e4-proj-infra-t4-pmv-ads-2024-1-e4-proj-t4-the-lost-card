@@ -24,6 +24,7 @@ public class LostCardDbContext : DbContext, ILostCardDbUnitOfWork
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PlayerMapping());
+        modelBuilder.ApplyConfiguration(new GameRoomMapping());
 
         base.OnModelCreating(modelBuilder);
     }

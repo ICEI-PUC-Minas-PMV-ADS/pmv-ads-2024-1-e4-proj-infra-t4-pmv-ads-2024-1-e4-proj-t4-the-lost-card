@@ -18,14 +18,14 @@ internal class GameRoomRepository : IGameRoomRepository
         await lostCardDbContext.AddAsync(gameRoom, cancellationToken);
     }
 
-    public Task<GameRoom?> Find(Guid id, CancellationToken cancellation = default)
+    public ValueTask<GameRoom?> Find(Guid id, CancellationToken cancellationToken = default)
     {
-        return lostCardDbContext.GameRooms.FirstOrDefaultAsync(gr => gr.Guid == id, cancellation);
+        return lostCardDbContext.GameRooms.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
     }
 
-    public async Task<IEnumerable<GameRoom>> Find(CancellationToken cancellation = default)
+    public async Task<IEnumerable<GameRoom>> Find(CancellationToken cancellationToken = default)
     {
-        return await lostCardDbContext.GameRooms.ToArrayAsync(cancellation);
+        return await lostCardDbContext.GameRooms.ToArrayAsync(cancellationToken);
     }
 
     public void Remove(GameRoom gameRoom)

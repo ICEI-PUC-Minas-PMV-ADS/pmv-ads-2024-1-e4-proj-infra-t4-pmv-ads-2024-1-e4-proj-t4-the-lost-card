@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Presentation.Serialization;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Presentation;
@@ -17,6 +18,17 @@ public class Endpoints
     public Endpoints(ISender sender)
     {
         this.sender = sender;
+    }
+
+    [FunctionName("HubDebugHelper")]
+    public static IActionResult HubDebugHelper([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req, ExecutionContext context)
+    {
+        var path = Path.Combine(context.FunctionAppDirectory, "content", "HubDebugHelper.html");
+        return new ContentResult
+        {
+            Content = File.ReadAllText(path),
+            ContentType = "text/html",
+        };
     }
 
     [FunctionName("SignUp")]

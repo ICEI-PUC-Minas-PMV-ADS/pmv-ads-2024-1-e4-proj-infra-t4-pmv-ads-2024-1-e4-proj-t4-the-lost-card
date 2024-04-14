@@ -1,8 +1,9 @@
 ﻿namespace Domain.Entities;
 
-public class GameRoom
+public class GameRoom : Entity
 {
-    public Guid Guid { get; init; } = Guid.NewGuid();
+    protected override string ProtectedPartitionKey { get => AdminId!.Value.ToString(); set => base.ProtectedPartitionKey = value; }
+
     public bool IsInviteOnly { get; set; }
     public string Name { get; set; } = "Public lobby";
     public Guid? AdminId { get; set; }
