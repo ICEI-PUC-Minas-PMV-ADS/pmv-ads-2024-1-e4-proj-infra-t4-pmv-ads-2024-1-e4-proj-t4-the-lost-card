@@ -1,21 +1,14 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.FluentResultExtensions;
+using Application.Services;
 using FluentResults;
 using FluentValidation;
 using Mediator;
 
 namespace Application.UseCases.GetPlayerAchievements
 {
-    public sealed record GetPlayerAchievementsRequest(string id) : IRequest<Result<GetPlayerAchievementsResponse>>  
-    {
-        public class Validator : AbstractValidator<GetPlayerAchievementsRequest>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.id).NotEmpty().NotNull();
-            }
-        }
-    }
+    public sealed record GetPlayerAchievementsRequest(IRequestMetadata.Metadata Info) : IRequest<Result<GetPlayerAchievementsResponse>>; 
+
 
     public class GetPlayerAchievementsRequestHandler : IRequestHandler<GetPlayerAchievementsRequest, Result<GetPlayerAchievementsResponse>>
     {
@@ -27,7 +20,8 @@ namespace Application.UseCases.GetPlayerAchievements
 
         public async ValueTask<Result<GetPlayerAchievementsResponse>> Handle(GetPlayerAchievementsRequest request, CancellationToken cancellationToken)
         {
-            var player = await playerRepository.Find(request.id,cancellationToken);
+            
+            var player = await playerRepository.Find((Guid)request.Info.RequesterId!,cancellationToken);
 
             if (player is null)
                 return new ApplicationError("Player not found");
