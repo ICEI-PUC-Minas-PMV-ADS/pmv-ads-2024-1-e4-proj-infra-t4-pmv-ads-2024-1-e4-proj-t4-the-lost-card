@@ -1,4 +1,5 @@
-﻿using Application.UseCases.PlayerSignIn;
+﻿using Application.UseCases.GameRooms.Query;
+using Application.UseCases.PlayerSignIn;
 using Application.UseCases.PlayerSignUp;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,17 @@ public class Endpoints
             Content = File.ReadAllText(path),
             ContentType = "text/html",
         };
+    }
+
+    [FunctionName("QueryGameRooms")]
+    public async Task<IActionResult> QueryGameRooms(
+        [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
+        System.Threading.CancellationToken cancellationToken
+    )
+    {
+        var responseResult = await sender.Send(QueryGameRoomsRequest.Value, cancellationToken);
+
+        return HttpSerialization.Serialize(responseResult);
     }
 
     [FunctionName("SignUp")]

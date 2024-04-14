@@ -1,12 +1,11 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.FluentResultExtensions;
 using Application.Services;
-using Domain.Extensions.Serialization;
 using FluentResults;
 
 namespace Application.UseCases.GameRooms.Leave;
 
-public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubResponse>, IJsonDerivedType<GameRoomHubRequestBase>, IRequestMetadata
+public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubResponse>, IRequestMetadata
 {
     public string Discriminator => nameof(LeaveGameRoomHubRequest);
 
@@ -15,7 +14,7 @@ public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubRespo
     public bool RequiresAuthorization => true;
 }
 
-public record LeaveGameRoomHubResponse(string NewToken) : GameRoomHubResponse, IJsonDerivedType<GameRoomHubResponse>
+public record LeaveGameRoomHubResponse(string NewToken) : GameRoomHubRequestResponse
 {
     public string Discriminator => nameof(LeaveGameRoomHubResponse);
 }
@@ -37,7 +36,7 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         this.tokenService = tokenService;
     }
 
-    public async ValueTask<Result<GameRoomHubResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
     {
         if (request.RequestMetadata?.RequesterId is null)
             return Result.Fail("Requester not found");

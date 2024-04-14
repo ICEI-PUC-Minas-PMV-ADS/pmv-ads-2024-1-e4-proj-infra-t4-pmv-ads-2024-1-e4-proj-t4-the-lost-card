@@ -22,7 +22,7 @@ public class QueryGameRoomsRequestHandler : IRequestHandler<QueryGameRoomsReques
 
     public async ValueTask<Result<IEnumerable<QueryGameRoomsResponse>>> Handle(QueryGameRoomsRequest request, CancellationToken cancellationToken)
     {
-        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(cancellationToken);
+        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(false, cancellationToken);
         return openRooms.Select(o => new QueryGameRoomsResponse(o.Id!.Value, o.Name, o.Players.Count)).ToResult();
     }
 }

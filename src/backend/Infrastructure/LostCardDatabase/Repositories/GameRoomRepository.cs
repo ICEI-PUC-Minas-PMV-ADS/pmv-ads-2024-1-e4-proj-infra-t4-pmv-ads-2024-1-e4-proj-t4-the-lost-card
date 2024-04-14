@@ -23,9 +23,14 @@ internal class GameRoomRepository : IGameRoomRepository
         return lostCardDbContext.GameRooms.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
     }
 
-    public async Task<IEnumerable<GameRoom>> Find(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<GameRoom>> Find(bool includeNonLobby = false, CancellationToken cancellationToken = default)
     {
-        return await lostCardDbContext.GameRooms.ToArrayAsync(cancellationToken);
+        IQueryable<GameRoom> query = lostCardDbContext.GameRooms;
+
+        if (!includeNonLobby)
+            query.Where(gr => gr.Semaphore == GameRoom.SemaphoreState.Lobby);
+
+        return await query.ToArrayAsync(cancellationToken);
     }
 
     public void Remove(GameRoom gameRoom)

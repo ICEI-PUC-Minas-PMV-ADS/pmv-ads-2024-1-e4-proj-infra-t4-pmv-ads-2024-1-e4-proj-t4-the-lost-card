@@ -8,6 +8,14 @@ public class GameRoom : Entity
     public string Name { get; set; } = "Public lobby";
     public Guid? AdminId { get; set; }
     public HashSet<PlayerInfo> Players { get; set; } = new();
+    public SemaphoreState Semaphore { get; set; }
 
     public record PlayerInfo(Guid? PlayerId, string ConnectionId);
+
+    public enum SemaphoreState
+    {
+        Lobby,
+        AwaitingPlayersActions,
+        AwaitingServerActions
+    }
 }

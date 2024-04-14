@@ -50,7 +50,7 @@ public class EventHub : ServerlessHub
 
         var request = JsonConvert.DeserializeObject<GameRoomHubRequestBase>(rawNotification, serializerSettings);
         var response = await sender.Send(request!, cancellationToken);
-        if (response is Result<GameRoomHubResponse> typedResponse)
+        if (response is Result<GameRoomHubRequestResponse> typedResponse)
         {
             if (typedResponse.IsSuccess)
             {
