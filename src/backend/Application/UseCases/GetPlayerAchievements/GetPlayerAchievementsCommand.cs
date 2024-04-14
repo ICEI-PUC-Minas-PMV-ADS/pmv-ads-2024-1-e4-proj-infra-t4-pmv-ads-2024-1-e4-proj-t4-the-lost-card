@@ -21,7 +21,7 @@ namespace Application.UseCases.GetPlayerAchievements
         public async ValueTask<Result<GetPlayerAchievementsResponse>> Handle(GetPlayerAchievementsRequest request, CancellationToken cancellationToken)
         {
             
-            var player = await playerRepository.Find((Guid)request.Info.RequesterId!,cancellationToken);
+            var player = await playerRepository.Find(request.Info.RequesterId!.Value,cancellationToken);
 
             if (player is null)
                 return new ApplicationError("Player not found");
