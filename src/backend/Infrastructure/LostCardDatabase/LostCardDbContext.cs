@@ -21,7 +21,6 @@ public class LostCardDbContext : DbContext, ILostCardDbUnitOfWork
 
     public IGameRoomRepository GameRoomRepository { get; init; }
 
-    public DbSet<Achievements> Achievements { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PlayerMapping());

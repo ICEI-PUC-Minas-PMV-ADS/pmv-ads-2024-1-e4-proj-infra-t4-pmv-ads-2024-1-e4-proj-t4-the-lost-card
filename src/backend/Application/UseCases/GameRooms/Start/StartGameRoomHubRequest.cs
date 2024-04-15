@@ -50,6 +50,22 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
         if (gameRoom is not { Semaphore: GameRoom.SemaphoreState.Lobby })
             return Result.Fail("Game room is not lobby anymore");
 
+        if (gameRoom.Players.Count < 2)
+            return Result.Fail("Gamerooms can only start after atleast two people join");
+
+        gameRoom.GameInfo = new GameRoom.RoomGameInfo
+        {
+            CurrentLevel = 1,
+            EncounterInfo = null,
+            PlayersInfo = gameRoom.Players.Select(p => new GameRoom.RoomGameInfo.PlayerGameInfo
+            {
+                PlayerId = p.PlayerId,
+                GameClassId = null,
+                Life = int.MinValue,
+                MaxLife = int.MinValue,
+            }).ToHashSet()
+        };
+
         gameRoom.Semaphore = GameRoom.SemaphoreState.AwaitingPlayersActions;
 
         dbUnitOfWork.GameRoomRepository.Update(gameRoom);

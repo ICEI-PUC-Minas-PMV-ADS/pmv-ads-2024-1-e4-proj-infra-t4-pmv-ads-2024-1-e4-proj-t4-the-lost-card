@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.GameObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,8 +16,7 @@ public class PlayerMapping : IEntityTypeConfiguration<Player>
         builder.Property(x => x.PasswordHash);
         builder.Property(x => x.Email);
         builder.Property(x => x.CurrentRoom);
-        builder.Property(x => x.JoinedRoomAt);
         builder.Property(x => x.Progrees);
-        builder.HasMany<Achievements>(x => x.Achivements);
+        builder.OwnsMany(x => x.Achivements);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.LostCardDatabase;
-using Application.FluentResultExtensions;
 using Application.Services;
 using Domain.Entities;
 using FluentResults;
@@ -82,6 +81,8 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
 
     private async Task<Result<Guid>> EnsureRoomJoined(JoinGameRoomHubRequest request, CancellationToken cancellationToken = default)
     {
+        var playerInfo = new GameRoom.RoomPlayerInfo { PlayerId = request.RequestMetadata!.RequesterId!.Value, ConnectionId = request.RequestMetadata!.HubConnectionId! };
+
         if (request.RoomGuid is not null)
         {
             var existingRoom = await dbUnitOfWork.GameRoomRepository.Find(request.RoomGuid!.Value, cancellationToken);
@@ -89,11 +90,11 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             if (existingRoom is null)
                 return Result.Fail("Room not found");
 
-            if (existingRoom is not { Semaphore: GameRoom.SemaphoreState.Lobby})
+            if (existingRoom is not { Semaphore: GameRoom.SemaphoreState.Lobby })
                 return Result.Fail("Cant join room that is not on lobby");
 
             // TODO: Adicionar verificacao de banimento e se o player ja entrou na sala
-            existingRoom.Players.Add(new GameRoom.PlayerInfo(request.RequestMetadata!.RequesterId, request.RequestMetadata!.HubConnectionId!));
+            existingRoom.Players.Add(playerInfo);
             dbUnitOfWork.GameRoomRepository.Update(existingRoom);
 
             return request.RoomGuid!.Value.ToResult();
@@ -106,7 +107,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             AdminId = request.RequestMetadata!.RequesterId,
             Name = creationOptions.RoomName,
             Semaphore = GameRoom.SemaphoreState.Lobby,
-            Players = new HashSet<GameRoom.PlayerInfo> { new(request.RequestMetadata!.RequesterId, request.RequestMetadata!.HubConnectionId!) }
+            Players = new HashSet<GameRoom.RoomPlayerInfo> { playerInfo }
         };
 
         await dbUnitOfWork.GameRoomRepository.Create(newRoom, cancellationToken);
