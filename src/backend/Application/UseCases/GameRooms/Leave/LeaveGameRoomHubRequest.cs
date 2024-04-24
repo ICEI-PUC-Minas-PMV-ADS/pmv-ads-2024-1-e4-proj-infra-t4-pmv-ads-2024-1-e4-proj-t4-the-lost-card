@@ -2,16 +2,14 @@
 using Application.FluentResultExtensions;
 using Application.Services;
 using FluentResults;
+using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.Leave;
 
 public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubResponse>, IRequestMetadata
 {
-    public string Discriminator => nameof(LeaveGameRoomHubRequest);
-
-    public IRequestMetadata.Metadata? RequestMetadata { get; set; }
-
-    public bool RequiresAuthorization => true;
+    [JsonIgnore]
+    public override bool RequiresAuthorization => true;
 }
 
 public record LeaveGameRoomHubResponse(string NewToken) : GameRoomHubRequestResponse
@@ -38,31 +36,27 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
 
     public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
     {
-        if (request.RequestMetadata?.RequesterId is null)
+        if (request.Requester is null)
             return Result.Fail("Requester not found");
 
-        var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetadata.RequesterId!.Value, cancellationToken);
+        if (request.CurrentRoom is null)
+            return Result.Fail("Room not found");
 
-        if (requester is null)
-            return Result.Fail("Requester not found");
+        await gameRoomHubService.LeaveGroup(request.RequestMetadata!.HubConnectionId!, request.CurrentRoom!.Id.ToString()!, cancellationToken);
 
-        var room = await dbUnitOfWork.GameRoomRepository.Find(requester.CurrentRoom!.Value, cancellationToken);
-
-        await gameRoomHubService.LeaveGroup(request.RequestMetadata!.HubConnectionId!, requester.CurrentRoom!.ToString()!, cancellationToken);
-
-        requester.CurrentRoom = null;
-        dbUnitOfWork.PlayerRepository.Update(requester);
+        request.Requester.CurrentRoom = null;
+        dbUnitOfWork.PlayerRepository.Update(request.Requester);
         await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (room is null)
+        if (request.CurrentRoom is null)
             return new NotFoundError("Room not found");
 
-        room.Players.RemoveWhere(p => p.PlayerId == requester.Id);
+        request.CurrentRoom.Players.RemoveWhere(p => p.PlayerId == request.Requester.Id);
 
-        dbUnitOfWork.GameRoomRepository.Update(room);
+        dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
         await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
-        var newToken = tokenService.GetToken(requester);
+        var newToken = tokenService.GetToken(request.Requester);
 
         return new LeaveGameRoomHubResponse(newToken);
     }

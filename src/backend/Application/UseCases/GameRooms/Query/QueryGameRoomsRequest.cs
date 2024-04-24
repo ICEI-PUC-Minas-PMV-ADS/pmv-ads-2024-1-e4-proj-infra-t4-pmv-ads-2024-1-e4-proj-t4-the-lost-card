@@ -1,8 +1,10 @@
 ﻿using Application.Contracts.LostCardDatabase;
+using Domain.Entities;
 using FluentResults;
 using Mediator;
 
 namespace Application.UseCases.GameRooms.Query;
+
 public class QueryGameRoomsRequest : IRequest<Result<IEnumerable<QueryGameRoomsResponse>>>
 {
     private QueryGameRoomsRequest() { }
@@ -22,7 +24,8 @@ public class QueryGameRoomsRequestHandler : IRequestHandler<QueryGameRoomsReques
 
     public async ValueTask<Result<IEnumerable<QueryGameRoomsResponse>>> Handle(QueryGameRoomsRequest request, CancellationToken cancellationToken)
     {
-        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(false, cancellationToken);
+        var lobbyFilter = new GameRoomState[] { GameRoomState.Lobby };
+        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(lobbyFilter, cancellationToken);
         return openRooms.Select(o => new QueryGameRoomsResponse(o.Id!.Value, o.Name, o.Players.Count)).ToResult();
     }
 }

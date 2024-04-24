@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.FluentResultExtensions;
 using Application.Services;
-using Application.UseCases.GetPlayerAchievements;
+//using Application.UseCases.GetPlayerAchievements;
 using Domain.Entities;
 using NSubstitute;
 
@@ -10,10 +10,10 @@ namespace Application.Test.UseCases.GetPlayerAchievement;
 public class GetPlayerAchievementsRequestHandlerTesting
 {
     private readonly IPlayerRepository playerRepository = Substitute.For<IPlayerRepository>();
-    private readonly SeePlayerInfoRequestHandler handler;
+    //private readonly SeePlayerInfoRequestHandler handler;
     public GetPlayerAchievementsRequestHandlerTesting()
     {
-        handler = new(playerRepository);
+        //handler = new(playerRepository);
     }
     //[Fact]
     //public async Task GetPlayerAchievements_With_Player_Sucess() 

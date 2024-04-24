@@ -6,18 +6,15 @@ using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.Start;
 
-public record StartGameRoomHubRequest() : GameRoomHubRequest, IRequestMetadata
+public record StartGameRoomHubRequestResponse : GameRoomHubRequestResponse;
+
+public record StartGameRoomHubRequest() : GameRoomHubRequest<StartGameRoomHubRequestResponse>, IRequestMetadata
 {
     [JsonIgnore]
-    public IRequestMetadata.Metadata? RequestMetadata { get; set; }
-
-    [JsonIgnore]
-    public bool RequiresAuthorization => true;
+    public override bool RequiresAuthorization => true;
 }
 
-public record StartGameRoomHubRequestResponse() : GameRoomHubRequestResponse;
-
-public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoomHubRequest>
+public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoomHubRequest, StartGameRoomHubRequestResponse>
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
 
@@ -26,52 +23,44 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
         this.dbUnitOfWork = dbUnitOfWork;
     }
 
-    public async ValueTask<Result> Handle(StartGameRoomHubRequest request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(StartGameRoomHubRequest request, CancellationToken cancellationToken)
     {
-        if (request.RequestMetadata?.RequesterId is null)
+        if (request.Requester is null)
             return Result.Fail("Requester not found");
 
-        var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetadata.RequesterId!.Value, cancellationToken);
-
-        if (requester is null)
-            return Result.Fail("Requester not found");
-
-        if (requester.CurrentRoom is null)
+        if (request.CurrentRoom is null)
             return Result.Fail("Requester hasnt joined a room");
 
-        var gameRoom = await dbUnitOfWork.GameRoomRepository.Find(requester.CurrentRoom!.Value, cancellationToken);
-
-        if (gameRoom is null)
-            return Result.Fail("Room not found");
-
-        if (gameRoom.AdminId != requester.Id)
+        if (request.CurrentRoom.AdminId != request.Requester.Id)
             return Result.Fail("Cant start a gameroom youre not admin of");
 
-        if (gameRoom is not { Semaphore: GameRoom.SemaphoreState.Lobby })
+        if (request.CurrentRoom is not { State: GameRoomState.Lobby })
             return Result.Fail("Game room is not lobby anymore");
 
-        if (gameRoom.Players.Count < 2)
+        if (request.CurrentRoom.Players.Count < 2)
             return Result.Fail("Gamerooms can only start after atleast two people join");
 
-        gameRoom.GameInfo = new GameRoom.RoomGameInfo
+        request.CurrentRoom.GameInfo = new GameRoom.RoomGameInfo
         {
             CurrentLevel = 1,
             EncounterInfo = null,
-            PlayersInfo = gameRoom.Players.Select(p => new GameRoom.RoomGameInfo.PlayerGameInfo
+            PlayersInfo = request.CurrentRoom.Players.Select(p => new GameRoom.RoomGameInfo.PlayerGameInfo
             {
+                ActionsFinished = false,
                 PlayerId = p.PlayerId,
                 GameClassId = null,
                 Life = int.MinValue,
                 MaxLife = int.MinValue,
+                CurrentBlock = int.MinValue
             }).ToHashSet()
         };
 
-        gameRoom.Semaphore = GameRoom.SemaphoreState.AwaitingPlayersActions;
+        request.CurrentRoom.State = GameRoomState.Started;
 
-        dbUnitOfWork.GameRoomRepository.Update(gameRoom);
+        dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
 
         _ = await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Ok();
+        return new StartGameRoomHubRequestResponse();
     }
 }

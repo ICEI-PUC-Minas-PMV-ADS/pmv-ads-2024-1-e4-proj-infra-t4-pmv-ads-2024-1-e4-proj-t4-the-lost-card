@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.FluentResultExtensions;
 using Application.Services;
+using Domain.Entities;
 using Domain.GameObjects;
 using FluentResults;
 using Mediator;
@@ -14,7 +15,13 @@ public sealed record SeePlayerInfoRequest(Guid PlayerGuid) : IRequest<Result<See
     public IRequestMetadata.Metadata? RequestMetadata { get; set; }
 
     [JsonIgnore]
-    public bool RequiresAuthorization => false;
+    public bool RequiresAuthorization => true;
+
+    [JsonIgnore]
+    public Player? Requester { get; set; }
+
+    [JsonIgnore]
+    public GameRoom? CurrentRoom { get; set; }
 }
 
 public class SeePlayerInfoRequestHandler : IRequestHandler<SeePlayerInfoRequest, Result<SeePlayerInfoRequestResponse>>
@@ -33,7 +40,7 @@ public class SeePlayerInfoRequestHandler : IRequestHandler<SeePlayerInfoRequest,
         if (player is null)
             return new ApplicationError("Player not found");
 
-        var unlockAchievments = player.Achivements.Select(ua => Achievements.AchievmentsDictionary[ua.AchievmentKey]);
+        var unlockAchievments = player.Achivements.Select(ua => Achievements.Dictionary[ua.AchievmentKey]);
 
         return new SeePlayerInfoRequestResponse(player.Name, player.Progrees, unlockAchievments);
     }

@@ -13,7 +13,7 @@ public class GameRoomMapping : IEntityTypeConfiguration<GameRoom>
         builder.Property(x => x.IsInviteOnly);
         builder.Property(x => x.Name);
         builder.Property(gr => gr.AdminId);
-        builder.Property(gr => gr.Semaphore);
+        builder.Property(gr => gr.State);
         builder.OwnsMany(gr => gr.Players);
         builder.OwnsOne(gr => gr.GameInfo);
     }

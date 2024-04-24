@@ -9,5 +9,5 @@ public partial class GameRoom : Entity
     public Guid? AdminId { get; set; }
     public HashSet<RoomPlayerInfo> Players { get; set; } = new();
     public RoomGameInfo? GameInfo { get; set; } = new();
-    public SemaphoreState Semaphore { get; set; }
+    public GameRoomState State { get; set; }
 }
