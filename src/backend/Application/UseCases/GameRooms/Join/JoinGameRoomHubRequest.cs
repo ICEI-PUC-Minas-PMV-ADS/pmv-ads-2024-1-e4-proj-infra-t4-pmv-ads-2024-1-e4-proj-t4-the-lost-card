@@ -12,15 +12,12 @@ public record JoinGameRoomHubRequest(
 ) : GameRoomHubRequest<JoinGameRoomHubRequestResponse>, IRequestMetadata
 {
     [JsonIgnore]
-    public IRequestMetadata.Metadata? RequestMetadata { get; set; }
-
-    [JsonIgnore]
-    public bool RequiresAuthorization => true;
+    public override bool RequiresAuthorization => true;
 
     public record CreationOptionsClass(string RoomName = "Public lobby");
 }
 
-public record JoinGameRoomHubRequestResponse(string NewToken) : GameRoomHubRequestResponse;
+public record JoinGameRoomHubRequestResponse(string NewToken, string Name) : GameRoomHubRequestResponse;
 
 public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHubRequest, JoinGameRoomHubRequestResponse>
 {
@@ -47,12 +44,10 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         if (request.RequestMetadata?.RequesterId is null)
             return Result.Fail("Requester not found");
 
-        var requester = await dbUnitOfWork.PlayerRepository.Find(request.RequestMetadata.RequesterId!.Value, cancellationToken);
-
-        if (requester is null)
+        if (request.Requester is null)
             return Result.Fail("Requester not found");
 
-        if (requester.CurrentRoom is not null)
+        if (request.CurrentRoom is not null)
             return Result.Fail("Requester already on a room");
 
         var creationOptions = request.CreationOptions ?? (request.RoomGuid is null ? new JoinGameRoomHubRequest.CreationOptionsClass() : null);
@@ -62,9 +57,9 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         if (roomGuidResult.IsFailed)
             return roomGuidResult.ToResult<GameRoomHubRequestResponse>();
 
-        requester.CurrentRoom = roomGuidResult.Value;
-        dbUnitOfWork.PlayerRepository.Update(requester);
-        await dbUnitOfWork.SaveChangesAsync(cancellationToken);
+        request.Requester.CurrentRoom = roomGuidResult.Value;
+        dbUnitOfWork.PlayerRepository.Update(request.Requester);
+        _ = await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
         requestMetadataService.SetRoomGuid(roomGuidResult!.Value);
 
@@ -74,9 +69,9 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             cancellationToken
         );
 
-        var newToken = tokenService.GetToken(requester);
+        var newToken = tokenService.GetToken(request.Requester);
 
-        return new JoinGameRoomHubRequestResponse(newToken);
+        return new JoinGameRoomHubRequestResponse(newToken, request.Requester.Name);
     }
 
     private async Task<Result<Guid>> EnsureRoomJoined(JoinGameRoomHubRequest request, CancellationToken cancellationToken = default)
@@ -90,7 +85,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             if (existingRoom is null)
                 return Result.Fail("Room not found");
 
-            if (existingRoom is not { Semaphore: GameRoom.SemaphoreState.Lobby })
+            if (existingRoom is not { State: GameRoomState.Lobby })
                 return Result.Fail("Cant join room that is not on lobby");
 
             // TODO: Adicionar verificacao de banimento e se o player ja entrou na sala
@@ -106,7 +101,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         {
             AdminId = request.RequestMetadata!.RequesterId,
             Name = creationOptions.RoomName,
-            Semaphore = GameRoom.SemaphoreState.Lobby,
+            State = GameRoomState.Lobby,
             Players = new HashSet<GameRoom.RoomPlayerInfo> { playerInfo }
         };
 

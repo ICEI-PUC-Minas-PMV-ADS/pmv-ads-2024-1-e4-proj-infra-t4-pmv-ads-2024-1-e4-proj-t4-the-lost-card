@@ -22,7 +22,7 @@ public class EventHub : ServerlessHub
     private readonly TokenService tokenService;
     private readonly ISender sender;
 
-    private readonly JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.All };
+    private static readonly JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.All };
 
     public EventHub(RequestMetadataService requestMetadataService, ISender sender, TokenService tokenService)
     {

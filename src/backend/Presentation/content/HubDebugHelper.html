@@ -24,18 +24,22 @@
 <body>
     <p>&nbsp;</p>
     <div id="app" class="container">
-        <h3>Serverless chat</h3>
+        <h3>GRHBH - Game Room Hub Debug Helper</h3>
         <div class="row" v-if="ready">
             <div class="signalr-demo col-sm">
                 <hr />
-                <div id='groupchecked'>
+                <!--<div id='groupchecked'>
                     <input type="checkbox" id="checkbox" v-model="checked">
                     <label for="checkbox">Send To Default Group: {{ this.defaultgroup }}</label>
-                </div>
+                </div>-->
                 <form v-on:submit.prevent="sendNewMessage(checked)">
                     <input type="text" v-model="newMessage" id="message-box" class="form-control"
                            placeholder="Type message here..." />
                 </form>
+                <hr />
+                <div id='setNewToken'>
+                    <button v-on:click="setNewToken" type="button">Change token</button>
+                </div>
             </div>
         </div>
         <div class="row" v-if="!ready">
@@ -115,6 +119,31 @@
                 el: '#app',
                 data: data,
                 methods: {
+                    setNewToken: function () {
+                        data.token = prompt("Enter your token");
+                        if (!data.token) {
+                            alert("No username entered. Reload page and try again.");
+                            throw "No username entered";
+                        }
+
+                        connection = new signalR.HubConnectionBuilder()
+                            .withUrl(apiBaseUrl + '/api', {
+                                accessTokenFactory: () => {
+                                    return data.token
+                                }
+                            })
+                            .configureLogging(signalR.LogLevel.Information)
+                            .build();
+
+                        connection.start()
+                            .then(() => {
+                                data.ready = true;
+                                console.log('connected!');
+                            })
+                            .catch(console.error);
+
+                        connection.invoke("OnServerDispatch", JSON.stringify({ "$type": "Application.UseCases.GameRooms.RefreshConnection.RefreshConnectionRequest, Application" }));
+                    },
                     sendNewMessage: function (isToGroup) {
                         if (isToGroup) {
                             connection.invoke("sendToGroup", this.defaultgroup, this.newMessage);
@@ -163,7 +192,7 @@
                 throw "No username entered";
             }
 
-            const connection = new signalR.HubConnectionBuilder()
+            let connection = new signalR.HubConnectionBuilder()
                 .withUrl(apiBaseUrl + '/api', {
                     accessTokenFactory: () => {
                         return data.token
@@ -187,9 +216,8 @@
 
             let counter = 0;
 
-            function onNewMessage(message) {
-                message.id = counter++; // vue transitions need an id
-                data.messages.unshift(message);
+            function onNewMessage(rawMessage) {
+                data.messages.unshift({ text: rawMessage, id: counter++ });
             };
 
             function base64url(source) {
