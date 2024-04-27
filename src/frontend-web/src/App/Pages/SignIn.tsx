@@ -2,8 +2,18 @@ import { useState } from "react";
 import useAuth from "../Contexts/Auth";
 import Button from "../Components/Button";
 import Input from "../Components/Input";
-import { ReactComponent as Logo } from "../Assets/logo.svg";
+import { ReactComponent as Account } from "../Assets/Account.svg";
 import PasswordInput from "../Components/PasswordInput";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+`;
 
 const Signin: React.FC = () => {
   const { signIn } = useAuth();
@@ -16,22 +26,30 @@ const Signin: React.FC = () => {
   const [plainTextPassword, setPlainTextPassword] = useState("");
 
   return (
-    <div style={{ backgroundColor: "black" }}>
+    <Container>
       <Input
-        type="text"
         placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
         value={email}
+        onChange={(e) => setEmail(e.target.value)}
       >
-        <Logo />
+        <Account />
       </Input>
       <PasswordInput
-        placeholder="Password"
-        onChange={(e) => setPlainTextPassword(e.target.value)}
+        placeholder="Senha"
         value={plainTextPassword}
+        onChange={(e) => setPlainTextPassword(e.target.value)}
       />
-      <Button onClick={handlerSubmit}>Entrar</Button>
-    </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "300px",
+        }}
+      >
+        <Button onClick={handlerSubmit}>Entrar</Button>
+        <Button>Criar</Button>
+      </div>
+    </Container>
   );
 };
 
