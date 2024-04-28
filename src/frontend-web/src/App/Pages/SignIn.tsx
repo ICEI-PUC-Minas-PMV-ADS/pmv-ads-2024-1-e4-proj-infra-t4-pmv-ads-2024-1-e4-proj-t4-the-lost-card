@@ -5,6 +5,7 @@ import Input from "../Components/Input";
 import { ReactComponent as Account } from "../Assets/Account.svg";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -17,9 +18,12 @@ const Container = styled.div`
 
 const Signin: React.FC = () => {
   const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handlerSubmit = async () => {
     await signIn({ email, plainTextPassword });
+
+    navigate('/');
   };
 
   const [email, setEmail] = useState("");

@@ -2,6 +2,7 @@ import React, {
   PropsWithChildren,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import * as SignInRepository from "../Repositories/SignInRepository";
@@ -14,24 +15,42 @@ interface AuthContextData {
   user: object | null;
   signIn(
     request: SignInRepository.SignInRequest
-  ): Promise<SignInRepository.SignInResponse | ProblemDetails>;
+  ): Promise<ProblemDetails | undefined>;
   signOut(): void;
 }
 
+interface User {
+  name: string;
+  token: string;
+}
+
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<object | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   async function signIn(request: SignInRepository.SignInRequest) {
     const response = await SignInRepository.signIn(request);
 
-    if ("token" in response) setUser(response);
+    if ("detail" in response) {
+      return response;
+    }
 
-    return response;
+    localStorage.setItem("token", response.token);
+    localStorage.setItem("name", response.name);
+    setUser(response);
   }
 
   function signOut() {
     setUser(null);
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
+
+    if (token && name && !Boolean(user)) {
+      setUser({ token, name });
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider

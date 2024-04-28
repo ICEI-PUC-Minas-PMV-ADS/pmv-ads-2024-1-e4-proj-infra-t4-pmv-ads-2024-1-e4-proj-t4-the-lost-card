@@ -15,8 +15,8 @@ export interface SignInResponse {
 
 export async function signIn(request: SignInRequest) {
   try {
-    const { data } = await axios.post<SignInResponse>(
-      "http://localhost:7097/api/players/sessions",
+    const { data } = await api.post<SignInResponse>(
+      "/players/sessions",
       request
     );
 

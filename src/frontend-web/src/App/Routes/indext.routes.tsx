@@ -8,9 +8,7 @@ const LostCardsRouters = () => {
 
   return (
     <BrowserRouter>
-      <AuthProvider>
         {authContext.signed ? <AppRoutes /> : <AnonRoutes />}
-      </AuthProvider>
     </BrowserRouter>
   );
 };
