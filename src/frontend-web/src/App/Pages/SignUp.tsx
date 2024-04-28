@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Button from "../Components/Button";
 import Input from "../Components/Input";
+import {signUp} from "../Repositories/SignUpRepository"
+
 import { ReactComponent as Account } from "../Assets/Account.svg";
 import { ReactComponent as Email } from "../Assets/Email.svg";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
-import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -17,23 +18,18 @@ const Container = styled.div`
 `;
 
 const Signup: React.FC = () => {
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    function handleSignUp() {
+    async function handleSignUp() {
         if (confirmPassword !== password) {
             console.log('Senhas não coincidem');
             return;
         }
-        axios.get('http://localhost:7097/api/players')
-            .then(() => {
-                console.log('Cadastrado com sucesso!');
-            })
-            .catch((error) => {
-                console.error('Erro ao cadastrar:', error);
-            });
+       await signUp({ username, email, password });
     }
 
     return (
@@ -63,16 +59,7 @@ const Signup: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
             />
-
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "300px",
-                }}
-            >
                 <Button onClick={handleSignUp}>Registrar</Button>
-            </div>
         </Container>
     );
 };
