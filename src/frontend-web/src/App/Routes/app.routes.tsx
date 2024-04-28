@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import Signin from "../Pages/SignIn";
 import Bestiario from "../Pages/Bestiario";
 
 const AppRoutes = () => {
