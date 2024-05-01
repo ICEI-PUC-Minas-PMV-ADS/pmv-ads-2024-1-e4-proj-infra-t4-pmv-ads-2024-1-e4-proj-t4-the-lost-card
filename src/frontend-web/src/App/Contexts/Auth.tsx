@@ -12,7 +12,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 interface AuthContextData {
   signed: boolean;
-  user: object | null;
+  user: User | null;
   signIn(
     request: SignInRepository.SignInRequest
   ): Promise<ProblemDetails | undefined>;
