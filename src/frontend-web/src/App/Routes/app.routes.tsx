@@ -1,11 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import Bestiario from "../Pages/Bestiario";
+import Progressos from "../Pages/Progressos";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate replace to="/bestiario" />} />
-      <Route path="/bestiario" element={<Bestiario />} />
+      <Route path="/" element={<Navigate replace to="/Progressos" />} />
+      <Route path="/Progressos" element={<Progressos />} />
     </Routes>
   );
 };

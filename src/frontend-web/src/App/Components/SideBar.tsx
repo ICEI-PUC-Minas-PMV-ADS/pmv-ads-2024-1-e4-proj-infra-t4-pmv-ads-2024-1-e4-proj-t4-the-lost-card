@@ -28,10 +28,8 @@ const SideBar: React.FC<React.PropsWithChildren> = ({ children }) => {
           <>
             {user.name}
             <div style={{ width: "100%" }}>
-              <SideBarButton href="lalaus" Text={"Lalaus"} />
-              <SideBarButton href="lalaus" Text={"Lalaus"} />
-              <SideBarButton href="lalaus" Text={"Lalaus"} />
-              <SideBarButton href="lalaus" Text={"Lalaus"} />
+              <SideBarButton href="Progressos" Text={"Progressos"} />
+              <SideBarButton href="Cartas" Text={"Cartas"} />
             </div>
           </>
         ) : null}

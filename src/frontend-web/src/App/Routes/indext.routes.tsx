@@ -5,11 +5,11 @@ import AppRoutes from "./app.routes";
 import SideBar from "../Components/SideBar";
 
 const LostCardsRouters = () => {
-  const authContext = useAuth();
+  const { signed } = useAuth();
 
   return (
     <BrowserRouter>
-      <SideBar>{authContext.signed ? <AppRoutes /> : <AnonRoutes />}</SideBar>
+      <SideBar>{signed ? <AppRoutes /> : <AnonRoutes />}</SideBar>
     </BrowserRouter>
   );
 };
