@@ -5,3 +5,7 @@ body {
   box-sizing: border-box;
   background-color: #4C4A62;
 }
+
+* {
+  font-family: 'Roboto', sans-serif;
+}

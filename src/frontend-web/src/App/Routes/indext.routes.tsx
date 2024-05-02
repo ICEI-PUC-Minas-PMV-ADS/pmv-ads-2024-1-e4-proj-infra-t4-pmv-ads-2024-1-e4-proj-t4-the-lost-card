@@ -1,16 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
 import AnonRoutes from "./anon.routes";
-import useAuth, { AuthProvider } from "../Contexts/Auth";
+import useAuth from "../Contexts/Auth";
 import AppRoutes from "./app.routes";
+import SideBar from "../Components/SideBar";
 
 const LostCardsRouters = () => {
-  const authContext = useAuth();
+  const { signed } = useAuth();
 
   return (
     <BrowserRouter>
-      <AuthProvider>
-        {authContext.signed ? <AppRoutes /> : <AnonRoutes />}
-      </AuthProvider>
+      <SideBar>{signed ? <AppRoutes /> : <AnonRoutes />}</SideBar>
     </BrowserRouter>
   );
 };
