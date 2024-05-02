@@ -5,6 +5,7 @@ import Input from "../Components/Input";
 import { ReactComponent as Account } from "../Assets/Account.svg";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -51,7 +52,9 @@ const Signin: React.FC = () => {
         }}
       >
         <Button onClick={handlerSubmit}>Entrar</Button>
-        <Button>Criar</Button>
+        <Link to={"/registro"}>
+          <Button>Criar</Button>
+        </Link>
       </div>
     </Container>
   );

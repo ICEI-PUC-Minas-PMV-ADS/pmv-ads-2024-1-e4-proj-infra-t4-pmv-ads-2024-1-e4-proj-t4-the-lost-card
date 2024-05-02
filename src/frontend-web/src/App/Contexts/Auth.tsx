@@ -40,6 +40,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }
 
   function signOut() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+
     setUser(null);
   }
 

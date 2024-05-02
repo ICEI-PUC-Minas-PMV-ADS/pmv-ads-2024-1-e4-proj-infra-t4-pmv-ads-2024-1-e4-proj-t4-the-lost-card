@@ -3,6 +3,8 @@ import { ReactComponent as Logo } from "../Assets/logo.svg";
 import React from "react";
 import useAuth from "../Contexts/Auth";
 import SideBarButton from "./SideBarButton";
+import { Link, useNavigate } from "react-router-dom";
+import { ReactComponent as Logout } from "../Assets/Shutdown.svg";
 
 const Container = styled.div`
   height: 100vh;
@@ -19,21 +21,36 @@ const Container = styled.div`
 `;
 
 const SideBar: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div style={{ display: "flex" }}>
       <Container>
         {user ? (
           <>
-            {user.name}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              {user.name}
+              <div onClick={() => { signOut(); navigate('/') }} style={{ cursor: 'pointer', height: '32px' }}>
+                <Logout />
+              </div>
+            </div>
             <div style={{ width: "100%" }}>
               <SideBarButton href="Progressos" Text={"Progressos"} />
               <SideBarButton href="Cartas" Text={"Cartas"} />
             </div>
           </>
         ) : null}
-        <Logo />
+        <Link to={"/"}>
+          <Logo />
+        </Link>
       </Container>
       {children}
     </div>

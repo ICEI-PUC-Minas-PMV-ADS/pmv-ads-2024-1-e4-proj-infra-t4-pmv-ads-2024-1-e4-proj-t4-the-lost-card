@@ -21,7 +21,7 @@ const PageTitle = ({ Text, onClick }: PageTitleProp) => {
 
   return (
     <Container>
-      <div style={{ fontSize: "30px", textAlign: "end", width: "300px" }}>
+      <div style={{ fontSize: "30px", textAlign: "end", width: "300px", color: "white" }}>
         {Text}
       </div>
       {onClick ? (
