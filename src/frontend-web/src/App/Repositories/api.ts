@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://localhost:7097';
+const url = 'https://lost-cards.azurewebsites.net';
 
 const api = axios.create({
   baseURL: `${url}/api`

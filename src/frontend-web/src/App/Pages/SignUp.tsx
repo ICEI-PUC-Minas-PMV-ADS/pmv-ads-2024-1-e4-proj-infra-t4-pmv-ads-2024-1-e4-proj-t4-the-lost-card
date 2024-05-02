@@ -7,6 +7,7 @@ import { ReactComponent as Account } from "../Assets/Account.svg";
 import { ReactComponent as Email } from "../Assets/Email.svg";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -19,25 +20,29 @@ const Container = styled.div`
 
 const Signup: React.FC = () => {
 
-    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [plainTextPassword, setPlainTextPassword] = useState('');
+    const [confirmPlainTextPassword, setConfirmPlainTextPassword] = useState('');
+
+    const navigate = useNavigate();
 
     async function handleSignUp() {
-        if (confirmPassword !== password) {
+        if (confirmPlainTextPassword !== plainTextPassword) {
             console.log('Senhas não coincidem');
             return;
         }
-       await signUp({ username, email, password });
+       await signUp({ name, email, plainTextPassword });
+
+       navigate('/');
     }
 
     return (
         <Container>
             <Input
                 placeholder="Usuário"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             ><Account />
             </Input>
 
@@ -51,13 +56,13 @@ const Signup: React.FC = () => {
 
             <PasswordInput
                 placeholder="Senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={plainTextPassword}
+                onChange={(e) => setPlainTextPassword(e.target.value)}
             />
             <PasswordInput
                 placeholder="Confirmar senha"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPlainTextPassword}
+                onChange={(e) => setConfirmPlainTextPassword(e.target.value)}
             />
                 <Button onClick={handleSignUp}>Registrar</Button>
         </Container>

@@ -1,16 +1,17 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ProblemDetails, ValidationProblemDetails } from "../DTOs/problemdetails";
+import api from "./api";
 
 export interface SignUpRequest {
-    username:string,
+    name:string,
     email: string;
-    password: string;
+    plainTextPassword: string;
   }
   
   export async function signUp(request: SignUpRequest) {
     try {
-      const { data } = await axios.post(
-        "http://localhost:7097/api/players",
+      const { data } = await api.post(
+        "/players",
         request
       );
   
