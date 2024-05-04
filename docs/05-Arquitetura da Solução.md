@@ -62,3 +62,7 @@ Com base nessas características e nas respectivas sub-características, identif
 > - [ISO/IEC 25010:2011 - Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — System and software quality models](https://www.iso.org/standard/35733.html/)
 > - [Análise sobre a ISO 9126 – NBR 13596](https://www.tiespecialistas.com.br/analise-sobre-iso-9126-nbr-13596/)
 > - [Qualidade de Software - Engenharia de Software 29](https://www.devmedia.com.br/qualidade-de-software-engenharia-de-software-29/18209/)
+
+## Justificativa da utilização de um banco de dados Nosql
+
+Eles oferecem escalabilidade horizontal eficiente, flexibilidade de esquema, alta disponibilidade e tolerância a falhas. Além disso, são otimizados para alto desempenho, oferecem modelos de dados específicos e integram-se bem com tecnologias modernas, tudo isso com custos de manutenção geralmente mais baixos do que os bancos de dados relacionais. Essas características os tornam essenciais para suportar a crescente demanda de armazenamento e acesso a dados em ambientes distribuídos, garantindo uma experiência de usuário responsiva e eficiente. 
