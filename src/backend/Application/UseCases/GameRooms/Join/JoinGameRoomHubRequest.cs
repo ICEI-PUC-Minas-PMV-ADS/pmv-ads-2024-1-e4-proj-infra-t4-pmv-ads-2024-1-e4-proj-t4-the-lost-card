@@ -47,7 +47,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
         if (request.Requester is null)
             return Result.Fail("Requester not found");
 
-        if (request.CurrentRoom is not null)
+        if (request.CurrentRoom is not null || request.Requester.CurrentRoom is not null)
             return Result.Fail("Requester already on a room");
 
         var creationOptions = request.CreationOptions ?? (request.RoomGuid is null ? new JoinGameRoomHubRequest.CreationOptionsClass() : null);
@@ -91,6 +91,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             // TODO: Adicionar verificacao de banimento e se o player ja entrou na sala
             existingRoom.Players.Add(playerInfo);
             dbUnitOfWork.GameRoomRepository.Update(existingRoom);
+
 
             return request.RoomGuid!.Value.ToResult();
         }

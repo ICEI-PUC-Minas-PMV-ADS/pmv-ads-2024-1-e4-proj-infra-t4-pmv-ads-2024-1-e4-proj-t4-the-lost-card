@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Button from "../Components/Button";
 import Input from "../Components/Input";
-import {signUp} from "../Repositories/SignUpRepository"
-
-import { ReactComponent as Account } from "../Assets/Account.svg";
-import { ReactComponent as Email } from "../Assets/Email.svg";
+import { signUp } from "../Repositories/SignUpRepository"
+import Account from "../Assets/Account.svg?react";
+import Email from "../Assets/Email.svg?react";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -32,9 +31,9 @@ const Signup: React.FC = () => {
             console.log('Senhas não coincidem');
             return;
         }
-       await signUp({ name, email, plainTextPassword });
+        await signUp({ name, email, plainTextPassword });
 
-       navigate('/');
+        navigate('/');
     }
 
     return (
@@ -64,7 +63,7 @@ const Signup: React.FC = () => {
                 value={confirmPlainTextPassword}
                 onChange={(e) => setConfirmPlainTextPassword(e.target.value)}
             />
-                <Button onClick={handleSignUp}>Registrar</Button>
+            <Button onClick={handleSignUp}>Registrar</Button>
         </Container>
     );
 };

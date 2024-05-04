@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { ReactComponent as Eye } from "../Assets/Eye.svg";
-import { ReactComponent as ClosedEye } from '../Assets/ClosedEye.svg';
+import Eye from "../Assets/Eye.svg?react";
+import ClosedEye from '../Assets/ClosedEye.svg?react';
 
 const Field = styled.input`
   background-color: rgba(0, 0, 0, 0);

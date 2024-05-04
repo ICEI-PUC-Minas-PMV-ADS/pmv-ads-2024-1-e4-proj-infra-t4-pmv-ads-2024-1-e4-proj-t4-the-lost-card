@@ -2,7 +2,7 @@ import { useState } from "react";
 import useAuth from "../Contexts/Auth";
 import Button from "../Components/Button";
 import Input from "../Components/Input";
-import { ReactComponent as Account } from "../Assets/Account.svg";
+import Account from "../Assets/Account.svg?react";
 import PasswordInput from "../Components/PasswordInput";
 import styled from "styled-components";
 import { Link } from "react-router-dom";

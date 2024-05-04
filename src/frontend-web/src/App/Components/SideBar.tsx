@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { ReactComponent as Logo } from "../Assets/logo.svg";
+import Logo from "../Assets/logo.svg?react";
 import React from "react";
 import useAuth from "../Contexts/Auth";
 import SideBarButton from "./SideBarButton";
 import { Link, useNavigate } from "react-router-dom";
-import { ReactComponent as Logout } from "../Assets/Shutdown.svg";
+import Logout from "../Assets/Shutdown.svg";
 
 const Container = styled.div`
   height: 100vh;

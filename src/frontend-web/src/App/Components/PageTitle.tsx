@@ -1,5 +1,5 @@
 import Input from "./Input";
-import { ReactComponent as SearchIcon } from "../Assets/Vector.svg";
+import SearchIcon from "../Assets/Vector.svg?react";
 import { useState } from "react";
 import styled from "styled-components";
 
