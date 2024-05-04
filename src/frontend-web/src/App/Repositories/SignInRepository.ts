@@ -1,7 +1,6 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ProblemDetails, ValidationProblemDetails } from "../DTOs/problemdetails";
 import api from "./api";
-import { Console } from "console";
 
 export interface SignInRequest {
   email: string;
