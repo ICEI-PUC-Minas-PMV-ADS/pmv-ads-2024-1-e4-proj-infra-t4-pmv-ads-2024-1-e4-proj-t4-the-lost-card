@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 interface PageTitleProp {
   Text: string;
-  onClick?: (value: string) => void;
+  onSearchClick?: (value: string) => void;
 }
 
 const Container = styled.div`
@@ -16,7 +16,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const PageTitle = ({ Text, onClick }: PageTitleProp) => {
+const PageTitle = ({ Text, onSearchClick }: PageTitleProp) => {
   const [search, setSearch] = useState("");
 
   return (
@@ -24,13 +24,13 @@ const PageTitle = ({ Text, onClick }: PageTitleProp) => {
       <div style={{ fontSize: "30px", textAlign: "end", width: "300px", color: "white" }}>
         {Text}
       </div>
-      {onClick ? (
+      {onSearchClick ? (
         <Input
           value={search}
           placeholder="Search"
           onChange={(e) => setSearch(e.target.value)}
         >
-          <div onClick={() => onClick(search)}>
+          <div onClick={() => onSearchClick(search)}>
             <SearchIcon />
           </div>
         </Input>

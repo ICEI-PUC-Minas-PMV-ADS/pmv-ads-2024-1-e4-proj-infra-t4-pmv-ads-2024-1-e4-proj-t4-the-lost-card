@@ -4,7 +4,7 @@ import React from "react";
 import useAuth from "../Contexts/Auth";
 import SideBarButton from "./SideBarButton";
 import { Link, useNavigate } from "react-router-dom";
-import Logout from "../Assets/Shutdown.svg";
+import Logout from "../Assets/Shutdown.svg?react";
 
 const Container = styled.div`
   height: 100vh;
@@ -43,7 +43,7 @@ const SideBar: React.FC<React.PropsWithChildren> = ({ children }) => {
               </div>
             </div>
             <div style={{ width: "100%" }}>
-              <SideBarButton href="Progressos" Text={"Progressos"} />
+              <SideBarButton href="Progresso" Text={"Progresso"} />
               <SideBarButton href="Cartas" Text={"Cartas"} />
             </div>
           </>

@@ -10,6 +10,7 @@ export interface SignInRequest {
 export interface SignInResponse {
   token: string;
   name: string;
+  id: string;
 }
 
 export async function signIn(request: SignInRequest) {
@@ -25,8 +26,8 @@ export async function signIn(request: SignInRequest) {
 
     console.log(axiosError);
 
-    if (axiosError.status === 404) 
-        return axiosError.response!.data as ValidationProblemDetails;
+    if (axiosError.status === 400) 
+      return axiosError.response!.data as ValidationProblemDetails;
 
     return axiosError.response!.data as ProblemDetails;
   }

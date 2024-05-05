@@ -22,6 +22,7 @@ interface AuthContextData {
 interface User {
   name: string;
   token: string;
+  id: string;
 }
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -36,12 +37,18 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     localStorage.setItem("token", response.token);
     localStorage.setItem("name", response.name);
+
+    const storedId = response.id ?? localStorage.getItem("id")
+    if (storedId)
+      response.id = storedId;
+
     setUser(response);
   }
 
   function signOut() {
     localStorage.removeItem("token");
     localStorage.removeItem("name");
+    localStorage.removeItem("id");
 
     setUser(null);
   }
@@ -49,9 +56,10 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const name = localStorage.getItem("name");
+    const id = localStorage.getItem("id");
 
-    if (token && name && !Boolean(user)) {
-      setUser({ token, name });
+    if (token && name && id && !Boolean(user)) {
+      setUser({ token, name, id });
     }
   }, [user]);
 

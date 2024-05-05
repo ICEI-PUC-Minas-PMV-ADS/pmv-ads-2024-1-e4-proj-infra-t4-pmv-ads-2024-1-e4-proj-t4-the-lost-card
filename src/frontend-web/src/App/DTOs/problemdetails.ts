@@ -1,4 +1,4 @@
-export interface ProblemDetails {
+export interface ProblemDetails {    
     detail: string;
     status: number;
     title : string;

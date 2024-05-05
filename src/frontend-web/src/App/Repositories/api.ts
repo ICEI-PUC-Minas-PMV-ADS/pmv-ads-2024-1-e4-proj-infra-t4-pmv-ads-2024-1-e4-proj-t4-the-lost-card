@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://lost-cards.azurewebsites.net';
-
 const api = axios.create({
-  baseURL: `${url}/api`
+  baseURL: `${import.meta.env.VITE_LOST_CARDS_API_BASEURL}/api`
 });
 
 export default api;
