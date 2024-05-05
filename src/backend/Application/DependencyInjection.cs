@@ -1,5 +1,6 @@
 ﻿using Application.Behaviours;
 using Application.Services;
+using Application.UseCases.GameRooms.ServerTick;
 using FluentValidation;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ public static class DependencyInjection
             opt.ServiceLifetime = ServiceLifetime.Scoped;
         });
 
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TurnEndingGameRoomActionBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestAuthBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehaviour<,>));

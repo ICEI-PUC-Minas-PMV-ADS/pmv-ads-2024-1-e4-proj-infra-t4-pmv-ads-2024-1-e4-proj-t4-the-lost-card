@@ -9,7 +9,7 @@ namespace Application.UseCases.GameRooms;
 public abstract record GameRoomHubRequestBase : IRequest<Result<GameRoomHubRequestResponse>>, IRequestMetadata
 {
     [JsonIgnore]
-    public abstract bool RequiresAuthorization { get; }
+    public virtual bool RequiresAuthorization => true;
 
     [JsonIgnore]
     public virtual IRequestMetadata.Metadata? RequestMetadata { get; set; }

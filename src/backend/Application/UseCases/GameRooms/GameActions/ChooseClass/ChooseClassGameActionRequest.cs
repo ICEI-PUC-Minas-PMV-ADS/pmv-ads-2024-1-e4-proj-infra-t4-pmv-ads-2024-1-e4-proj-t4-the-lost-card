@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.GameActions.ChooseClass;
 
-public record ChooseClassGameActionRequest(int GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>, ITurnEndingActionRequest
+public record ChooseClassGameActionRequest(int GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>, ITurnEndingGameRoomActionRequest
 {
     [JsonIgnore]
     public override bool RequiresAuthorization => true;

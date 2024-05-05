@@ -1,8 +1,17 @@
 # Registro de Testes de Software
 
-<span style="color:red">Pré-requisitos: <a href="3-Projeto de Interface.md"> Projeto de Interface</a></span>, <a href="8-Plano de Testes de Software.md"> Plano de Testes de Software</a>
+## Testes unitarios, 05/05/2024
 
-Relatório com as evidências dos testes de software realizados no sistema pela equipe, baseado em um plano de testes pré-definido.
+![Relatório dos testes unitarios](img/Print_TestesUnitarios.png)
+
+## Cobertura e resultado por cenarios de testes
+- Registro do Usuário
+    - CT001 - Registro do Usuário ✅ (coberto por testes unitarios)
+    - CT002 - Registro com Usuário existente ✅ (coberto por testes unitarios)
+-  Login de Usuário
+    - CT003 - SignIn do Usuário ✅ (coberto por testes unitarios)
+    - CT004 - SignIn do Usuário com senha errada ✅ (coberto por testes unitarios)
+    - CT005 - SignIn do Usuário inexistente ✅ (coberto por testes unitarios)
 
 ## Avaliação
 

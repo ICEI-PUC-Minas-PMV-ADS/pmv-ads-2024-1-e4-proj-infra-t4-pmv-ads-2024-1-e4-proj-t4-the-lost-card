@@ -5,7 +5,7 @@ using Domain.Entities;
 using FluentResults;
 using NSubstitute;
 
-namespace Application.Test.UseCases.PlayerSignUp;
+namespace Application.Test.UseCases;
 
 public class PlayerSignUpRequestHandlerTesting
 {
@@ -13,15 +13,15 @@ public class PlayerSignUpRequestHandlerTesting
     private readonly ICryptographyService cryptographyService = Substitute.For<ICryptographyService>();
     private readonly ILostCardDbUnitOfWork lostCardDbUnitOfWork = Substitute.For<ILostCardDbUnitOfWork>();
 
-    private readonly PlayerSignUpRequestHandler handler;
+    private readonly PlayerSignUpRequestHandler sut;
 
     public PlayerSignUpRequestHandlerTesting()
     {
-        handler = new(cryptographyService, playerRepository, lostCardDbUnitOfWork);
+        sut = new(cryptographyService, playerRepository, lostCardDbUnitOfWork);
     }
 
     [Fact]
-    public async Task PlayerSignUpRequestHandler_WhenPlayerCanSignUp_ReturnSuccessResult()
+    public async Task WhenPlayerCanSignUp_ReturnSuccessResult()
     {
         var name = "Tester";
         var password = "Test@12345";
@@ -29,7 +29,7 @@ public class PlayerSignUpRequestHandlerTesting
 
         var request = new PlayerSignUpRequest(name, email, password);
 
-        var result = await handler.Handle(request, CancellationToken.None);
+        var result = await sut.Handle(request, CancellationToken.None);
 
         cryptographyService.Received().GenerateSaltedSHA512Hash(password);
 
@@ -41,7 +41,7 @@ public class PlayerSignUpRequestHandlerTesting
     }
 
     [Fact]
-    public async Task PlayerSignUpRequestHandler_WhenPlayerIsAlreadyRegistred_ReturnResultWithFail()
+    public async Task WhenPlayerIsAlreadyRegistred_ReturnResultWithFail()
     {
         var name = "Tester";
         var password = "Test@12345";
@@ -52,7 +52,7 @@ public class PlayerSignUpRequestHandlerTesting
 
         var request = new PlayerSignUpRequest(name, email, password);
 
-        var result = await handler.Handle(request, CancellationToken.None);
+        var result = await sut.Handle(request, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.NotEmpty(result.Errors);
