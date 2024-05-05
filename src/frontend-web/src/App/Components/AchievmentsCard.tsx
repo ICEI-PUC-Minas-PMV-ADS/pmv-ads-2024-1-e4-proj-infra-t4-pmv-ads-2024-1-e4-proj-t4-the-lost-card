@@ -36,7 +36,7 @@ const AchievmentsCard = ({
         hasUnlocked={hasUnlocked}
       />
       <div>
-        <div>{Title}</div>
+        <h3 style={{ margin: '2px' }}>{Title}</h3>
         <div>{Description}</div>
       </div>
     </Container>
