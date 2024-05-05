@@ -28,15 +28,19 @@ O diagrama de fluxo pode ser desenvolvido com “boxes” que possuem internamen
 
 ### Tela de Login
 ![Tela de Login](img/Tela_Login.png)
+Tela responsável pela Login do usuário. 
 
 ### Tela de Cadastro
 ![Tela de Cadastro](img/Tela_Cadastro.png)
+Tela responsável pelo cadastro do Usuário. 
 
 ### Tela de Progresso
 ![Tela de Progresso](img/Tela_Progresso.png)
+Tela responsável pela visualização das Conquistas do Usuário. Cada conquista exibe a descrição da conquista e informa a data e hora que a conquista foi obtida. 
 
 ### Tela de Cartas
 ![Tela de Cartas](img/Tela_Cartas.png)
+Tela responsável pela visualização das Cartas que o usuário conquistou ate o momento. Cada carta exibe o icone e a descrição de suas abilidade.
 
 São protótipos usados em design de interface para sugerir a estrutura de um site web e seu relacionamentos entre suas páginas. Um wireframe web é uma ilustração semelhante do layout de elementos fundamentais na interface.
  
