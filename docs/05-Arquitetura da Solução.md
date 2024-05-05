@@ -349,14 +349,15 @@ Apresente também uma figura explicando como as tecnologias estão relacionadas 
 
 ## Hospedagem
 
-Explique como a hospedagem e o lançamento da plataforma foi feita.
+Utilizamos o Microsoft Azure como nosso provedor de hospedagem, que não apenas oferece uma infraestrutura escalável e confiável, mas também suporta uma arquitetura serverless. O Azure permite que implantemos, gerenciemos e dimensionemos nosso projeto de maneira eficaz e eficiente.
 
-> **Links Úteis**:
->
-> - [Website com GitHub Pages](https://pages.github.com/)
-> - [Programação colaborativa com Repl.it](https://repl.it/)
-> - [Getting Started with Heroku](https://devcenter.heroku.com/start)
-> - [Publicando Seu Site No Heroku](http://pythonclub.com.br/publicando-seu-hello-world-no-heroku.html)
+Optar por uma arquitetura serverless traz várias vantagens. Primeiramente, ela permite uma escalabilidade automática. Isso significa que o Azure gerencia a alocação de recursos para nossa aplicação com base na demanda, eliminando a necessidade de provisionar e gerenciar servidores.
+
+Em segundo lugar, a arquitetura serverless segue o modelo de pagamento pelo uso, o que significa que só pagamos pelos recursos de computação que realmente usamos. Isso pode levar a uma redução significativa nos custos operacionais.
+
+Além disso, a arquitetura serverless permite que nos concentremos mais no desenvolvimento do aplicativo, pois a manutenção e a administração do servidor são tratadas pelo Azure. Isso resulta em um tempo de colocação no mercado mais rápido.
+
+A escolha do Azure como nosso provedor de hospedagem garante que nossa aplicação seja hospedada em um ambiente seguro e de alto desempenho. Além disso, a natureza serverless do Azure permite uma alta disponibilidade e tolerância a falhas, proporcionando uma experiência estável e confiável aos nossos usuários.
 
 ## Qualidade de Software
 
