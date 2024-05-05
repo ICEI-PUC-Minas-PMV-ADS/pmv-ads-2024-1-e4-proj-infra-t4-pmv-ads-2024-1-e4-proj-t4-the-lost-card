@@ -43,7 +43,7 @@ const Progresso: React.FC = () => {
     <div style={{ width: "100%", gap: "30px" }}>
       <PageTitle
         Text={"Progresso"}
-        onSearchClick={(v) => console.log(allAchievments)}
+        onSearchClick={(filter) => setAllAchievments(current => current.filter(a => a.Title == filter))}
       />
       <div
         style={{
@@ -55,9 +55,10 @@ const Progresso: React.FC = () => {
           padding: "30px 50px",
         }}
       >
-        {allAchievments.map((aa) => {
+        {allAchievments.map((aa, index) => {
           return (
             <AchievmentsCard
+              key={index}
               hasUnlocked={aa.hasUnlocked}
               Description={aa.Description}
               Title={aa.Title}
