@@ -13,11 +13,329 @@
 
 ## Esquema Relacional
 
-O Esquema Relacional corresponde à representação dos dados em tabelas juntamente com as restrições de integridade e chave primária.
+### Documento da GameRoom
 
-As referências abaixo irão auxiliá-lo na geração do artefato “Esquema Relacional”.
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "IsInviteOnly": {
+      "type": "boolean"
+    },
+    "Name": {
+      "type": "string"
+    },
+    "AdminId": {
+      "type": "string"
+    },
+    "Players": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "PlayerId": {
+              "type": "string"
+            },
+            "ConnectionId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "PlayerId",
+            "ConnectionId"
+          ]
+        }
+      ]
+    },
+    "GameInfo": {
+      "type": "object",
+      "properties": {
+        "CurrentLevel": {
+          "type": "integer"
+        },
+        "EncounterInfo": {
+          "type": "object",
+          "properties": {
+            "MonsterMaxLife": {
+              "type": "integer"
+            },
+            "MonsterLife": {
+              "type": "integer"
+            },
+            "MonsterGameClassId": {
+              "type": "string"
+            },
+            "PlayersInfo": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "PlayerId": {
+                      "type": "string"
+                    },
+                    "Hand": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "DrawPile": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "DiscardPile": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "PlayerId",
+                    "Hand",
+                    "DrawPile",
+                    "DiscardPile"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "MonsterMaxLife",
+            "MonsterLife",
+            "MonsterGameClassId",
+            "PlayersInfo"
+          ]
+        },
+        "PlayersInfo": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "ActionsFinished": {
+                  "type": "boolean"
+                },
+                "PlayerId": {
+                  "type": "string"
+                },
+                "GameClassId": {
+                  "type": "integer"
+                },
+                "MaxLife": {
+                  "type": "integer"
+                },
+                "Life": {
+                  "type": "integer"
+                },
+                "CurrentBlock": {
+                  "type": "integer"
+                },
+                "Cards": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "QueryKey": {
+                          "type": "string"
+                        },
+                        "GameClassId": {
+                          "type": "integer"
+                        },
+                        "Id": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "QueryKey",
+                        "GameClassId",
+                        "Id"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "ActionsFinished",
+                "PlayerId",
+                "GameClassId",
+                "MaxLife",
+                "Life",
+                "CurrentBlock",
+                "Cards"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "CurrentLevel",
+        "EncounterInfo",
+        "PlayersInfo"
+      ]
+    },
+    "State": {
+      "type": "integer"
+    },
+    "PartitionKey": {
+      "type": "string"
+    },
+    "Id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "IsInviteOnly",
+    "Name",
+    "AdminId",
+    "Players",
+    "GameInfo",
+    "State",
+    "PartitionKey",
+    "Id"
+  ]
+}
+```
 
-> - [Criando um modelo relacional - Documentação da IBM](https://www.ibm.com/docs/pt-br/cognos-analytics/10.2.2?topic=designer-creating-relational-model)
+### Documento do Player
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Id": {
+      "type": "string"
+    },
+    "CurrentRoom": {
+      "type": "string"
+    },
+    "Discriminator": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "string"
+    },
+    "Name": {
+      "type": "string"
+    },
+    "PartitionKey": {
+      "type": "string"
+    },
+    "PasswordHash": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "PasswordSalt": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "Progrees": {
+      "type": "integer"
+    },
+    "Achivements": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "AchievmentKey": {
+              "type": "integer"
+            },
+            "UnlockedAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "AchievmentKey",
+            "UnlockedAt"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "Id",
+    "CurrentRoom",
+    "Discriminator",
+    "Email",
+    "Name",
+    "PartitionKey",
+    "PasswordHash",
+    "PasswordSalt",
+    "Progrees",
+    "Achivements"
+  ]
+}
+```
 
 ## Modelo Físico
 
