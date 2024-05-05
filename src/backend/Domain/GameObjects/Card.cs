@@ -9,6 +9,10 @@ public class Card : GameObjectBaseClass
 
     public virtual int? GameClassId { get; } = null;
 
+    public virtual string Name { get; } = "Carta padrão";
+
+    public virtual string Description { get; } = "Não faz absolutamente nada";
+
     public virtual void OnPlay(GameRoom gameRoom, GameRoom.RoomGameInfo.PlayerGameInfo playerGameInfo) { }
 }
 
