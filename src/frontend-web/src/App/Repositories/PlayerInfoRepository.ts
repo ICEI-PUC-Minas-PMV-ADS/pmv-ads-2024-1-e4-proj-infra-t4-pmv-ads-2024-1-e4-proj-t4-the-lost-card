@@ -1,33 +1,28 @@
 import { AxiosError } from "axios";
-import { ProblemDetails, ValidationProblemDetails } from "../DTOs/problemdetails";
+import {
+  ProblemDetails,
+  ValidationProblemDetails,
+} from "../DTOs/problemdetails";
 import api from "./api";
 import { Achivement } from "./GameObjectRepository";
 
 export interface PlayerInfoResponse {
-    unlockedAchievments: Achivement[]
+  unlockedAchievments: Achivement[];
 }
 
-export async function queryPlayerInfo({ playerId, token }: { playerId: string, token: string }) {
-    try {
+export async function queryPlayerInfo({ playerId }: { playerId: string }) {
+  try {
+    const { data } = await api.get<PlayerInfoResponse>(`players/${playerId}`);
 
-        const { data } = await api.get<PlayerInfoResponse>(
-            `players/${playerId}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }
-        );
+    return data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
 
-        return data;
-    } catch (error) {
-        const axiosError = error as AxiosError;
+    console.log(axiosError);
 
-        console.log(axiosError);
+    if (axiosError.status === 400)
+      return axiosError.response!.data as ValidationProblemDetails;
 
-        if (axiosError.status === 400)
-            return axiosError.response!.data as ValidationProblemDetails;
-
-        return axiosError.response!.data as ProblemDetails;
-    }
+    return axiosError.response!.data as ProblemDetails;
+  }
 }

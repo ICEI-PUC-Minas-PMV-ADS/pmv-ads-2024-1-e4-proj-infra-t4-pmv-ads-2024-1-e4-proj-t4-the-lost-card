@@ -38,7 +38,13 @@ const SideBar: React.FC<React.PropsWithChildren> = ({ children }) => {
               }}
             >
               {user.name}
-              <div onClick={() => { signOut(); navigate('/') }} style={{ cursor: 'pointer', height: '32px' }}>
+              <div
+                onClick={() => {
+                  signOut();
+                  navigate("/");
+                }}
+                style={{ cursor: "pointer", height: "32px" }}
+              >
                 <Logout />
               </div>
             </div>
