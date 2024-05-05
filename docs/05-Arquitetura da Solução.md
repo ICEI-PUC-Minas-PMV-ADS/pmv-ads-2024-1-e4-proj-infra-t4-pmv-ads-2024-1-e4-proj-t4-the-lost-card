@@ -343,9 +343,13 @@ Entregar um arquivo banco.sql contendo os scripts de criação das tabelas do ba
 
 ## Tecnologias Utilizadas
 
-Descreva aqui qual(is) tecnologias você vai usar para resolver o seu problema, ou seja, implementar a sua solução. Liste todas as tecnologias envolvidas, linguagens a serem utilizadas, serviços web, frameworks, bibliotecas, IDEs de desenvolvimento, e ferramentas.
-
-Apresente também uma figura explicando como as tecnologias estão relacionadas ou como uma interação do usuário com o sistema vai ser conduzida, por onde ela passa até retornar uma resposta ao usuário.
+<!-- Tabela gerada apartir do arquivo: ./img/Tecnologias_Usadas.tgn -->
+| **Contexto de uso** | **Tecnologias Usadas**                            |
+|---------------------|---------------------------------------------------|
+| **Hospedagem**      | Azure Cloud                                       |
+| **Frontend Web**    | React, Axios, StyledComponents e React-router-dom |
+| **Backend**         | C#, Asp.Net, Azure Functions e SignalR.           |
+| **Frontend Mobile** | React Native, React Navigation, SignalR e axios   |
 
 ## Hospedagem
 
