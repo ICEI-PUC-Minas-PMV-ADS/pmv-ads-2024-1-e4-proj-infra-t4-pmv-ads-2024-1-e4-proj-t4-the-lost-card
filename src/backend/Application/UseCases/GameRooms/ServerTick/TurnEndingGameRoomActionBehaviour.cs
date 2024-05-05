@@ -3,15 +3,15 @@ using Mediator;
 
 namespace Application.UseCases.GameRooms.ServerTick;
 
-public interface ITurnEndingActionRequest { };
+public interface ITurnEndingGameRoomActionRequest { };
 
-public class GameRoomTurnEndingActionPipelineBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : GameRoomHubRequestBase, ITurnEndingActionRequest
+public class TurnEndingGameRoomActionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : GameRoomHubRequestBase, ITurnEndingGameRoomActionRequest
     where TResponse : Result<GameRoomHubRequestResponse>
 {
     private readonly ISender sender;
 
-    public GameRoomTurnEndingActionPipelineBehaviour(ISender sender)
+    public TurnEndingGameRoomActionBehaviour(ISender sender)
     {
         this.sender = sender;
     }

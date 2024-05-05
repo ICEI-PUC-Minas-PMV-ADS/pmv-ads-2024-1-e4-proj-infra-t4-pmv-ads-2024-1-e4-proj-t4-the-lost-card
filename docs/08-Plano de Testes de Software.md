@@ -1,13 +1,6 @@
 # Plano de Testes de Software
 
-<span style="color:red">Pré-requisitos: <a href="2-Especificação do Projeto.md"> Especificação do Projeto</a></span>, <a href="3-Projeto de Interface.md"> Projeto de Interface</a>
-
-Apresente os cenários de testes utilizados na realização dos testes da sua aplicação. Escolha cenários de testes que demonstrem os requisitos sendo satisfeitos.
-
-Enumere quais cenários de testes foram selecionados para teste. Neste tópico o grupo deve detalhar quais funcionalidades avaliadas, o grupo de usuários que foi escolhido para participar do teste e as ferramentas utilizadas.
-
-
- ## Cenário de Teste: Registro do Usuário
+## Cenário de Teste: Registro do Usuário
 
 - **Objetivo:** Verificar se o usuário consegue fazer o registro no sistema caso ele ainda não seja registrado.
 
@@ -15,8 +8,17 @@ Enumere quais cenários de testes foram selecionados para teste. Neste tópico o
 
 - **Grupo de Usuários:** Usuários que desejam utilizar o The Lost Cards.
 
+### Cenario CT001 - Registro do Usuário
+Quando não há jogador existente com o mesmo email
+Ao registrar um jogador com tal email
+O registro é finalizado com sucesso
 
-## Cenário de Teste: Login de Usuário
+### Cenario CT002 - Registro com Usuário existente 
+Quando há jogador existente com o mesmo email
+Ao registrar um jogador com tal email
+O registro é finalizado com erro
+
+## Cenário de Teste: Login do Usuário
 
 - **Objetivo:** Assegurar que a funcionalidade de Login do usuário esteja operando adequadamente, possibilitando que os usuários entrem em suas contas usando credenciais corretas.
 
@@ -24,6 +26,20 @@ Enumere quais cenários de testes foram selecionados para teste. Neste tópico o
 
 - **Grupo de Usuários:** Usuários cadastrados no The Lost Cards.
 
+### Cenario CT003 - SignIn do Usuário
+Quando há jogador existente com determinado email e determinada senha
+Ao realizar o signin usando tal email e tal senha
+O SignIn é finalizado com sucesso, possibilitando a autenticação em outros casos de uso
+
+### Cenario CT004 - SignIn do Usuário com senha errada
+Quando há jogador existente com determinado email e determinada senha
+Ao realizar o signin usando tal email e senha distinta
+O SignIn é finalizado com erro
+
+### Cenario CT005 - SignIn do Usuário inexistente
+Quando não há jogador existente com determinado email
+Ao realizar o signin usando tal email e qualquer senha
+O SignIn é finalizado com erro
 
 ## Cenário de Teste: Buscar Salas
 
@@ -83,15 +99,7 @@ Enumere quais cenários de testes foram selecionados para teste. Neste tópico o
 
 - **Grupo de Usuários:** Usuários que têm permissão para criar salas no sistema.
 
-## Ferramentas de Testes (Opcional)
+## Ferramentas de Testes
 
-Comente sobre as ferramentas de testes utilizadas.
- 
-> **Links Úteis**:
-> - [IBM - Criação e Geração de Planos de Teste](https://www.ibm.com/developerworks/br/local/rational/criacao_geracao_planos_testes_software/index.html)
-> - [Práticas e Técnicas de Testes Ágeis](http://assiste.serpro.gov.br/serproagil/Apresenta/slides.pdf)
-> -  [Teste de Software: Conceitos e tipos de testes](https://blog.onedaytesting.com.br/teste-de-software/)
-> - [Criação e Geração de Planos de Teste de Software](https://www.ibm.com/developerworks/br/local/rational/criacao_geracao_planos_testes_software/index.html)
-> - [Ferramentas de Test para Java Script](https://geekflare.com/javascript-unit-testing/)
-> - [UX Tools](https://uxdesign.cc/ux-user-research-and-user-testing-tools-2d339d379dc7)
-
+- Modelagem dos cenarios de teste feita usando Cucumber-Gherkin
+- Testes unitarios do backend executados usando XUnit e NSubstitute
