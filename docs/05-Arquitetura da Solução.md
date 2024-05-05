@@ -4,28 +4,338 @@
 
 ## Diagrama de Classes
 
-O diagrama de classes ilustra graficamente como será a estrutura do software, e como cada uma das classes da sua estrutura estarão interligadas. Essas classes servem de modelo para materializar os objetos que executarão na memória.
-
-As referências abaixo irão auxiliá-lo na geração do artefato “Diagrama de Classes”.
-
-> - [Diagramas de Classes - Documentação da IBM](https://www.ibm.com/docs/pt-br/rational-soft-arch/9.6.1?topic=diagrams-class)
-> - [O que é um diagrama de classe UML? | Lucidchart](https://www.lucidchart.com/pages/pt/o-que-e-diagrama-de-classe-uml)
+![Diagrama de classes](img/DiagramaClasses_lostcards.drawio.png)
 
 ## Modelo ER
 
-O Modelo ER representa através de um diagrama como as entidades (coisas, objetos) se relacionam entre si na aplicação interativa.]
-
-As referências abaixo irão auxiliá-lo na geração do artefato “Modelo ER”.
-
-> - [Como fazer um diagrama entidade relacionamento | Lucidchart](https://www.lucidchart.com/pages/pt/como-fazer-um-diagrama-entidade-relacionamento)
+![Schema de gameroom](img/Modelo_ER_Lost_Cards-Gameroom.drawio.png)
+![Schema de player](img/Modelo_ER_Lost_Cards-Player.drawio.png)
 
 ## Esquema Relacional
 
-O Esquema Relacional corresponde à representação dos dados em tabelas juntamente com as restrições de integridade e chave primária.
- 
-As referências abaixo irão auxiliá-lo na geração do artefato “Esquema Relacional”.
+### Documento da GameRoom
 
-> - [Criando um modelo relacional - Documentação da IBM](https://www.ibm.com/docs/pt-br/cognos-analytics/10.2.2?topic=designer-creating-relational-model)
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "IsInviteOnly": {
+      "type": "boolean"
+    },
+    "Name": {
+      "type": "string"
+    },
+    "AdminId": {
+      "type": "string"
+    },
+    "Players": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "PlayerId": {
+              "type": "string"
+            },
+            "ConnectionId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "PlayerId",
+            "ConnectionId"
+          ]
+        }
+      ]
+    },
+    "GameInfo": {
+      "type": "object",
+      "properties": {
+        "CurrentLevel": {
+          "type": "integer"
+        },
+        "EncounterInfo": {
+          "type": "object",
+          "properties": {
+            "MonsterMaxLife": {
+              "type": "integer"
+            },
+            "MonsterLife": {
+              "type": "integer"
+            },
+            "MonsterGameClassId": {
+              "type": "string"
+            },
+            "PlayersInfo": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "PlayerId": {
+                      "type": "string"
+                    },
+                    "Hand": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "DrawPile": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "DiscardPile": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "QueryKey": {
+                              "type": "string"
+                            },
+                            "GameClassId": {
+                              "type": "integer"
+                            },
+                            "Id": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "QueryKey",
+                            "GameClassId",
+                            "Id"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "PlayerId",
+                    "Hand",
+                    "DrawPile",
+                    "DiscardPile"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "MonsterMaxLife",
+            "MonsterLife",
+            "MonsterGameClassId",
+            "PlayersInfo"
+          ]
+        },
+        "PlayersInfo": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "ActionsFinished": {
+                  "type": "boolean"
+                },
+                "PlayerId": {
+                  "type": "string"
+                },
+                "GameClassId": {
+                  "type": "integer"
+                },
+                "MaxLife": {
+                  "type": "integer"
+                },
+                "Life": {
+                  "type": "integer"
+                },
+                "CurrentBlock": {
+                  "type": "integer"
+                },
+                "Cards": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "QueryKey": {
+                          "type": "string"
+                        },
+                        "GameClassId": {
+                          "type": "integer"
+                        },
+                        "Id": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "QueryKey",
+                        "GameClassId",
+                        "Id"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "ActionsFinished",
+                "PlayerId",
+                "GameClassId",
+                "MaxLife",
+                "Life",
+                "CurrentBlock",
+                "Cards"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "CurrentLevel",
+        "EncounterInfo",
+        "PlayersInfo"
+      ]
+    },
+    "State": {
+      "type": "integer"
+    },
+    "PartitionKey": {
+      "type": "string"
+    },
+    "Id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "IsInviteOnly",
+    "Name",
+    "AdminId",
+    "Players",
+    "GameInfo",
+    "State",
+    "PartitionKey",
+    "Id"
+  ]
+}
+```
+
+### Documento do Player
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Id": {
+      "type": "string"
+    },
+    "CurrentRoom": {
+      "type": "string"
+    },
+    "Discriminator": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "string"
+    },
+    "Name": {
+      "type": "string"
+    },
+    "PartitionKey": {
+      "type": "string"
+    },
+    "PasswordHash": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "PasswordSalt": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "Progrees": {
+      "type": "integer"
+    },
+    "Achivements": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "AchievmentKey": {
+              "type": "integer"
+            },
+            "UnlockedAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "AchievmentKey",
+            "UnlockedAt"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "Id",
+    "CurrentRoom",
+    "Discriminator",
+    "Email",
+    "Name",
+    "PartitionKey",
+    "PasswordHash",
+    "PasswordSalt",
+    "Progrees",
+    "Achivements"
+  ]
+}
+```
 
 ## Modelo Físico
 
@@ -33,20 +343,25 @@ Entregar um arquivo banco.sql contendo os scripts de criação das tabelas do ba
 
 ## Tecnologias Utilizadas
 
-Descreva aqui qual(is) tecnologias você vai usar para resolver o seu problema, ou seja, implementar a sua solução. Liste todas as tecnologias envolvidas, linguagens a serem utilizadas, serviços web, frameworks, bibliotecas, IDEs de desenvolvimento, e ferramentas.
-
-Apresente também uma figura explicando como as tecnologias estão relacionadas ou como uma interação do usuário com o sistema vai ser conduzida, por onde ela passa até retornar uma resposta ao usuário.
+<!-- Tabela gerada apartir do arquivo: ./img/Tecnologias_Usadas.tgn -->
+| **Contexto de uso** | **Tecnologias Usadas**                            |
+|---------------------|---------------------------------------------------|
+| **Hospedagem**      | Azure Cloud                                       |
+| **Frontend Web**    | React, Axios, StyledComponents e React-router-dom |
+| **Backend**         | C#, Asp.Net, Azure Functions e SignalR.           |
+| **Frontend Mobile** | React Native, React Navigation, SignalR e axios   |
 
 ## Hospedagem
 
-Explique como a hospedagem e o lançamento da plataforma foi feita.
+Utilizamos o Microsoft Azure como nosso provedor de hospedagem, que não apenas oferece uma infraestrutura escalável e confiável, mas também suporta uma arquitetura serverless. O Azure permite que implantemos, gerenciemos e dimensionemos nosso projeto de maneira eficaz e eficiente.
 
-> **Links Úteis**:
->
-> - [Website com GitHub Pages](https://pages.github.com/)
-> - [Programação colaborativa com Repl.it](https://repl.it/)
-> - [Getting Started with Heroku](https://devcenter.heroku.com/start)
-> - [Publicando Seu Site No Heroku](http://pythonclub.com.br/publicando-seu-hello-world-no-heroku.html)
+Optar por uma arquitetura serverless traz várias vantagens. Primeiramente, ela permite uma escalabilidade automática. Isso significa que o Azure gerencia a alocação de recursos para nossa aplicação com base na demanda, eliminando a necessidade de provisionar e gerenciar servidores.
+
+Em segundo lugar, a arquitetura serverless segue o modelo de pagamento pelo uso, o que significa que só pagamos pelos recursos de computação que realmente usamos. Isso pode levar a uma redução significativa nos custos operacionais.
+
+Além disso, a arquitetura serverless permite que nos concentremos mais no desenvolvimento do aplicativo, pois a manutenção e a administração do servidor são tratadas pelo Azure. Isso resulta em um tempo de colocação no mercado mais rápido.
+
+A escolha do Azure como nosso provedor de hospedagem garante que nossa aplicação seja hospedada em um ambiente seguro e de alto desempenho. Além disso, a natureza serverless do Azure permite uma alta disponibilidade e tolerância a falhas, proporcionando uma experiência estável e confiável aos nossos usuários.
 
 ## Qualidade de Software
 
