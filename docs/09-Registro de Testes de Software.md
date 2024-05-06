@@ -5,13 +5,18 @@
 ![Relatório dos testes unitarios](img/Print_TestesUnitarios.png)
 
 ## Cobertura e resultado por cenarios de testes
-- Registro do Usuário
-    - CT001 - Registro do Usuário ✅ (coberto por testes unitarios)
-    - CT002 - Registro com Usuário existente ✅ (coberto por testes unitarios)
--  Login de Usuário
-    - CT003 - SignIn do Usuário ✅ (coberto por testes unitarios)
-    - CT004 - SignIn do Usuário com senha errada ✅ (coberto por testes unitarios)
-    - CT005 - SignIn do Usuário inexistente ✅ (coberto por testes unitarios)
+### Registro do Usuário
+#### CT001 - Registro do Usuário ✅ (coberto por testes unitarios)
+#### CT002 - Registro com Usuário existente ✅ (coberto por testes unitarios)
+### Login de Usuário
+#### CT003 - SignIn do Usuário ✅ (coberto por testes unitarios)
+#### CT004 - SignIn do Usuário com senha errada ✅ (coberto por testes unitarios)
+#### CT005 - SignIn do Usuário inexistente ✅ (coberto por testes unitarios)
+### Ver Perfil
+#### CT006 - Ver o propio perfil✅
+![Parte 1](testing_evidence/ct006/part1.png)
+![Parte 2](testing_evidence/ct006/part2.png)
+![Parte 3](testing_evidence/ct006/part3.png)
 
 ## Avaliação
 

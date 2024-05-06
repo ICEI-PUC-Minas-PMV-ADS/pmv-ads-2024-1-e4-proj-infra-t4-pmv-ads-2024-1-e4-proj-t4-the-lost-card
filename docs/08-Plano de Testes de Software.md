@@ -41,6 +41,19 @@ Quando não há jogador existente com determinado email
 Ao realizar o signin usando tal email e qualquer senha
 O SignIn é finalizado com erro
 
+## Cenário de Teste: Ver Perfil
+
+- **Objetivo:** Garantir que a funcionalidade Visualizar o Perfil esteja executando corretamente, permitindo que os usuários vejam as informações do perfil de outros usuários ou do seu próprio perfil.
+
+- **Descrição:** Avaliar o recurso de visualização de perfil, acessando a página de perfil de um usuário e verificando se todas as informações relevantes são exibidas corretamente pelo sistema.
+
+- **Grupo de Usuários:** Usuários que têm permissão para visualizar perfis no sistema.
+
+### Cenario CT006 - Ver o propio perfil
+Quando há jogador existente com determinado email e determinada senha
+Ao realizar o signin usando tal email e tal senha
+As consquistas desbloqueadas de tal jogador são mostradas 
+
 ## Cenário de Teste: Buscar Salas
 
 - **Objetivo:** Assegurar que a funcionalidade de Buscar Salas esteja implementada corretamente, permitindo que os usuários localizem salas específicas utilizando critérios de busca requeridos.
@@ -50,13 +63,7 @@ O SignIn é finalizado com erro
 - **Grupo de Usuários:** Usuários que têm permissão para acessar e buscar salas no sistema.
 
 
-## Cenário de Teste: Ver Perfil
 
-- **Objetivo:** Garantir que a funcionalidade Visualizar o Perfil esteja executando corretamente, permitindo que os usuários vejam as informações do perfil de outros usuários ou do seu próprio perfil.
-
-- **Descrição:** Avaliar o recurso de visualização de perfil, acessando a página de perfil de um usuário e verificando se todas as informações relevantes são exibidas corretamente pelo sistema.
-
-- **Grupo de Usuários:** Usuários que têm permissão para visualizar perfis no sistema.
 
 
 ## Cenário de Teste: Convidar
