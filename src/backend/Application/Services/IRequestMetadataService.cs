@@ -1,4 +1,6 @@
-﻿namespace Application.Services;
+﻿using Domain.Entities;
+
+namespace Application.Services;
 
 public interface IRequestMetadata
 {
@@ -9,6 +11,8 @@ public interface IRequestMetadata
         DateTime RecievedAt
     );
 
+    Player? Requester { get; set; }
+    GameRoom? CurrentRoom { get; set; }
     Metadata? RequestMetadata { get; set; }
     bool RequiresAuthorization { get; }
 }

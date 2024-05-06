@@ -1,12 +1,13 @@
 ﻿namespace Domain.Entities;
 
-public class GameRoom
+public partial class GameRoom : Entity
 {
-    public Guid Guid { get; init; } = Guid.NewGuid();
+    protected override string ProtectedPartitionKey { get => AdminId!.Value.ToString(); set => base.ProtectedPartitionKey = value; }
+
     public bool IsInviteOnly { get; set; }
     public string Name { get; set; } = "Public lobby";
     public Guid? AdminId { get; set; }
-    public HashSet<PlayerInfo> Players { get; set; } = new();
-
-    public record PlayerInfo(Guid? PlayerId, string ConnectionId);
+    public HashSet<RoomPlayerInfo> Players { get; set; } = new();
+    public RoomGameInfo? GameInfo { get; set; } = new();
+    public GameRoomState State { get; set; }
 }
