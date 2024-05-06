@@ -49,10 +49,15 @@ O SignIn é finalizado com erro
 
 - **Grupo de Usuários:** Usuários que têm permissão para visualizar perfis no sistema.
 
-### Cenario CT006 - Ver o propio perfil
+### Cenario CT006 - Ver conquistas
 Quando há jogador existente com determinado email e determinada senha
 Ao realizar o signin usando tal email e tal senha
 As consquistas desbloqueadas de tal jogador são mostradas 
+
+### Cenario CT007 - Ver cartas
+Quando há jogador existente com determinado email e determinada senha
+Ao realizar o signin usando tal email e tal senha
+As cartas desbloqueadas de tal jogador são mostradas 
 
 ## Cenário de Teste: Buscar Salas
 

@@ -13,10 +13,14 @@
 #### CT004 - SignIn do Usuário com senha errada ✅ (coberto por testes unitarios)
 #### CT005 - SignIn do Usuário inexistente ✅ (coberto por testes unitarios)
 ### Ver Perfil
-#### CT006 - Ver o propio perfil✅
+#### CT006 - Ver conquistas✅
 ![Parte 1](testing_evidence/ct006/part1.png)
 ![Parte 2](testing_evidence/ct006/part2.png)
 ![Parte 3](testing_evidence/ct006/part3.png)
+#### CT007 - Ver cartas✅
+![Parte 1](testing_evidence/ct007/part1.png)
+![Parte 2](testing_evidence/ct007/part2.png)
+![Parte 3](testing_evidence/ct007/part3.png)
 
 ## Avaliação
 
