@@ -2,36 +2,27 @@
 using Application.FluentResultExtensions;
 using Application.Services;
 using FluentResults;
-using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.Leave;
 
 public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubResponse>, IRequestMetadata
 {
-    [JsonIgnore]
-    public override bool RequiresAuthorization => true;
 }
 
-public record LeaveGameRoomHubResponse(string NewToken) : GameRoomHubRequestResponse
-{
-    public string Discriminator => nameof(LeaveGameRoomHubResponse);
-}
+public record LeaveGameRoomHubResponse() : GameRoomHubRequestResponse;
 
 public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameRoomHubRequest, LeaveGameRoomHubResponse>
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
     private readonly IGameRoomHubService gameRoomHubService;
-    private readonly ITokenService tokenService;
 
     public LeaveGameRoomHubRequestHandler(
         ILostCardDbUnitOfWork dbUnitOfWork,
-        IGameRoomHubService gameRoomHubService,
-        ITokenService tokenService
+        IGameRoomHubService gameRoomHubService
     )
     {
         this.dbUnitOfWork = dbUnitOfWork;
         this.gameRoomHubService = gameRoomHubService;
-        this.tokenService = tokenService;
     }
 
     public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(LeaveGameRoomHubRequest request, CancellationToken cancellationToken)
@@ -53,11 +44,13 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
 
         request.CurrentRoom.Players.RemoveWhere(p => p.PlayerId == request.Requester.Id);
 
-        dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
+        if (request.CurrentRoom.Players.Any())
+            dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
+        else
+            dbUnitOfWork.GameRoomRepository.Remove(request.CurrentRoom);
+
         await dbUnitOfWork.SaveChangesAsync(cancellationToken);
 
-        var newToken = tokenService.GetToken(request.Requester);
-
-        return new LeaveGameRoomHubResponse(newToken);
+        return new LeaveGameRoomHubResponse();
     }
 }

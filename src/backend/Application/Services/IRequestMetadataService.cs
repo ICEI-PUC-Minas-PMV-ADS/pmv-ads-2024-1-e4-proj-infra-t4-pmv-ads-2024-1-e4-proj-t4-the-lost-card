@@ -7,7 +7,6 @@ public interface IRequestMetadata
     public record Metadata(
         Guid? RequesterId,
         string? HubConnectionId,
-        Guid? RoomId,
         DateTime RecievedAt
     );
 

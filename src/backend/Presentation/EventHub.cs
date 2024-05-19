@@ -45,7 +45,7 @@ public class EventHub : ServerlessHub
     [FunctionName(nameof(OnServerDispatch))]
     public async Task OnServerDispatch([SignalRTrigger] InvocationContext invocationContext, string rawNotification, CancellationToken cancellationToken)
     {
-        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Clients, Groups, UserGroups);
+        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Groups);
         await requestMetadataService.SetRequestMetadata(cancellationToken);
 
         var request = JsonConvert.DeserializeObject<GameRoomHubRequestBase>(rawNotification, serializerSettings);
@@ -55,12 +55,12 @@ public class EventHub : ServerlessHub
             if (typedResponse.IsSuccess)
             {
                 var responseRaw = JsonConvert.SerializeObject(typedResponse.Value, serializerSettings);
-                await Clients.Group(requestMetadataService.RequestMetadata!.RoomId.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
+                await Clients.Group(requestMetadataService.RoomGuid!.Value.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
             }
-            else
+            else // TODO: Adicionar tratamento de erro
             {
                 var responseRaw = JsonConvert.SerializeObject(typedResponse.Value, serializerSettings);
-                await Clients.Group(requestMetadataService.RequestMetadata!.RoomId.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
+                await Clients.Group(requestMetadataService.RoomGuid!.Value.ToString()!).SendAsync("OnClientDispatch", responseRaw, cancellationToken: cancellationToken);
             }
         }
     }
@@ -68,7 +68,7 @@ public class EventHub : ServerlessHub
     [FunctionName(nameof(OnDisconnected))]
     public async Task OnDisconnected([SignalRTrigger] InvocationContext invocationContext, CancellationToken cancellationToken)
     {
-        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Clients, Groups, UserGroups);
+        requestMetadataService.SetSignalRConnectionInfo(invocationContext, Groups);
         await requestMetadataService.SetRequestMetadata(cancellationToken);
         if (requestMetadataService.RequestMetadata?.HubConnectionId is not null)
             await sender.Send(new LeaveGameRoomHubRequest(), cancellationToken);

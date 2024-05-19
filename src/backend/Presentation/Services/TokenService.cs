@@ -25,15 +25,12 @@ public sealed class TokenService : ITokenService
             new(ClaimTypes.NameIdentifier, user.Id!.ToString()!)
         };
 
-        if (user.CurrentRoom is not null)
-            claims.Add(new Claim(ClaimTypes.GroupSid, user.CurrentRoom!.ToString()!));
-
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddHours(16),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(TokenKey), SecurityAlgorithms.HmacSha256Signature)
         };
 

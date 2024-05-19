@@ -1,7 +1,6 @@
 ﻿using Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Azure.SignalR.Management;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using System;
 using System.Collections.Generic;
@@ -17,9 +16,8 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly TokenService tokenService;
     private InvocationContext? signalRContext = default;
-    private IHubClients? signalRClients = default;
     private IGroupManager? signalRGroups = default;
-    private IUserGroupManager? signalRGUserGroups = default;
+    public Guid? RoomGuid { get; private set; } = default;
 
     public IRequestMetadata.Metadata? RequestMetadata { get; private set; }
 
@@ -29,12 +27,10 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
         this.tokenService = tokenService;
     }
 
-    public void SetSignalRConnectionInfo(InvocationContext callerContext, IHubClients hubClients, IGroupManager groupManager, IUserGroupManager userGroupManager)
+    public void SetSignalRConnectionInfo(InvocationContext callerContext, IGroupManager groupManager)
     {
         signalRContext = callerContext;
-        signalRClients = hubClients;
         signalRGroups = groupManager;
-        signalRGUserGroups = userGroupManager;
     }
 
     public Task JoinGroup(string connectionId, string groupId, CancellationToken cancellationToken = default)
@@ -62,22 +58,9 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
         if (requesterIdClaim?.Value is not null && Guid.TryParse(requesterIdClaim.Value, out var parsedRequesterId))
             requesterId = parsedRequesterId;
 
-        var roomGuidClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.GroupSid);
-        Guid? roomGuid = default;
-        if (roomGuidClaim?.Value is not null && Guid.TryParse(roomGuidClaim.Value, out var parsedGuid))
-            roomGuid = parsedGuid;
-
-        RequestMetadata = new IRequestMetadata.Metadata(requesterId, signalRContext?.ConnectionId, roomGuid, DateTime.Now);
+        RequestMetadata = new IRequestMetadata.Metadata(requesterId, signalRContext?.ConnectionId, DateTime.Now);
 
         return Task.FromResult((IRequestMetadata.Metadata?)RequestMetadata);
-    }
-
-    public void SetRoomGuid(Guid roomGuid)
-    {
-        if (RequestMetadata is null)
-            RequestMetadata = new IRequestMetadata.Metadata(null, null, roomGuid, DateTime.Now);
-        else
-            RequestMetadata = new IRequestMetadata.Metadata(RequestMetadata.RequesterId, RequestMetadata.HubConnectionId, roomGuid, DateTime.Now);
     }
 
     public IEnumerable<Claim>? ReadClaims()
@@ -92,5 +75,10 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
         }
 
         return null;
+    }
+
+    public void SetRoomGuid(Guid roomGuid)
+    {
+        RoomGuid = roomGuid;
     }
 }

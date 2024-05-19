@@ -11,19 +11,15 @@ public record JoinGameRoomHubRequest(
     JoinGameRoomHubRequest.CreationOptionsClass? CreationOptions = default
 ) : GameRoomHubRequest<JoinGameRoomHubRequestResponse>, IRequestMetadata
 {
-    [JsonIgnore]
-    public override bool RequiresAuthorization => true;
-
     public record CreationOptionsClass(string RoomName = "Public lobby");
 }
 
-public record JoinGameRoomHubRequestResponse(string NewToken, string Name) : GameRoomHubRequestResponse;
+public record JoinGameRoomHubRequestResponse(string Name) : GameRoomHubRequestResponse;
 
 public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHubRequest, JoinGameRoomHubRequestResponse>
 {
     private readonly ILostCardDbUnitOfWork dbUnitOfWork;
     private readonly IGameRoomHubService gameRoomHubService;
-    private readonly ITokenService tokenService;
     private readonly IRequestMetadataService requestMetadataService;
 
 
@@ -35,7 +31,6 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
     {
         this.dbUnitOfWork = dbUnitOfWork;
         this.gameRoomHubService = gameRoomHubService;
-        this.tokenService = tokenService;
         this.requestMetadataService = requestMetadataService;
     }
 
@@ -69,9 +64,7 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             cancellationToken
         );
 
-        var newToken = tokenService.GetToken(request.Requester);
-
-        return new JoinGameRoomHubRequestResponse(newToken, request.Requester.Name);
+        return new JoinGameRoomHubRequestResponse(request.Requester.Name);
     }
 
     private async Task<Result<Guid>> EnsureRoomJoined(JoinGameRoomHubRequest request, CancellationToken cancellationToken = default)

@@ -23,8 +23,8 @@ class RequestAuthBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TR
     {
         if (await requestInfoService.SetRequestMetadata(cancellationToken) is { } requestMetadata)
             message.RequestMetadata = requestMetadata;
-            
-        if(message.RequiresAuthorization && message.RequestMetadata is null)
+
+        if (message.RequiresAuthorization && message.RequestMetadata is null)
             return Result.Fail(new AuthError()).To<TResponse>();
 
         if (message.RequestMetadata?.RequesterId is { } requesterId)
@@ -37,8 +37,10 @@ class RequestAuthBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TR
             message.Requester = requester;
         }
 
-        if (message.RequestMetadata?.RoomId is { } roomId)
+        if (message.Requester?.CurrentRoom is { } roomId)
         {
+            requestInfoService.SetRoomGuid(roomId);
+
             var currentRoom = await unitOfWork.GameRoomRepository.Find(roomId, cancellationToken);
 
             if (currentRoom is null)
