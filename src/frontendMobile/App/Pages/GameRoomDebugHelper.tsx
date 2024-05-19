@@ -1,10 +1,9 @@
 import { Text, View, TextStyle, TextInput, Button } from "react-native";
-import React, { useContext, useEffect, useState } from 'react';
-import AuthContext from "../Context/auth";
+import React, { useContext, useState } from 'react';
 import MessagingContext from "../Context/messaging";
 
-const DefaultAppRoute: React.FC = () => {
-  const { start, joinRoom, newConnection } = useContext(MessagingContext);
+const GameRoomDebugHelper: React.FC = () => {
+  const { start } = useContext(MessagingContext);
   const [messagingInput, setMessagingInput] = useState('');
   const [messages, setMessages] = useState<string[]>([]);
   const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
@@ -36,26 +35,35 @@ const DefaultAppRoute: React.FC = () => {
     if (!connection) {
       throw new Error("Not yet connected")
     }
-    await joinRoom(null, connection)
+    if (connection == null) {
+      throw new Error("Connection is not started");
+    }
+
+    connection.on(
+      "OnClientDispatch",
+      async (rawEvent: any) => {
+        console.log(rawEvent);
+        const event = JSON.parse(rawEvent);
+        if (
+          event.$type == "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application" &&
+          "Name" in event
+        )
+          console.log(`User: ${event.Name} has joined`);
+      }
+    );
+
+    const joinGameRoomRequest =
+    {
+      $type: "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequest, Application",
+      roomGuid: messagingInput.length > 0 ? messagingInput : null,
+      creationOptions: null
+    };
+
+    console.log('invoking join room');
+    await connection.invoke("OnServerDispatch", JSON.stringify(joinGameRoomRequest));
+
     setMessagingInput('');
   }
-
-  useEffect(() => {
-    console.log("Effect was called")
-    if(newConnection != null)
-    {
-      newConnection.on(
-        "OnClientDispatch",
-        (rawEvent: any) => {
-          console.log('recieved event in new connection: ');
-          console.log(rawEvent);
-          setMessages(currentMessages => [...currentMessages, rawEvent]);
-        }
-      )
-
-      setConnection(newConnection);
-    }
-  }, [newConnection])
 
   return (
     <View style={{ gap: 10, flexDirection: 'column', alignItems: 'center' }}>
@@ -95,4 +103,4 @@ const textStyle: Readonly<TextStyle> = {
   textShadowRadius: 10,
 }
 
-export default DefaultAppRoute;
+export default GameRoomDebugHelper;
