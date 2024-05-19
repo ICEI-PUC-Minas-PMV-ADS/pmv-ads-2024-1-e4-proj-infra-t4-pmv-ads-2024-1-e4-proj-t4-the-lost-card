@@ -135,14 +135,19 @@
                             .configureLogging(signalR.LogLevel.Information)
                             .build();
 
+                        connection.on('OnClientDispatch', onNewMessage);
+
+                        connection.onclose(() => console.log('disconnected'));
+
+                        console.log('connecting...');
+
                         connection.start()
                             .then(() => {
                                 data.ready = true;
                                 console.log('connected!');
+                                connection.invoke("OnServerDispatch", JSON.stringify({ "$type": "Application.UseCases.GameRooms.RefreshConnection.RefreshConnectionRequest, Application" }));
                             })
                             .catch(console.error);
-
-                        connection.invoke("OnServerDispatch", JSON.stringify({ "$type": "Application.UseCases.GameRooms.RefreshConnection.RefreshConnectionRequest, Application" }));
                     },
                     sendNewMessage: function (isToGroup) {
                         if (isToGroup) {

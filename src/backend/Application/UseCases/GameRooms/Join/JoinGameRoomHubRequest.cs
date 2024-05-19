@@ -90,8 +90,10 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
 
             // TODO: Adicionar verificacao de banimento e se o player ja entrou na sala
             existingRoom.Players.Add(playerInfo);
-            dbUnitOfWork.GameRoomRepository.Update(existingRoom);
 
+            (existingRoom.GameInfo ??= new GameRoom.RoomGameInfo()).PlayersInfo.Add(new() { PlayerId = playerInfo.PlayerId });
+
+            dbUnitOfWork.GameRoomRepository.Update(existingRoom);
 
             return request.RoomGuid!.Value.ToResult();
         }
@@ -103,7 +105,8 @@ public class JoinGameRoomRequestHandler : IGameRoomRequestHandler<JoinGameRoomHu
             AdminId = request.RequestMetadata!.RequesterId,
             Name = creationOptions.RoomName,
             State = GameRoomState.Lobby,
-            Players = new HashSet<GameRoom.RoomPlayerInfo> { playerInfo }
+            Players = new HashSet<GameRoom.RoomPlayerInfo> { playerInfo },
+            GameInfo = new GameRoom.RoomGameInfo { PlayersInfo = new() { new() { PlayerId = playerInfo.PlayerId } } }
         };
 
         await dbUnitOfWork.GameRoomRepository.Create(newRoom, cancellationToken);
