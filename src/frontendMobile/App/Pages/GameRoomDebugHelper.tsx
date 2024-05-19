@@ -1,12 +1,11 @@
 import { Text, View, TextStyle, TextInput, Button } from "react-native";
 import React, { useContext, useState } from 'react';
-import MessagingContext from "../Context/messaging";
+import GameRoomContext from "../Context/gameRoom";
 
 const GameRoomDebugHelper: React.FC = () => {
-  const { start } = useContext(MessagingContext);
+  const { start, hubConnection } = useContext(GameRoomContext);
   const [messagingInput, setMessagingInput] = useState('');
   const [messages, setMessages] = useState<string[]>([]);
-  const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
 
   async function onStartConnection() {
     const connection = await start();
@@ -19,27 +18,22 @@ const GameRoomDebugHelper: React.FC = () => {
         setMessages(currentMessages => [...currentMessages, rawEvent]);
       }
     )
-
-    setConnection(connection);
   }
 
   async function onSendInput() {
-    if (!connection) {
+    if (!hubConnection) {
       throw new Error("Not yet connected")
     }
-    await connection.invoke("OnServerDispatch", messagingInput);
+    await hubConnection.invoke("OnServerDispatch", messagingInput);
     setMessagingInput('');
   }
 
   async function onJoinRoom() {
-    if (!connection) {
-      throw new Error("Not yet connected")
-    }
-    if (connection == null) {
+    if (!hubConnection) {
       throw new Error("Connection is not started");
     }
 
-    connection.on(
+    hubConnection.on(
       "OnClientDispatch",
       async (rawEvent: any) => {
         console.log(rawEvent);
@@ -60,7 +54,7 @@ const GameRoomDebugHelper: React.FC = () => {
     };
 
     console.log('invoking join room');
-    await connection.invoke("OnServerDispatch", JSON.stringify(joinGameRoomRequest));
+    await hubConnection.invoke("OnServerDispatch", JSON.stringify(joinGameRoomRequest));
 
     setMessagingInput('');
   }

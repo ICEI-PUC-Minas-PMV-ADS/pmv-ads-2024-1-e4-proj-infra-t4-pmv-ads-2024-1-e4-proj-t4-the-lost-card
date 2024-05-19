@@ -48,6 +48,7 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
             {
                 ActionsFinished = false,
                 PlayerId = p.PlayerId,
+                PlayerName = p.PlayerName,
                 GameClassId = null,
                 Life = int.MinValue,
                 MaxLife = int.MinValue,

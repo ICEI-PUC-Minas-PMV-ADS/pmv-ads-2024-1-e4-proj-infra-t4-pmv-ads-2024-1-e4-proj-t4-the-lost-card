@@ -10,6 +10,7 @@ public partial class GameRoom
         {
             public bool ActionsFinished { get; set; }
             public Guid PlayerId { get; set; } = default!;
+            public string PlayerName { get; set; } = string.Empty;
             public int? GameClassId { get; set; }
             public int MaxLife { get; set; }
             public int Life { get; set; }
