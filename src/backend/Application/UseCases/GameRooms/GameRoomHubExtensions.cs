@@ -6,6 +6,24 @@ using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms;
 
+
+public class GameRoomHubRequestErrorBase : Error
+{
+    public GameRoomHubRequestErrorBase(string message) : base(message)
+    {
+    }
+}
+public class GameRoomHubRequestError<TResponse> : GameRoomHubRequestErrorBase where TResponse : GameRoomHubRequestResponse
+{
+    public GameRoomHubRequestError(string message) : base(message)
+    {
+    }
+
+    [JsonProperty("$type")]
+    public string Type { get; } = typeof(TResponse).FullName!;
+    public bool Ack => false;
+}
+
 public abstract record GameRoomHubRequestBase : IRequest<Result<GameRoomHubRequestResponse>>, IRequestMetadata
 {
     [JsonIgnore]

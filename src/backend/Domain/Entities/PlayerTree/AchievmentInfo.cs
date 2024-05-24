@@ -4,7 +4,7 @@ public partial class Player
 {
     public class AchievmentInfo
     {
-        public int AchievmentKey { get; set; }
+        public long AchievmentKey { get; set; }
         public DateTime UnlockedAt { get; set; }
     }
 }

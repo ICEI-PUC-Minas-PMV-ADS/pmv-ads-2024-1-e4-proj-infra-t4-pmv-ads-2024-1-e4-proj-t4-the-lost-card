@@ -21,7 +21,7 @@ namespace Presentation;
 public class Endpoints
 {
     private readonly ISender sender;
-    private static readonly JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.All };
+    private static readonly JsonSerializerSettings serializerSettings = new() { TypeNameHandling = TypeNameHandling.Objects };
 
     public Endpoints(ISender sender)
     {

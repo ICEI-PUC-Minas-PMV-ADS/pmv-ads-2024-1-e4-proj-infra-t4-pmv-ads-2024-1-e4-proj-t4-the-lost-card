@@ -1,4 +1,6 @@
-﻿using FluentResults;
+﻿using Application.Services;
+using Domain.Notifications;
+using FluentResults;
 using Mediator;
 
 namespace Application.UseCases.GameRooms.ServerTick;
@@ -9,11 +11,11 @@ public class TurnEndingGameRoomActionBehaviour<TRequest, TResponse> : IPipelineB
     where TRequest : GameRoomHubRequestBase, ITurnEndingGameRoomActionRequest
     where TResponse : Result<GameRoomHubRequestResponse>
 {
-    private readonly ISender sender;
+    private readonly IGameRoomHubService gameRoomHubService;
 
-    public TurnEndingGameRoomActionBehaviour(ISender sender)
+    public TurnEndingGameRoomActionBehaviour(IGameRoomHubService gameRoomHubService)
     {
-        this.sender = sender;
+        this.gameRoomHubService = gameRoomHubService;
     }
 
     public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
@@ -23,7 +25,7 @@ public class TurnEndingGameRoomActionBehaviour<TRequest, TResponse> : IPipelineB
         if (response.IsFailed) return response;
 
         if (message.CurrentRoom?.GameInfo?.PlayersInfo.All(x => x.ActionsFinished) is true)
-            _ = await sender.Send(new ServerTickGameRoomRequest(message.CurrentRoom));
+            gameRoomHubService.AddDelayed(new PlayerTurnEndedNotification(message.CurrentRoom));
 
         return response;
     }

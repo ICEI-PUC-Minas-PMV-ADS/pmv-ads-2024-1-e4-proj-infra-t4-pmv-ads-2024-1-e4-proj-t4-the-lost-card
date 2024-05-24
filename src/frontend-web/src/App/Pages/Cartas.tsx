@@ -12,7 +12,7 @@ const Grid = styled.div`
 `;
 
 const Cartas = () => {
-  const [cards, setCards] = useState<CardResponse>();
+  const [cards, setCards] = useState<CardResponse[]>([]);
 
   useEffect(() => {
     queryCards().then((c) =>
@@ -24,7 +24,7 @@ const Cartas = () => {
     <div style={{ width: "100%", gap: "30px" }}>
       <PageTitle Text={"Cartas"} onSearchClick={(v) => console.log(v)} />
       <Grid>
-        {cards?.$values.map((c) => (
+        {cards?.map((c) => (
           <Card key={c.Id} Name={c.Name} Description={c.Description} />
         ))}
       </Grid>

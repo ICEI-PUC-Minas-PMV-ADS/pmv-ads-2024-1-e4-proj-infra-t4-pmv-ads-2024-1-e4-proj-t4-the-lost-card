@@ -6,10 +6,6 @@ import {
 import api from "./api";
 
 export interface AchivementsResponse {
-  $values: Achivement[];
-}
-
-export interface Achivement {
   Id: number;
   Title: string;
   Description: string;
@@ -18,7 +14,7 @@ export interface Achivement {
 
 export async function queryAchievments() {
   try {
-    const { data } = await api.get<AchivementsResponse>(
+    const { data } = await api.get<AchivementsResponse[]>(
       "/gameobjects/Domain.GameObjects.Achievements+Achievment"
     );
 
@@ -34,13 +30,7 @@ export async function queryAchievments() {
     return axiosError.response!.data as ProblemDetails;
   }
 }
-
 export interface CardResponse {
-  $type: string;
-  $values: Value[];
-}
-
-export interface Value {
   $type: string;
   BlockValue: number;
   GameClassId: number;
@@ -51,7 +41,7 @@ export interface Value {
 }
 
 export async function queryCards() {
-  const { data } = await api.get<CardResponse>("/gameobjects/Domain.GameObjects.Card");
+  const { data } = await api.get<CardResponse[]>("/gameobjects/Domain.GameObjects.Card");
 
   return data;
 }

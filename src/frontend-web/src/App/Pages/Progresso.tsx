@@ -5,7 +5,7 @@ import * as PlayerInfoRepository from "../Repositories/PlayerInfoRepository";
 import useAuth from "../Contexts/Auth";
 import AchievmentsCard from "../Components/AchievmentsCard";
 
-interface UnlockableAchievment extends GameObjectRepository.Achivement {
+interface UnlockableAchievment extends GameObjectRepository.AchivementsResponse {
   hasUnlocked: boolean;
 }
 
@@ -22,9 +22,9 @@ const Progresso: React.FC = () => {
     }).then((playerInfoData) => {
       GameObjectRepository.queryAchievments().then((achievmentsData) => {
         if ("unlockedAchievments" in playerInfoData) {
-          if ("$values" in achievmentsData) {
+          if (Array.isArray(achievmentsData)) {
             setAllAchievments(
-              achievmentsData.$values.map((v) => {
+              achievmentsData.map((v) => {
                 return {
                   ...v,
                   hasUnlocked: playerInfoData.unlockedAchievments.some(

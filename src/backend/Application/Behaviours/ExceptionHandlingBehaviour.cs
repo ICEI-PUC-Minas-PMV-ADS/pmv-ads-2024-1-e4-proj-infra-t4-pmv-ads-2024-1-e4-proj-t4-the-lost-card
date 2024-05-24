@@ -1,4 +1,6 @@
 ﻿using Application.FluentResultExtensions;
+using Application.Services;
+using Application.UseCases.GameRooms;
 using FluentResults;
 using Mediator;
 using Microsoft.Extensions.Logging;
@@ -10,10 +12,12 @@ public class ExceptionHandlingBehaviour<TRequest, TResponse> : IPipelineBehavior
     where TResponse : ResultBase, new()
 {
     private readonly ILogger<ExceptionHandlingBehaviour<TRequest, TResponse>> logger;
+    private readonly IRequestMetadataService requestMetadataService;
 
-    public ExceptionHandlingBehaviour(ILogger<ExceptionHandlingBehaviour<TRequest, TResponse>> logger)
+    public ExceptionHandlingBehaviour(ILogger<ExceptionHandlingBehaviour<TRequest, TResponse>> logger, IRequestMetadataService requestMetadataService)
     {
         this.logger = logger;
+        this.requestMetadataService = requestMetadataService;
     }
 
     public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
@@ -26,9 +30,15 @@ public class ExceptionHandlingBehaviour<TRequest, TResponse> : IPipelineBehavior
         {
             const string errorMessage = "An unhandled exception has occured";
 
-            logger.LogError(exception: e, errorMessage);
+            logger.LogError(errorMessage);
 
-            return Result.Fail(new Error(errorMessage)).To<TResponse>();
+            // Azure log currently requires exceptions to be logged like this
+            logger.LogError("{Message}", e.Message);
+            logger.LogError("{StackTrace}", e.StackTrace);
+
+            var error = requestMetadataService.IsHubRequest ? new GameRoomHubRequestError<GameRoomHubRequestResponse>(errorMessage) : new Error(errorMessage);
+
+            return Result.Fail(error).To<TResponse>();
         }
     }
 }

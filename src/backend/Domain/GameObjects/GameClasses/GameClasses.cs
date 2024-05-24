@@ -3,12 +3,15 @@
 namespace Domain.GameObjects.GameClasses;
 
 public record GameClass(
-    int Id, 
-    string Name, 
-    IEnumerable<Card> AvailableCards, 
+    long Id,
+    string Name,
+    IEnumerable<Card> AvailableCards,
     IEnumerable<Card> StartingHand,
     int StartingLife
-) : GameObjectBaseRecord(Id);
+) : GameObjectBaseRecord(Id)
+{
+    public override string QueryKey => typeof(GameClass).FullName!;
+};
 
 public class GameClasses
 {
@@ -16,5 +19,5 @@ public class GameClasses
         DefaultGameClass.Value,
     };
 
-    public static Dictionary<int, GameClass> Dictionary { get; } = All.ToDictionary(gc => gc.Id);
+    public static Dictionary<long, GameClass> Dictionary { get; } = All.ToDictionary(gc => gc.Id);
 }

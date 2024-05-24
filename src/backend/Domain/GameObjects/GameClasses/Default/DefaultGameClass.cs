@@ -3,7 +3,7 @@
 public class DefaultGameClass
 {
     public static GameClass Value { get; } = new GameClass(
-        GlobalCounter.Instance++, 
+        IdAssignHelper.CalculateIdHash(nameof(DefaultGameClass)), 
         "Default",
         new Card[] {
             new BlockCard()

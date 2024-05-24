@@ -6,38 +6,38 @@ using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms.GameActions.ChooseClass;
 
-public record ChooseClassGameActionRequest(int GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>, ITurnEndingGameRoomActionRequest
+public record ChooseClassGameActionRequest(long GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>, ITurnEndingGameRoomActionRequest
 {
     [JsonIgnore]
     public override bool RequiresAuthorization => true;
 }
 
-public record ChooseClassGameActionRequestResponse(int GameClassId, string Name, string PlayerId) : GameRoomHubRequestResponse { }
+public record ChooseClassGameActionRequestResponse(long GameClassId, string Name) : GameRoomHubRequestResponse { }
 
 public class ChooseClassGameActionRequestHandler : IGameRoomRequestHandler<ChooseClassGameActionRequest, ChooseClassGameActionRequestResponse>
 {
-    private readonly ILostCardDbUnitOfWork unitOfWork;
+    private readonly IGameRoomRepository gameRoomRepository;
 
-    public ChooseClassGameActionRequestHandler(ILostCardDbUnitOfWork unitOfWork)
+    public ChooseClassGameActionRequestHandler(IGameRoomRepository gameRoomRepository)
     {
-        this.unitOfWork = unitOfWork;
+        this.gameRoomRepository = gameRoomRepository;
     }
 
     public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(ChooseClassGameActionRequest request, CancellationToken cancellationToken)
     {
         if (request.Requester is null)
-            return new Error("Requester not found");
+            return new GameRoomHubRequestError<ChooseClassGameActionRequestResponse>("Requester not found");
 
         if (request.CurrentRoom is null)
-            return new Error("Requester is not in a room");
+            return new GameRoomHubRequestError<ChooseClassGameActionRequestResponse>("Requester is not in a room");
 
         var gameClassId = request.GameClassId;
 
         if (!GameClasses.Dictionary.TryGetValue(gameClassId, out var choosenClass))
-            return new Error("Selected class does not exist");
+            return new GameRoomHubRequestError<ChooseClassGameActionRequestResponse>("Selected class does not exist");
 
         if (request.RequesterPlayerInfo is null)
-            return new Error("Room has no record of player joining");
+            return new GameRoomHubRequestError<ChooseClassGameActionRequestResponse>("Room has no record of player joining");
 
         var requesterPlayerInfo = request.RequesterPlayerInfo;
 
@@ -47,9 +47,8 @@ public class ChooseClassGameActionRequestHandler : IGameRoomRequestHandler<Choos
         requesterPlayerInfo.CurrentBlock = 0;
         requesterPlayerInfo.MaxLife = requesterPlayerInfo.Life = choosenClass.StartingLife;
 
-        unitOfWork.GameRoomRepository.Update(request.CurrentRoom);
-        _ = await unitOfWork.SaveChangesAsync(cancellationToken);
+        await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);
 
-        return new ChooseClassGameActionRequestResponse(gameClassId, request.Requester.Name, request.Requester.Id!.Value.ToString());
+        return new ChooseClassGameActionRequestResponse(gameClassId, request.Requester.Name);
     }
 }

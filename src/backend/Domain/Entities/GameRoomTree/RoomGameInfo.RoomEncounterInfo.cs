@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using Domain.GameObjects.Oponents;
+
+namespace Domain.Entities;
 
 public partial class GameRoom
 {
@@ -7,9 +9,10 @@ public partial class GameRoom
         public partial class RoomEncounterInfo
         {
             // TODO: Expandir informacoes relacionadas a monstro
-            public int MonsterMaxLife { get; set; }
-            public int MonsterLife { get; set; }
-            public Guid MonsterGameClassId { get; set; } = default!;
+            public int OponentMaxLife { get; set; }
+            public int OponentLife { get; set; }
+            public long OponentGameId { get; set; }
+            public OponentIntent OponentIntent { get; set; } = default!;
 
             public HashSet<PlayerGameEncounterInfo> PlayersInfo { get; set; } = new();
         }

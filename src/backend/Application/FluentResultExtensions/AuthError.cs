@@ -4,5 +4,6 @@ namespace Application.FluentResultExtensions;
 
 public class AuthError : Error
 {
-    public AuthError() : base("An authorization or authentication error has occured") { }
+    public const string DefaultMessage = "An authorization or authentication error has occured";
+    public AuthError() : base(DefaultMessage) { }
 }

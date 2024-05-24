@@ -18,6 +18,7 @@ public interface IRequestMetadata
 
 public interface IRequestMetadataService
 {
+    bool IsHubRequest { get; }
     IRequestMetadata.Metadata? RequestMetadata { get; }
     void SetRoomGuid(Guid roomGuid);
     Task<IRequestMetadata.Metadata?> SetRequestMetadata(CancellationToken cancellationToken = default);
