@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: 10,
     fontSize: 16,
-    width: 270,
+    width: 260,
     borderWidth: 0,
   },
   container: {
