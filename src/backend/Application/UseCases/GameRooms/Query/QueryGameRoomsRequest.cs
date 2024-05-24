@@ -15,17 +15,17 @@ public record QueryGameRoomsResponse(Guid RoomGuid, string RoomName, int Current
 
 public class QueryGameRoomsRequestHandler : IRequestHandler<QueryGameRoomsRequest, Result<IEnumerable<QueryGameRoomsResponse>>>
 {
-    private readonly ILostCardDbUnitOfWork dbUnitOfWork;
+    private readonly IGameRoomRepository gameRoomRepository;
 
-    public QueryGameRoomsRequestHandler(ILostCardDbUnitOfWork dbUnitOfWork)
+    public QueryGameRoomsRequestHandler(IGameRoomRepository gameRoomRepository)
     {
-        this.dbUnitOfWork = dbUnitOfWork;
+        this.gameRoomRepository = gameRoomRepository;
     }
 
     public async ValueTask<Result<IEnumerable<QueryGameRoomsResponse>>> Handle(QueryGameRoomsRequest request, CancellationToken cancellationToken)
     {
         var lobbyFilter = new GameRoomState[] { GameRoomState.Lobby };
-        var openRooms = await dbUnitOfWork.GameRoomRepository.Find(lobbyFilter, cancellationToken);
+        var openRooms = await gameRoomRepository.Find(lobbyFilter, cancellationToken);
         return openRooms.Select(o => new QueryGameRoomsResponse(o.Id!.Value, o.Name, o.Players.Count)).ToResult();
     }
 }

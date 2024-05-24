@@ -13,15 +13,18 @@ public record LeaveGameRoomHubResponse() : GameRoomHubRequestResponse;
 
 public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameRoomHubRequest, LeaveGameRoomHubResponse>
 {
-    private readonly ILostCardDbUnitOfWork dbUnitOfWork;
+    private readonly IPlayerRepository playerRepository;
+    private readonly IGameRoomRepository gameRoomRepository;
     private readonly IGameRoomHubService gameRoomHubService;
 
     public LeaveGameRoomHubRequestHandler(
-        ILostCardDbUnitOfWork dbUnitOfWork,
+        IPlayerRepository playerRepository,
+        IGameRoomRepository gameRoomRepository,
         IGameRoomHubService gameRoomHubService
     )
     {
-        this.dbUnitOfWork = dbUnitOfWork;
+        this.playerRepository = playerRepository;
+        this.gameRoomRepository = gameRoomRepository;
         this.gameRoomHubService = gameRoomHubService;
     }
 
@@ -36,8 +39,7 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         await gameRoomHubService.LeaveGroup(request.RequestMetadata!.HubConnectionId!, request.CurrentRoom!.Id.ToString()!, cancellationToken);
 
         request.Requester.CurrentRoom = null;
-        dbUnitOfWork.PlayerRepository.Update(request.Requester);
-        await dbUnitOfWork.SaveChangesAsync(cancellationToken);
+        await playerRepository.Update(request.Requester, cancellationToken);
 
         if (request.CurrentRoom is null)
             return new NotFoundError("Room not found");
@@ -45,11 +47,9 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
         request.CurrentRoom.Players.RemoveWhere(p => p.PlayerId == request.Requester.Id);
 
         if (request.CurrentRoom.Players.Any())
-            dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
+            await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);
         else
-            dbUnitOfWork.GameRoomRepository.Remove(request.CurrentRoom);
-
-        await dbUnitOfWork.SaveChangesAsync(cancellationToken);
+            await gameRoomRepository.Remove(request.CurrentRoom, cancellationToken);
 
         return new LeaveGameRoomHubResponse();
     }

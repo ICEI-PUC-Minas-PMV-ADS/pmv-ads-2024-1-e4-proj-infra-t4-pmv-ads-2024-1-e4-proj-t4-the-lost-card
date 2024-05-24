@@ -1,11 +1,12 @@
 ﻿using Domain.Entities;
 using Domain.GameObjects.GameClasses.Default;
+using Newtonsoft.Json;
 
 namespace Domain.GameObjects;
 
-public class Card : GameObjectBaseClass
+public abstract class Card : GameObjectBaseClass
 {
-    public override string QueryKey => typeof(Card).FullName!;
+    public override string QueryKey { get; } = typeof(Card).FullName!;
 
     public virtual int? GameClassId { get; } = null;
 
@@ -18,7 +19,7 @@ public class Card : GameObjectBaseClass
 
 public class Cards
 {
-    public static IEnumerable<Card> All { get; } = 
+    public static IEnumerable<Card> All { get; } =
         Enumerable.Empty<Card>()
             .Concat(DefaultGameClass.Value.AvailableCards);
 }

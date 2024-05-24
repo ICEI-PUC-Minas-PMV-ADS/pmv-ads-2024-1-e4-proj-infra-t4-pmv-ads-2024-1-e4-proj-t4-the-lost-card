@@ -1,16 +1,14 @@
 ﻿using Application;
-using Application.Behaviours.RequestPreprocessor;
 using Application.Services;
 using Infrastructure;
-using Mediator;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Presentation.Services;
-using System.Linq;
 using System;
+using System.Linq;
 using System.Text;
 
 [assembly: FunctionsStartup(typeof(Presentation.DependencyInjection))]
@@ -30,8 +28,6 @@ public class DependencyInjection : FunctionsStartup
 
         builder.Services.AddLostCardsApp();
         builder.Services.AddInfrastructure();
-
-        builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreprocessorPipelineBehaviour<,>));
 
         builder.Services
             .AddOptions<TokenService.Options>()

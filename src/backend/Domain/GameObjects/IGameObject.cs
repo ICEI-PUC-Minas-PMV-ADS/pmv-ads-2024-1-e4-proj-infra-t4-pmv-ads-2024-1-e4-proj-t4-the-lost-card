@@ -11,19 +11,17 @@ public class GameObjects
 
 public interface IGameObject
 {
-    int Id { get; }
-
+    long Id { get; }
     string QueryKey { get; }
 }
 
-public class GameObjectBaseClass : IGameObject
+public abstract class GameObjectBaseClass : IGameObject
 {
-    public virtual int Id { get; }
-
-    public virtual string QueryKey => GetType().FullName!;
+    public abstract long Id { get; }
+    public virtual string QueryKey { get; } = typeof(GameObjectBaseClass).FullName!;
 }
 
-public record GameObjectBaseRecord(int Id) : IGameObject
+public abstract record GameObjectBaseRecord(long Id) : IGameObject
 {
-    public virtual string QueryKey => GetType().FullName!;
+    public virtual string QueryKey => typeof(GameObjectBaseRecord).FullName!;
 }

@@ -50,7 +50,7 @@ public class GameRoomTurnEndingActionBehaviourTests
                 }
             }
         };
-        var serverTickGameRoomRequest = new ServerTickGameRoomRequest(request.CurrentRoom);
+        var serverTickGameRoomRequest = new PlayerTurnEndedNotification(request.CurrentRoom);
 
         var wasDelegateCalled = false;
 

@@ -1,6 +1,10 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.Services;
 using Domain.Entities;
+using Domain.GameObjects;
+using Domain.GameObjects.GameClasses;
+using Domain.GameObjects.Oponents;
+using Domain.Notifications;
 using FluentResults;
 using Newtonsoft.Json;
 
@@ -16,51 +20,75 @@ public record StartGameRoomHubRequest() : GameRoomHubRequest<StartGameRoomHubReq
 
 public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoomHubRequest, StartGameRoomHubRequestResponse>
 {
-    private readonly ILostCardDbUnitOfWork dbUnitOfWork;
+    private readonly IGameRoomRepository gameRoomRepository;
+    private readonly IGameRoomHubService gameRoomHubService;
 
-    public StartGameRoomRequestHandler(ILostCardDbUnitOfWork dbUnitOfWork)
+    public StartGameRoomRequestHandler(IGameRoomRepository gameRoomRepository,IGameRoomHubService gameRoomHubService)
     {
-        this.dbUnitOfWork = dbUnitOfWork;
+        this.gameRoomRepository = gameRoomRepository;
+        this.gameRoomHubService = gameRoomHubService;
     }
 
     public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(StartGameRoomHubRequest request, CancellationToken cancellationToken)
     {
         if (request.Requester is null)
-            return Result.Fail("Requester not found");
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Requester not found");
 
         if (request.CurrentRoom is null)
-            return Result.Fail("Requester hasnt joined a room");
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Requester hasnt joined a room");
 
         if (request.CurrentRoom.AdminId != request.Requester.Id)
-            return Result.Fail("Cant start a gameroom youre not admin of");
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Cant start a gameroom youre not admin of");
 
         if (request.CurrentRoom is not { State: GameRoomState.Lobby })
-            return Result.Fail("Game room is not lobby anymore");
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Game room is not lobby anymore");
 
         if (request.CurrentRoom.Players.Count < 2)
-            return Result.Fail("Gamerooms can only start after atleast two people join");
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Gamerooms can only start after atleast two people join");
+
+        if (request.CurrentRoom.Players.Count > 2)
+            return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Gamerooms can only start with two people (for now)");
+
+        var randomOponent = Oponents.All.Where(o => o.MinLevel >= 1 && o.MaxLevel <= 1).OrderBy(x => Guid.NewGuid()).First();
 
         request.CurrentRoom.GameInfo = new GameRoom.RoomGameInfo
         {
             CurrentLevel = 1,
-            EncounterInfo = null,
-            PlayersInfo = request.CurrentRoom.Players.Select(p => new GameRoom.RoomGameInfo.PlayerGameInfo
+            EncounterInfo = new GameRoom.RoomGameInfo.RoomEncounterInfo
             {
-                ActionsFinished = false,
-                PlayerId = p.PlayerId,
-                PlayerName = p.PlayerName,
-                GameClassId = null,
-                Life = int.MinValue,
-                MaxLife = int.MinValue,
-                CurrentBlock = int.MinValue
-            }).ToHashSet()
+                OponentGameId = randomOponent.Id,
+                OponentIntent = randomOponent.GetIntent(request.CurrentRoom),
+                OponentLife = randomOponent.StartingMaxLife,
+                OponentMaxLife = randomOponent.StartingMaxLife,
+                PlayersInfo = request.CurrentRoom.GameInfo!.PlayersInfo.Select(p =>
+                {
+                    var selectedClass = GameClasses.Dictionary[p.GameClassId!.Value];
+
+                    var hand = selectedClass.StartingHand.OrderBy(x => Guid.NewGuid()).Take(5).ToHashSet();
+                    var drawPile = selectedClass.AvailableCards.Where(ac => !hand.Contains(ac)).ToHashSet();
+                    var discardPile = new HashSet<Card>();
+
+                    var connectionId = request.CurrentRoom.Players.First(x => x.PlayerId == p.PlayerId).ConnectionId;
+
+                    gameRoomHubService.AddDelayed(new HandShuffledNotification(p.PlayerId, connectionId, p.PlayerName, hand, drawPile, discardPile));
+
+                    return new GameRoom.RoomGameInfo.RoomEncounterInfo.PlayerGameEncounterInfo
+                    {
+                        DiscardPile = discardPile,
+                        Hand = hand,
+                        DrawPile = drawPile,
+                        PlayerId = p.PlayerId
+                    };
+                }).ToHashSet()
+            },
+            PlayersInfo = request.CurrentRoom.GameInfo!.PlayersInfo
         };
 
         request.CurrentRoom.State = GameRoomState.Started;
 
-        dbUnitOfWork.GameRoomRepository.Update(request.CurrentRoom);
+        gameRoomHubService.AddDelayed(new OponentSpawnedNotification(request.CurrentRoom.GameInfo.EncounterInfo));
 
-        _ = await dbUnitOfWork.SaveChangesAsync(cancellationToken);
+        await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);
 
         return new StartGameRoomHubRequestResponse();
     }

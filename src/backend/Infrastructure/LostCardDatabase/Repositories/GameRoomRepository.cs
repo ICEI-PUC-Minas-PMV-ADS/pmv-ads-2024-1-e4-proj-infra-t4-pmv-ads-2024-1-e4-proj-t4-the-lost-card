@@ -1,45 +1,71 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Azure.Cosmos;
 
 namespace Infrastructure.LostCardDatabase.Repositories;
 
 internal class GameRoomRepository : IGameRoomRepository
 {
-    private readonly LostCardDbContext lostCardDbContext;
+    private readonly CosmosClient cosmosClient;
+    private Database? lostCardDatabase;
+    private Container? lostCardContainer;
 
-    public GameRoomRepository(LostCardDbContext lostCardDbContext)
+    public GameRoomRepository(CosmosClient cosmosClient)
     {
-        this.lostCardDbContext = lostCardDbContext;
+        this.cosmosClient = cosmosClient;
+    }
+
+    private async Task<Container> GetContainer(CancellationToken cancellationToken = default)
+    {
+        lostCardDatabase ??= (await cosmosClient.CreateDatabaseIfNotExistsAsync("LostCardDb", cancellationToken: cancellationToken)).Database;
+        return lostCardContainer ??= (await lostCardDatabase.CreateContainerIfNotExistsAsync("LostCardDbContext", "/PartitionKey", throughput: 400, cancellationToken: cancellationToken)).Container;
     }
 
     public async Task Create(GameRoom gameRoom, CancellationToken cancellationToken = default)
     {
-        await lostCardDbContext.AddAsync(gameRoom, cancellationToken);
+        var container = await GetContainer(cancellationToken);
+        gameRoom.Id = Guid.NewGuid();
+        await container.CreateItemAsync(gameRoom, new PartitionKey(gameRoom.PartitionKey), cancellationToken: cancellationToken);
     }
 
-    public ValueTask<GameRoom?> Find(Guid id, CancellationToken cancellationToken = default)
+    public async ValueTask<GameRoom?> Find(Guid id, CancellationToken cancellationToken = default)
     {
-        return lostCardDbContext.GameRooms.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
+        var container = await GetContainer(cancellationToken);
+        var query = new QueryDefinition("SELECT * FROM GameRooms gr WHERE gr.id = @id").WithParameter("@id", id.ToString());
+
+        FeedResponse<GameRoom>? response = null;
+
+        using (var resultSetIterator = container.GetItemQueryIterator<GameRoom>(query))
+            while (resultSetIterator.HasMoreResults)
+                response = await resultSetIterator.ReadNextAsync(cancellationToken);
+
+        return response?.FirstOrDefault();
     }
 
     public async Task<IEnumerable<GameRoom>> Find(IEnumerable<GameRoomState>? semaphoreStatesFilter = default, CancellationToken cancellationToken = default)
     {
-        IQueryable<GameRoom> query = lostCardDbContext.GameRooms;
+        var container = await GetContainer(cancellationToken);
+        var query = new QueryDefinition("SELECT * FROM GameRooms gr WHERE gr.State IN @statesFilter")
+            .WithParameter("@statesFilter", (semaphoreStatesFilter ?? Array.Empty<GameRoomState>()).Select(s => (int)s).ToArray());
 
-        foreach (var semaphoreStateFilter in semaphoreStatesFilter ?? Array.Empty<GameRoomState>())
-            query = query.Where(gr => gr.State == semaphoreStateFilter);
+        var gameRooms = new HashSet<IEnumerable<GameRoom>>();
 
-        return await query.ToArrayAsync(cancellationToken);
+        using (var resultSetIterator = container.GetItemQueryIterator<GameRoom>(query))
+            while (resultSetIterator.HasMoreResults)
+                gameRooms.Add(await resultSetIterator.ReadNextAsync(cancellationToken));
+
+        return gameRooms.SelectMany(gmrs => gmrs);
     }
 
-    public void Remove(GameRoom gameRoom)
+    public async Task Remove(GameRoom gameRoom, CancellationToken cancellationToken = default)
     {
-        lostCardDbContext.Remove(gameRoom);
+        var container = await GetContainer(cancellationToken);
+        _ = await container.DeleteItemAsync<GameRoom>(gameRoom.Id!.Value.ToString(), new PartitionKey(gameRoom.PartitionKey), cancellationToken: cancellationToken);
     }
 
-    public void Update(GameRoom gameRoom)
+    public async Task Update(GameRoom gameRoom, CancellationToken cancellationToken = default)
     {
-        lostCardDbContext.Update(gameRoom);
+        var container = await GetContainer(cancellationToken);
+        _ = await container.UpsertItemAsync(gameRoom, new PartitionKey(gameRoom.PartitionKey), cancellationToken: cancellationToken);
     }
 }

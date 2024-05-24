@@ -1,35 +1,57 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Azure.Cosmos;
 
 namespace Infrastructure.LostCardDatabase.Repositories;
 
 public class PlayerRepository : IPlayerRepository
 {
-    private readonly LostCardDbContext lostCardDbContext;
+    private readonly CosmosClient cosmosClient;
+    private Database? lostCardDatabase;
+    private Container? lostCardContainer;
 
-    public PlayerRepository(LostCardDbContext lostCardDbContext)
+    public PlayerRepository(CosmosClient cosmosClient)
     {
-        this.lostCardDbContext = lostCardDbContext;
+        this.cosmosClient = cosmosClient;
+    }
+
+    private async Task<Container> GetContainer(CancellationToken cancellationToken = default)
+    {
+        lostCardDatabase ??= (await cosmosClient.CreateDatabaseIfNotExistsAsync("LostCardDb", cancellationToken: cancellationToken)).Database;
+        return lostCardContainer ??= (await lostCardDatabase.CreateContainerIfNotExistsAsync("LostCardDbContext", "/PartitionKey", throughput: 400, cancellationToken: cancellationToken)).Container;
     }
 
     public async Task Create(Player player, CancellationToken cancellationToken = default)
     {
-        await lostCardDbContext.AddAsync(player, cancellationToken);
+        var container = await GetContainer(cancellationToken);
+        player.Id = Guid.NewGuid();
+        await container.CreateItemAsync(player, new PartitionKey(player.PartitionKey), cancellationToken: cancellationToken);
     }
 
-    public ValueTask<Player?> Find(Guid id, CancellationToken cancellationToken = default)
+    public async ValueTask<Player?> Find(Guid id, CancellationToken cancellationToken = default)
     {
-        return lostCardDbContext.Players.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
+        var container = await GetContainer(cancellationToken);
+        return await container.ReadItemAsync<Player>(id.ToString(), new PartitionKey(id.ToString()), cancellationToken: cancellationToken);
     }
 
-    public Task<Player?> Find(string email, CancellationToken cancellationToken = default)
+    public async Task<Player?> Find(string email, CancellationToken cancellationToken = default)
     {
-        return lostCardDbContext.Players.FirstOrDefaultAsync(p => p.Email == email, cancellationToken);
+        var container = await GetContainer(cancellationToken);
+
+        var query = new QueryDefinition("SELECT * FROM Players p WHERE p.Email = @email").WithParameter("@email", email);
+
+        FeedResponse<Player>? response = null;
+
+        using (var resultSetIterator = container.GetItemQueryIterator<Player>(query))
+            while (resultSetIterator.HasMoreResults)
+                response = await resultSetIterator.ReadNextAsync(cancellationToken);
+
+        return response?.FirstOrDefault();
     }
 
-    public void Update(Player player)
+    public async Task Update(Player player, CancellationToken cancellationToken = default)
     {
-        lostCardDbContext.Update(player);
+        var container = await GetContainer(cancellationToken);
+        _ = await container.UpsertItemAsync(player, new PartitionKey(player.PartitionKey), cancellationToken: cancellationToken);
     }
 }

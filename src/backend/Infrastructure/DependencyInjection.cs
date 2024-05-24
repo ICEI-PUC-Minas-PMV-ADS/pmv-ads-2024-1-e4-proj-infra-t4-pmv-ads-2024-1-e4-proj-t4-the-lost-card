@@ -1,42 +1,37 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Infrastructure.LostCardDatabase;
 using Infrastructure.LostCardDatabase.Repositories;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Infrastructure;
 
 public static class DependencyInjection
 {
+
+    private static readonly JsonSerializerSettings serializerSettings = new()
+    {
+        TypeNameHandling = TypeNameHandling.Objects
+    };
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddDbContext<LostCardDbContext>((sp, cfg) =>
+        services.AddSingleton(sp =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            if (configuration.GetSection("useSqlite").Exists())
+            var connectionString = configuration.GetConnectionString("LostCardsDbConnectionString");
+
+            return new CosmosClient(connectionString, new CosmosClientOptions
             {
-                var connectionStringBuilder = new SqliteConnectionStringBuilder
-                {
-                    DataSource = "lostcards.db",
-                    Cache = SqliteCacheMode.Shared
-                };
-                var sqliteConnection = new SqliteConnection(connectionStringBuilder.ToString());
-                sqliteConnection.Open();
-                cfg.UseSqlite(sqliteConnection);
-            }
-            else
-            {
-                cfg.UseCosmos(configuration.GetConnectionString("LostCardsDbConnectionString")!, "LostCardDb");
-            }
+                Serializer = new NewtonsoftJsonCosmosSerializer(serializerSettings)
+            });
         });
 
-        services.AddScoped(sp => sp.GetRequiredService<LostCardDbContext>() as ILostCardDbUnitOfWork);
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IGameRoomRepository, GameRoomRepository>();
 
         return services;
     }
-
 }

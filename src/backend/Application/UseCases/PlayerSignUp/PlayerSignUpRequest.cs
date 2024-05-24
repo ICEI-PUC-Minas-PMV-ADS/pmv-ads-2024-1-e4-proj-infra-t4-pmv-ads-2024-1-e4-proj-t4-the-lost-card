@@ -25,14 +25,12 @@ public sealed record PlayerSignUpResponse(string Id);
 public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpRequest, Result<PlayerSignUpResponse>>
 {
     private readonly IPlayerRepository playerRepository;
-    private readonly ILostCardDbUnitOfWork unitOfWork;
     private readonly ICryptographyService cryptographyService;
 
-    public PlayerSignUpRequestHandler(ICryptographyService cryptographyService, IPlayerRepository playerRepository, ILostCardDbUnitOfWork unitOfWork)
+    public PlayerSignUpRequestHandler(ICryptographyService cryptographyService, IPlayerRepository playerRepository)
     {
         this.cryptographyService = cryptographyService;
         this.playerRepository = playerRepository;
-        this.unitOfWork = unitOfWork;
     }
 
     public async ValueTask<Result<PlayerSignUpResponse>> Handle(PlayerSignUpRequest request, CancellationToken cancellationToken)
@@ -53,8 +51,6 @@ public sealed class PlayerSignUpRequestHandler : IRequestHandler<PlayerSignUpReq
         };
 
         await playerRepository.Create(player, cancellationToken);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new PlayerSignUpResponse(player.Id!.ToString()!).ToResult();
     }
