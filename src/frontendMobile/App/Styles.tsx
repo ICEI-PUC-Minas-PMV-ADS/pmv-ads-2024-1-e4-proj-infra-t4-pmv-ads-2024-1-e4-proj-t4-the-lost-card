@@ -8,9 +8,9 @@ interface Colors {
 }
 
 const colors: Readonly<Colors> = {
-  Neutral: '#FAFCFF',
-  NeutralContrast: '#2D5D83',
-  Primary: '#0149BF',
+  Neutral: '#FFFFFF',
+  NeutralContrast: '#5E5C72',
+  Primary: '#4C4A62',
   PrimaryContrast: '#DAD8D8',
 };
 
