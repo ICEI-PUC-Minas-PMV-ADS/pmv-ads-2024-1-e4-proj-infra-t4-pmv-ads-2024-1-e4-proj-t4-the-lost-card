@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {ImageBackground, StyleSheet, ViewStyle} from 'react-native';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 
 const Background: React.FC<{children: ReactNode; style?: ViewStyle}> = ({
   children,
@@ -8,11 +8,9 @@ const Background: React.FC<{children: ReactNode; style?: ViewStyle}> = ({
   const inputStyle = StyleSheet.compose(defaultStyle, style);
 
   return (
-    <ImageBackground
-      style={inputStyle}
-      source={require('../Assets/Background.png')}>
+    <View style={inputStyle}>
       {children}
-    </ImageBackground>
+    </View>
   );
 };
 
@@ -21,6 +19,7 @@ const defaultStyle: ViewStyle = {
   height: '100%',
   justifyContent: 'center',
   alignItems: 'center',
+  backgroundColor: '#4C4A62'
 };
 
 export default Background;

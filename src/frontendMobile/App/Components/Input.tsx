@@ -1,13 +1,15 @@
 import React from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
+import {NativeSyntheticEvent, StyleSheet, TextInput, TextInputChangeEventData, View} from 'react-native';
 
 interface LostCardInputProp extends React.PropsWithChildren {
   placeholder: string;
+  onChangeText?: ((text: string) => void) | undefined
 }
 
 const LostCardInput: React.FC<LostCardInputProp> = ({
   children,
   placeholder,
+  ...props
 }) => {
   return (
     <View style={styles.container}>
@@ -15,6 +17,7 @@ const LostCardInput: React.FC<LostCardInputProp> = ({
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor="#777777"
+        {...props}
       />
       {children}
     </View>

@@ -1,13 +1,14 @@
 import React, { useState} from 'react';
-import {TextInput, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {TextInput, View, TouchableOpacity, StyleSheet, NativeSyntheticEvent, TextInputChangeEventData} from 'react-native';
 import EyeIcon from '../Assets/Eye.svg';
 import ClosedEyeIcon from '../Assets/ClosedEye.svg';
 
 interface PasswordInputProps {
   placeholder: string;
+  onChangeText?: ((text: string) => void) | undefined
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({placeholder}) => {
+const PasswordInput: React.FC<PasswordInputProps> = (props) => {
   const [show, setShow] = useState(false);
 
   return (
@@ -15,8 +16,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({placeholder}) => {
       <TextInput
         style={styles.field}
         secureTextEntry={!show}
-        placeholder={placeholder}
         placeholderTextColor="#777777"
+        {...props}
       />
       <TouchableOpacity onPress={() => setShow(!show)} style={styles.eyeIcon}>
         {show ? <EyeIcon /> : <ClosedEyeIcon />}

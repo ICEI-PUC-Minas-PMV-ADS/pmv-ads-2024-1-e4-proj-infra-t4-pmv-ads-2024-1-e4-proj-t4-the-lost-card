@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Image, ImageBackground, Pressable } from 'react-native';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import {StyleSheet, Image, Pressable} from 'react-native';
+import {useNavigation, CommonActions} from '@react-navigation/native';
+import Background from '../Components/Background';
 
 const SplashPage: React.FC = () => {
   const navigation = useNavigation();
@@ -11,16 +12,14 @@ const SplashPage: React.FC = () => {
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
-      {() => (
-        <ImageBackground source={require('../Assets/Background.png')} style={styles.backgroundImage}>
-          <Pressable onPress={handlePress} style={styles.logoContainer}>
-            <Image source={require('../Assets/Logo.png')} style={styles.logo} />
-          </Pressable>
-        </ImageBackground>
-      )}
+      <Background>
+        <Pressable onPress={handlePress} style={styles.logoContainer}>
+          <Image source={require('../Assets/Logo.png')} style={styles.logo} />
+        </Pressable>
+      </Background>
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   logoContainer: {
     flex: 1,
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     resizeMode: 'contain',
-  }
+  },
 });
 
 export default SplashPage;

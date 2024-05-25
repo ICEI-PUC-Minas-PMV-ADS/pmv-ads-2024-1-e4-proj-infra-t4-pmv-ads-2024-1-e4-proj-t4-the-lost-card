@@ -8,6 +8,7 @@ StatusBar.setHidden(true);
 
 const Routes: React.FC = () => {
   const {signed} = useContext(AuthContext);
+  console.log(signed)
   return signed ? <AppRoutes /> : <AnonRoutes />;
 };
 

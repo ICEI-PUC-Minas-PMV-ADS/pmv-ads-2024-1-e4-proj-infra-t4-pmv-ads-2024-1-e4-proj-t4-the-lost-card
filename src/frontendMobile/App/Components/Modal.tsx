@@ -3,7 +3,7 @@ import LostCardIcon from '../Assets/logo.svg';
 import React from 'react';
 import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
 
-const LostCardInput: React.FC<ViewProps> = ({children, ...props}) => {
+const LostCardModal: React.FC<ViewProps> = ({children, ...props}) => {
   return (
     <View style={styles.container} {...props}>
       <LostCardIcon width={'40%'}/>
@@ -13,7 +13,7 @@ const LostCardInput: React.FC<ViewProps> = ({children, ...props}) => {
   );
 };
 
-export default LostCardInput;
+export default LostCardModal;
 
 const styles = StyleSheet.create({
   container: {
