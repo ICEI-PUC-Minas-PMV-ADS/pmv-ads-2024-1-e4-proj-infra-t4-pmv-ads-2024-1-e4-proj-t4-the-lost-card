@@ -61,7 +61,7 @@ const GameRoomDebugHelper: React.FC = () => {
 
   return (
     <View style={{ gap: 10, flexDirection: 'column', alignItems: 'center' }}>
-      <Text style={contrastTextStyle}>{'\u2022' + "Tela default logado"}</Text>
+      <Text style={contrastTextStyle}>{"\u2022 Tela default logado"}</Text>
       <Button onPress={onStartConnection} title={"Iniciar conexao"} />
       <TextInput
         onChangeText={e => {
@@ -74,8 +74,7 @@ const GameRoomDebugHelper: React.FC = () => {
       <Button onPress={onSendInput} title={"Enviar texto"} />
       <Button onPress={onJoinRoom} title={"Entrar em sala"} />
       {
-        messages.map((message, index) =>
-          <Text key={index} style={textStyle}>{'\u2022' + message}</Text>)
+        messages.map((message, index) => <Text key={index} style={textStyle}>{'\u2022' + message}</Text>)
       }
     </View>
   );

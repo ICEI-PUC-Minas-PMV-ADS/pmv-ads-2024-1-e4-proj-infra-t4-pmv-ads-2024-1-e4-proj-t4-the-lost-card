@@ -1,9 +1,9 @@
 export interface ProblemDetails {    
-    detail: string;
+    detail: string | null;
     status: number;
     title : string;
 };
 
 export interface ValidationProblemDetails extends ProblemDetails {
-    errors : Record<string, string[]>
+    errors : Map<string, string[]>
 }

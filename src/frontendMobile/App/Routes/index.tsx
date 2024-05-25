@@ -7,9 +7,8 @@ import { StatusBar } from 'react-native';
 StatusBar.setHidden(true);
 
 const Routes: React.FC = () => {
-  const {signed} = useContext(AuthContext);
-  console.log(signed)
-  return signed ? <AppRoutes /> : <AnonRoutes />;
+  const {user} = useContext(AuthContext);
+  return user ? <AppRoutes /> : <AnonRoutes />;
 };
 
 export default Routes;

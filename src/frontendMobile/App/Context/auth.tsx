@@ -5,9 +5,7 @@ import { ProblemDetails } from "../DTOs/problemdetails";
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 interface AuthContextData {
-  signed: boolean;
   user: User | null;
-  setToken(token: string): void;
   signIn(
     request: AuthRequest
   ): Promise<ProblemDetails | undefined>;
@@ -35,7 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   async function signIn(request: SignInRepository.SignInRequest) {
     const response = await SignInRepository.signIn(request);
 
-    if ("detail" in response) {
+    if ("title" in response) {
       return response;
     }
 
@@ -46,19 +44,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   }
 
-  function setToken(token: string) {
-    setUser(user => {
-      if (user)
-        user.token = token
-      else
-        user = {token: token, name: "adeilton", id: "4826f484-1221-4e53-916c-08dc6402df5e"}
-      
-      return user;
-    });
-  }
-
   return (
-    <AuthContext.Provider value={{ signed: Boolean(user), user, setToken, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

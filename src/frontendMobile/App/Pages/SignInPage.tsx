@@ -14,14 +14,12 @@ const SignIn = () => {
   const context = useContext(AuthContext);
 
   async function signIn() {
-    console.log(context.user);
     const response = await context.signIn({email, plainTextPassword: password});
     
     if (response === undefined) return;
     
-    ToastAndroid.show(response.detail, 2000);
+    ToastAndroid.show(response.title, 2000);
   }
-  console.log(context.user);
 
   return (
     <Background>

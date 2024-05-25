@@ -13,7 +13,7 @@ export interface SignInResponse {
   id: string;
 }
 
-export async function signIn(request: SignInRequest) {
+export async function signIn(request: SignInRequest): Promise<SignInResponse | ValidationProblemDetails | ProblemDetails> {
   try {
     const { data } = await api.post<SignInResponse>(
       "/players/sessions",
@@ -26,7 +26,7 @@ export async function signIn(request: SignInRequest) {
 
     console.log(axiosError);
 
-    if (axiosError.status === 400) 
+    if (axiosError.status === 400)
       return axiosError.response!.data as ValidationProblemDetails;
 
     return axiosError.response!.data as ProblemDetails;
