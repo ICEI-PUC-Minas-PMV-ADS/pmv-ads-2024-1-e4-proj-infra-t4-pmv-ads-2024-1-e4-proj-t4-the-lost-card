@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
           <Image source={require('../Assets/Logo.png')} style={styles.logo} />
 
         <Anchor text="Entrar" route="SignInPage" />
-        <Anchor text="Registrar-se" route="SingUpPage" />
+        <Anchor text="Registrar-se" route="SignUpPage" />
         <Pressable onPress={exit}>
           <ListItem text="Sair" />
         </Pressable>
