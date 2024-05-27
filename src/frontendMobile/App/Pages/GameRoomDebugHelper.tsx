@@ -35,11 +35,11 @@ const GameRoomDebugHelper: React.FC = () => {
 
     hubConnection.on(
       "OnClientDispatch",
-      async (rawEvent: any) => {
+      async (rawEvent: string) => {
         console.log(rawEvent);
         const event = JSON.parse(rawEvent);
         if (
-          event.$type == "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application" &&
+          event.$type == "Application.UseCases.GameRooms.LobbyActions.JoinGameRoomHubRequestResponse, Application" &&
           "Name" in event
         )
           console.log(`User: ${event.Name} has joined`);
@@ -48,7 +48,7 @@ const GameRoomDebugHelper: React.FC = () => {
 
     const joinGameRoomRequest =
     {
-      $type: "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequest, Application",
+      $type: "Application.UseCases.GameRooms.LobbyActions.JoinGameRoomHubRequest, Application",
       roomGuid: messagingInput.length > 0 ? messagingInput : null,
       creationOptions: null
     };

@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.LostCardDatabase;
 using Application.FluentResultExtensions;
 using Application.Services;
-using Application.UseCases.GameRooms.Start;
 using Application.UseCases.GameRooms;
 using FluentResults;
 using Mediator;
@@ -17,7 +16,7 @@ class RequestAuthBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TR
     private readonly IGameRoomRepository gameRoomRepository;
 
     public RequestAuthBehaviour(
-        IRequestMetadataService requestInfoService, 
+        IRequestMetadataService requestInfoService,
         IPlayerRepository playerRepository,
         IGameRoomRepository gameRoomRepository)
     {

@@ -4,7 +4,7 @@ using Domain.Entities;
 using Domain.GameObjects.GameClasses;
 using FluentResults;
 
-namespace Application.UseCases.GameRooms.Join;
+namespace Application.UseCases.GameRooms.LobbyActions;
 
 public record JoinGameRoomHubRequest(
     Guid? RoomGuid = default,

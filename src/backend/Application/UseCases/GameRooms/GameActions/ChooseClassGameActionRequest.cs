@@ -1,18 +1,17 @@
 ﻿using Application.Contracts.LostCardDatabase;
-using Application.UseCases.GameRooms.ServerTick;
 using Domain.GameObjects.GameClasses;
 using FluentResults;
 using Newtonsoft.Json;
 
-namespace Application.UseCases.GameRooms.GameActions.ChooseClass;
+namespace Application.UseCases.GameRooms.GameActions;
 
-public record ChooseClassGameActionRequest(long GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>, ITurnEndingGameRoomActionRequest
+public record ChooseClassGameActionRequest(long GameClassId) : GameRoomHubRequest<ChooseClassGameActionRequestResponse>
 {
     [JsonIgnore]
     public override bool RequiresAuthorization => true;
 }
 
-public record ChooseClassGameActionRequestResponse(long GameClassId, string Name) : GameRoomHubRequestResponse { }
+public record ChooseClassGameActionRequestResponse(long GameClassId, string GameClassName, string Name) : GameRoomHubRequestResponse { }
 
 public class ChooseClassGameActionRequestHandler : IGameRoomRequestHandler<ChooseClassGameActionRequest, ChooseClassGameActionRequestResponse>
 {
@@ -49,6 +48,6 @@ public class ChooseClassGameActionRequestHandler : IGameRoomRequestHandler<Choos
 
         await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);
 
-        return new ChooseClassGameActionRequestResponse(gameClassId, request.Requester.Name);
+        return new ChooseClassGameActionRequestResponse(gameClassId, choosenClass.Name, request.Requester.Name);
     }
 }

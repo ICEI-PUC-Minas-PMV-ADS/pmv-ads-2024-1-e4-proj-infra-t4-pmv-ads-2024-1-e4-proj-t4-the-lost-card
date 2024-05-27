@@ -2,7 +2,7 @@
 using Application.UseCases.PlayerSignIn;
 using Application.UseCases.PlayerSignUp;
 using Application.UseCases.QueryGameObjects;
-using Application.UseCases.SeePlayerInfoRequest;
+using Application.UseCases.SeePlayerInfo;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

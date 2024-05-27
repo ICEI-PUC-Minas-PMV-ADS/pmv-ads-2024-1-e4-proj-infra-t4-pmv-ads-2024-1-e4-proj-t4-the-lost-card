@@ -2,7 +2,6 @@
 using Application.Services;
 using Application.UseCases.GameRooms.GameActions.ChooseClass;
 using Application.UseCases.GameRooms;
-using Application.UseCases.GameRooms.ServerTick;
 using Application.UseCases.PlayerSignIn;
 using Domain.Entities;
 using Mediator;

@@ -45,7 +45,7 @@ internal class GameRoomRepository : IGameRoomRepository
     public async Task<IEnumerable<GameRoom>> Find(IEnumerable<GameRoomState>? semaphoreStatesFilter = default, CancellationToken cancellationToken = default)
     {
         var container = await GetContainer(cancellationToken);
-        var query = new QueryDefinition("SELECT * FROM GameRooms gr WHERE gr.State IN @statesFilter")
+        var query = new QueryDefinition("SELECT * FROM GameRooms gr WHERE ARRAY_CONTAINS(@statesFilter, gr.State)")
             .WithParameter("@statesFilter", (semaphoreStatesFilter ?? Array.Empty<GameRoomState>()).Select(s => (int)s).ToArray());
 
         var gameRooms = new HashSet<IEnumerable<GameRoom>>();

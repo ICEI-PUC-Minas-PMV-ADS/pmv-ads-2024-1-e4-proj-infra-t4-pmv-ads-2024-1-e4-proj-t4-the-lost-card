@@ -3,7 +3,7 @@ using Application.FluentResultExtensions;
 using Application.Services;
 using FluentResults;
 
-namespace Application.UseCases.GameRooms.Leave;
+namespace Application.UseCases.GameRooms.LobbyActions;
 
 public record LeaveGameRoomHubRequest : GameRoomHubRequest<LeaveGameRoomHubResponse>, IRequestMetadata
 {

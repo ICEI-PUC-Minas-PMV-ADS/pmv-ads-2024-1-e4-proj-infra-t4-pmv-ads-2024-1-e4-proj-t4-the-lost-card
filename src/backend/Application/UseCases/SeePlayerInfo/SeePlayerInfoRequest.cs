@@ -7,7 +7,7 @@ using FluentResults;
 using Mediator;
 using Newtonsoft.Json;
 
-namespace Application.UseCases.SeePlayerInfoRequest;
+namespace Application.UseCases.SeePlayerInfo;
 
 public sealed record SeePlayerInfoRequest(Guid PlayerGuid) : IRequest<Result<SeePlayerInfoRequestResponse>>, IRequestMetadata
 {

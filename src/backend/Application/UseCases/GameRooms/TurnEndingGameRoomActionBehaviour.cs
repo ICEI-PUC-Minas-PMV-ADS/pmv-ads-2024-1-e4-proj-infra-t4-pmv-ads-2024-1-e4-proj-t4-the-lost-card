@@ -3,7 +3,7 @@ using Domain.Notifications;
 using FluentResults;
 using Mediator;
 
-namespace Application.UseCases.GameRooms.ServerTick;
+namespace Application.UseCases.GameRooms;
 
 public interface ITurnEndingGameRoomActionRequest { };
 

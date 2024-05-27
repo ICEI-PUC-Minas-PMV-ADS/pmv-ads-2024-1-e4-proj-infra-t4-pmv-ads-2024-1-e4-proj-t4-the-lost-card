@@ -1,6 +1,6 @@
 ﻿using Application.Behaviours;
 using Application.Services;
-using Application.UseCases.GameRooms.ServerTick;
+using Application.UseCases.GameRooms;
 using FluentValidation;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;

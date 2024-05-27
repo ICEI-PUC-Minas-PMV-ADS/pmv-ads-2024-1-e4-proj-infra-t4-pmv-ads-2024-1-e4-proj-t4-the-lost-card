@@ -8,7 +8,7 @@ using Domain.Notifications;
 using FluentResults;
 using Newtonsoft.Json;
 
-namespace Application.UseCases.GameRooms.Start;
+namespace Application.UseCases.GameRooms.LobbyActions;
 
 public record StartGameRoomHubRequestResponse : GameRoomHubRequestResponse;
 
@@ -23,7 +23,7 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
     private readonly IGameRoomRepository gameRoomRepository;
     private readonly IGameRoomHubService gameRoomHubService;
 
-    public StartGameRoomRequestHandler(IGameRoomRepository gameRoomRepository,IGameRoomHubService gameRoomHubService)
+    public StartGameRoomRequestHandler(IGameRoomRepository gameRoomRepository, IGameRoomHubService gameRoomHubService)
     {
         this.gameRoomRepository = gameRoomRepository;
         this.gameRoomHubService = gameRoomHubService;

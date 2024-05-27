@@ -1,5 +1,5 @@
 ﻿using Application.UseCases.GameRooms;
-using Application.UseCases.GameRooms.Leave;
+using Application.UseCases.GameRooms.LobbyActions;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
@@ -57,8 +57,7 @@ public class EventHub : ServerlessHub
             await requestMetadataService.Dispatch(responseResult.Value, cancellationToken);
         else
         {
-            var error = responseResult.Errors.FirstOrDefault(e => e is GameRoomHubRequestErrorBase) as GameRoomHubRequestErrorBase;
-            if(error != null)
+            if (responseResult.Errors.FirstOrDefault(e => e is GameRoomHubRequestErrorBase) is GameRoomHubRequestErrorBase error)
                 await requestMetadataService.Dispatch(error, cancellationToken);
         }
 
