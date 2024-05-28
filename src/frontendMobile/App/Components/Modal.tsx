@@ -5,10 +5,10 @@ import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
 
 const LostCardModal: React.FC<ViewProps> = ({children, ...props}) => {
   return (
-    <View style={styles.container} {...props}>
+    <View style={styles.container} >
       <LostCardIcon width={'40%'}/>
       <View style={styles.verticleLine} />
-      <View>{children}</View>
+      <View {...props}>{children}</View>
     </View>
   );
 };

@@ -1,82 +1,125 @@
-import { Text, View, TextStyle, TextInput, Button } from "react-native";
-import React, { useContext, useState } from 'react';
-import GameRoomContext, { GameRoomPlayerData } from "../../Context/gameRoom";
-import AuthContext from "../../Context/auth";
-
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import GameRoomContext, {GameRoomPlayerData} from '../../Context/gameRoom';
+import AuthContext from '../../Context/auth';
+import {
+  GameRoomReponse,
+  queryRooms,
+} from '../../Repositories/LobbySearchReposity';
+import Kawasaki from '../../Components/Kawasaki';
+import Background from '../../Components/Background';
+import LostCardModal from '../../Components/Modal';
+import Input from '../../Components/Input';
+import SearchIcon from '../../Assets/Vector.svg';
 
 interface JoinGameRoomHubRequestResponse {
-    RoomId: string,
-    AdminName: string ;
-    $type: "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application",
-    Players: { Name: string, Class: { Name: string, Id: number } | null }[]
+  RoomId: string;
+  AdminName: string;
+  $type: 'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application';
+  Players: {Name: string; Class: {Name: string; Id: number} | null}[];
 }
 
 export const LobbySearch: React.FC = () => {
-    const [roomIdInput, setRoomIdInput] = useState('');
-    const { start, setRoom } = useContext(GameRoomContext);
-    const { user } = useContext(AuthContext);
+  const {start, setRoom} = useContext(GameRoomContext);
+  const {user} = useContext(AuthContext);
+  const [rooms, setRooms] = useState<GameRoomReponse[]>([]);
 
-    async function onJoinRoom() {
-        const connection = await start();
-        if (!connection) {
-            throw new Error("Connection is not started");
-        }
+  const [roomNameFilter, setRoomNameFilter] = useState<string>('');
 
-        const handlerBody = async (rawEvent: any) => {
-            const anyEvent = JSON.parse(rawEvent);
-            if (anyEvent.$type == "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application") {
-                const joinResponse = anyEvent as JoinGameRoomHubRequestResponse;
-                setRoom({
-                    id: joinResponse.RoomId,
-                    adminName: joinResponse.AdminName,
-                    hasStarted: false,
-                    players: joinResponse.Players.map(x => new GameRoomPlayerData(
-                        x.Name,
-                        x.Name == user?.name,
-                        x.Class ? { name: x.Class.Name, id: x.Class.Id } : null
-                    ))
-                });
-                connection.off("OnClientDispatch", handlerBody)
-            }
-        }
-
-        connection.on(
-            "OnClientDispatch",
-            handlerBody
-        );
-
-        const joinGameRoomRequest =
-        {
-            $type: "Application.UseCases.GameRooms.Join.JoinGameRoomHubRequest, Application",
-            roomGuid: roomIdInput.length > 0 ? roomIdInput : null,
-            creationOptions: null
-        };
-
-        await connection.invoke("OnServerDispatch", JSON.stringify(joinGameRoomRequest));
-
-        setRoomIdInput('');
+  async function onJoinRoom(id: string) {
+    const connection = await start();
+    if (!connection) {
+      throw new Error('Connection is not started');
     }
 
-    return (
-        <View style={{ gap: 10, flexDirection: 'column', alignItems: 'center' }}>
-            <Text style={contrastTextStyle}>{'\u2022' + "Pesquisa de lobies"}</Text>
-            <TextInput
-                onChangeText={e => {
-                    setRoomIdInput(e);
-                }}
-                value={roomIdInput}
-                placeholder={"ID DA SALA"}
-                style={{ width: '100%', color: "black" }}
-            />
-            <Button onPress={onJoinRoom} title={"Entrar em sala"} />
-        </View>
+    const handlerBody = async (rawEvent: any) => {
+      const anyEvent = JSON.parse(rawEvent);
+      if (
+        anyEvent.$type ==
+        'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application'
+      ) {
+        const joinResponse = anyEvent as JoinGameRoomHubRequestResponse;
+        setRoom({
+          id: joinResponse.RoomId,
+          adminName: joinResponse.AdminName,
+          hasStarted: false,
+          players: joinResponse.Players.map(
+            x =>
+              new GameRoomPlayerData(
+                x.Name,
+                x.Name == user?.name,
+                x.Class ? {name: x.Class.Name, id: x.Class.Id} : null,
+              ),
+          ),
+        });
+        connection.off('OnClientDispatch', handlerBody);
+      }
+    };
+
+    connection.on('OnClientDispatch', handlerBody);
+
+    const joinGameRoomRequest = {
+      $type:
+        'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequest, Application',
+      roomGuid: id,
+      creationOptions: null,
+    };
+
+    await connection.invoke(
+      'OnServerDispatch',
+      JSON.stringify(joinGameRoomRequest),
     );
+  }
+
+  useEffect(() => {
+    queryRooms().then(response => {
+      if ('title' in response) throw new Error('rooms query failed');
+
+      setRooms(response);
+    });
+  }, [roomNameFilter]);
+
+  return (
+    <Background>
+      <LostCardModal style={styles.container}>
+        <Input
+          placeholder="Search"
+          onChangeText={value => setRoomNameFilter(value)}>
+          <SearchIcon />
+        </Input>
+        <ScrollView>
+          <View style={styles.lobbyList}>
+            {(roomNameFilter === ''
+              ? rooms
+              : rooms.filter(room => room.roomName.includes(roomNameFilter))
+            ).map(room => (
+              <Kawasaki
+                key={room.roomGuid}
+                text={room.roomName}
+                onPress={() => onJoinRoom(room.roomGuid)}>
+                <Text>{room.currentPlayers}/2</Text>
+              </Kawasaki>
+            ))}
+          </View>
+        </ScrollView>
+      </LostCardModal>
+    </Background>
+  );
 };
 
-const contrastTextStyle: Readonly<TextStyle> = {
-    color: 'red',
-    fontSize: 35,
-    textShadowColor: '#0149BF',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-}
+const styles = StyleSheet.create({
+  lobbyList: {
+    height: '80%',
+    gap: 20,
+  },
+  container: {
+    gap: 15,
+  },
+});
