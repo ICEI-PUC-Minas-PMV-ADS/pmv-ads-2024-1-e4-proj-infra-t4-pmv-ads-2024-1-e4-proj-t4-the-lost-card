@@ -1,7 +1,8 @@
 import { Text, View, TextStyle, Button } from "react-native";
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import GameRoomContext from "../../Context/gameRoom";
 import AuthContext from "../../Context/auth";
+import { joinRoomEventKey } from "./LobbySearch";
 
 const classChoosenEventKey = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application";
 
@@ -28,32 +29,47 @@ export const Lobby: React.FC = () => {
             const chooseClassGameActionRequestResponse = anyEvent as ChooseClassGameActionRequestResponse;
             setRoom(roomDispatch => {
                 const player = roomDispatch!.players.filter(x => x.name == chooseClassGameActionRequestResponse.Name)[0];
-                player.gameClass = { name: chooseClassGameActionRequestResponse.Name, id: chooseClassGameActionRequestResponse.GameClassId };
+                player.gameClass = { name: chooseClassGameActionRequestResponse.GameClassName, id: chooseClassGameActionRequestResponse.GameClassId };
                 return roomDispatch;
             });
         }
     }
 
-    setEvents(map => {
-        map.set(classChoosenEventKey, classChoosenEventHandler)
-        return map;
-    })
+    useEffect(() => {
+        if (!events.has(classChoosenEventKey)) {
+            setEvents(map => {
+                map.set(classChoosenEventKey, classChoosenEventHandler)
+                return map;
+            })
+            hubConnection!.on(
+                "OnClientDispatch",
+                classChoosenEventHandler
+            );
+        }
+    }, [])
 
-    if(!events.has(classChoosenEventKey))
-        hubConnection!.on(
-            "OnClientDispatch",
-            classChoosenEventHandler
-        );
+    async function onStartRoom() {
+        
+        setEvents(map => {
+            const joinRoomEventHandler = map.get(joinRoomEventKey)
+            if (joinRoomEventHandler) {
+                hubConnection!.off(
+                    "OnClientDispatch",
+                    joinRoomEventHandler
+                )
+                map.delete(joinRoomEventKey)
+            }
 
-    async function onStartRoom()
-    {
+            return map;
+        })
+
         setEvents(map => {
             map.delete(classChoosenEventKey)
             return map;
         })
 
         hubConnection!.off(
-            "OnClientDispatch", 
+            "OnClientDispatch",
             classChoosenEventHandler
         )
 
@@ -61,8 +77,8 @@ export const Lobby: React.FC = () => {
             const anyEvent = JSON.parse(rawEvent);
             if (anyEvent.$type == roomStartedEventKey) {
                 setRoom(roomDispatch => {
-                    if(roomDispatch != null)
-                        roomDispatch.hasStarted = false;
+                    if (roomDispatch != null)
+                        roomDispatch.hasStarted = true;
 
                     return roomDispatch;
                 });
@@ -86,7 +102,7 @@ export const Lobby: React.FC = () => {
             {
                 room?.players.map((player, index) => <Text key={index} style={textStyle}>{`\u2022${player.name} with class ${player.gameClass?.name ?? "None"}. Is Me? ${player.isMe}`}</Text>)
             }
-            <Button disabled={!canStartRoom} title={"Começar"} onPress={onStartRoom}/>
+            <Button disabled={!canStartRoom} title={"Começar"} onPress={onStartRoom} />
         </View>
     );
 }

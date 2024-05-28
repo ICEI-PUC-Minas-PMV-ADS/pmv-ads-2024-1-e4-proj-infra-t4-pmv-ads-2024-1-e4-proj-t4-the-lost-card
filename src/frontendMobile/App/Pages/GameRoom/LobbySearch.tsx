@@ -2,12 +2,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextStyle,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
-import GameRoomContext, {GameRoomPlayerData} from '../../Context/gameRoom';
+import React, { useContext, useEffect, useState } from 'react';
+import GameRoomContext, { GameRoomPlayerData } from '../../Context/gameRoom';
 import AuthContext from '../../Context/auth';
 import {
   GameRoomReponse,
@@ -19,16 +17,18 @@ import LostCardModal from '../../Components/Modal';
 import Input from '../../Components/Input';
 import SearchIcon from '../../Assets/Vector.svg';
 
+export const joinRoomEventKey = "Application.UseCases.GameRooms.LobbyActions.JoinGameRoomHubRequestResponse, Application";
+
 interface JoinGameRoomHubRequestResponse {
   RoomId: string;
   AdminName: string;
   $type: 'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application';
-  Players: {Name: string; Class: {Name: string; Id: number} | null}[];
+  Players: { Name: string; Class: { Name: string; Id: number } | null }[];
 }
 
 export const LobbySearch: React.FC = () => {
-  const {start, setRoom} = useContext(GameRoomContext);
-  const {user} = useContext(AuthContext);
+  const { start, setRoom } = useContext(GameRoomContext);
+  const { user } = useContext(AuthContext);
   const [rooms, setRooms] = useState<GameRoomReponse[]>([]);
 
   const [roomNameFilter, setRoomNameFilter] = useState<string>('');
@@ -39,43 +39,52 @@ export const LobbySearch: React.FC = () => {
       throw new Error('Connection is not started');
     }
 
-    const handlerBody = async (rawEvent: any) => {
+    const joinRoomEventHandler = async (rawEvent: any) => {
       const anyEvent = JSON.parse(rawEvent);
-      if (
-        anyEvent.$type ==
-        'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequestResponse, Application'
-      ) {
+      if (anyEvent.$type == joinRoomEventKey) {
         const joinResponse = anyEvent as JoinGameRoomHubRequestResponse;
-        setRoom({
-          id: joinResponse.RoomId,
-          adminName: joinResponse.AdminName,
-          hasStarted: false,
-          players: joinResponse.Players.map(
-            x =>
-              new GameRoomPlayerData(
+        setRoom(roomDispatch => {
+          if (roomDispatch == null) {
+            roomDispatch = {
+              id: joinResponse.RoomId,
+              adminName: joinResponse.AdminName,
+              hasStarted: false,
+              players: joinResponse.Players.map(x => new GameRoomPlayerData(
                 x.Name,
                 x.Name == user?.name,
-                x.Class ? {name: x.Class.Name, id: x.Class.Id} : null,
-              ),
-          ),
+                x.Class ? { name: x.Class.Name, id: x.Class.Id } : null
+              ))
+            }
+          }
+          else {
+            roomDispatch.id = joinResponse.RoomId,
+            roomDispatch.hasStarted = false;
+            roomDispatch.adminName = joinResponse.AdminName,
+            roomDispatch.players = joinResponse.Players.map(x => new GameRoomPlayerData(
+              x.Name,
+              x.Name == user?.name,
+              x.Class ? { name: x.Class.Name, id: x.Class.Id } : null
+            ))
+          }
+
+          return roomDispatch;
         });
-        connection.off('OnClientDispatch', handlerBody);
       }
-    };
+    }
 
-    connection.on('OnClientDispatch', handlerBody);
-
-    const joinGameRoomRequest = {
-      $type:
-        'Application.UseCases.GameRooms.Join.JoinGameRoomHubRequest, Application',
-      roomGuid: id,
-      creationOptions: null,
-    };
-
-    await connection.invoke(
-      'OnServerDispatch',
-      JSON.stringify(joinGameRoomRequest),
+    connection.on(
+      "OnClientDispatch",
+      joinRoomEventHandler
     );
+
+    const joinGameRoomRequest =
+    {
+      $type: "Application.UseCases.GameRooms.LobbyActions.JoinGameRoomHubRequest, Application",
+      roomGuid: id.length > 0 ? id : null,
+      creationOptions: null
+    };
+
+    await connection.invoke("OnServerDispatch", JSON.stringify(joinGameRoomRequest));
   }
 
   useEffect(() => {

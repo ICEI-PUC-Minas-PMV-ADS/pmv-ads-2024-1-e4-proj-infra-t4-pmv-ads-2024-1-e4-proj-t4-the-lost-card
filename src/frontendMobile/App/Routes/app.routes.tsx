@@ -10,7 +10,7 @@ const { Screen, Navigator } = createNativeStackNavigator();
 
 const AppRoutes = () => {
   return (
-    <Navigator screenOptions={{ headerShown: false }} initialRouteName='LobbySearch'>
+    <Navigator screenOptions={{ headerShown: false }} initialRouteName='GameRoomRouter'>
       <Screen name="DebugHelper" component={GameRoomDebugHelper} />
       <Screen name="LobbySearch" component={LobbySearch} />
       <Screen name="GameRoomRouter" component={GameRoomRouter}></Screen>

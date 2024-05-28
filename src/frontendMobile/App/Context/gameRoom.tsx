@@ -26,8 +26,8 @@ interface GameRoomContextData {
     hubConnection: signalR.HubConnection | null;
     room: GameRoomData | null;
     setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>;
-    setEvents: React.Dispatch<React.SetStateAction<Map<string, Function>>>;
-    events: Map<string, Function>;
+    setEvents: React.Dispatch<React.SetStateAction<Map<string, (...args: any[]) => void>>>;
+    events: Map<string, (...args: any[]) => void>;
 }
 
 const GameRoomContext = createContext<GameRoomContextData>({} as GameRoomContextData);
@@ -40,7 +40,7 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
     const { user } = useContext(AuthContext)
     const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null);
     const [gameRoom, setGameRoom] = useState<GameRoomData | null>(null);
-    const [events, setEvents] = useState<Map<string, Function>>(new Map<string, Function>());
+    const [events, setEvents] = useState<Map<string, (...args: any[]) => void>>(new Map<string, (...args: any[]) => void>());
 
     async function start(): Promise<signalR.HubConnection> {
         if (!user) {

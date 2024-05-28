@@ -9,7 +9,7 @@ export const GameRoomRouter: React.FC = () => {
     if (!hubConnection && !room)
         return (<LobbySearch />);
 
-    if (!(room!.hasStarted))
+    if (!(room?.hasStarted))
         return (<Lobby />);
 
     return (
