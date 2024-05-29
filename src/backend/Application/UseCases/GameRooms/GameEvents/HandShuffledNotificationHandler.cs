@@ -5,8 +5,6 @@ using Mediator;
 
 namespace Application.UseCases.GameRooms.GameEvents;
 
-public record HandShuffledNotificationDispatch(string PlayerName, IEnumerable<Card> Hand, IEnumerable<Card> DrawPile, IEnumerable<Card> DiscardPile);
-
 public class HandShuffledNotificationHandler : INotificationHandler<HandShuffledNotification>
 {
     private readonly IGameRoomHubService gameRoomHubService;
@@ -21,3 +19,6 @@ public class HandShuffledNotificationHandler : INotificationHandler<HandShuffled
         await gameRoomHubService.Dispatch(ConnectionId, new HandShuffledNotificationDispatch(PlayerName, Hand, DrawPile, DiscardPile), cancellationToken);
     }
 }
+
+public record HandShuffledNotificationDispatch(string PlayerName, IEnumerable<Card> Hand, IEnumerable<Card> DrawPile, IEnumerable<Card> DiscardPile);
+

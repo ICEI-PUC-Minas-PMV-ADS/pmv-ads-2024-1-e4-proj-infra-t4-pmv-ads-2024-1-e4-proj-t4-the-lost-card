@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.LostCardDatabase;
+using Application.Services;
 using Domain.Entities;
 using Domain.GameObjects.Oponents;
 using Domain.Notifications;
@@ -10,14 +11,17 @@ public class ServerTickPlayerTurnEndedNotificationHandler : INotificationHandler
 {
     private readonly IGameRoomRepository gameRoomRepository;
     private readonly IPublisher publisher;
+    private readonly IGameRoomHubService gameRoomHubService;
 
     public ServerTickPlayerTurnEndedNotificationHandler(
         IGameRoomRepository gameRoomRepository, 
-        IPublisher publisher
+        IPublisher publisher,
+        IGameRoomHubService gameRoomHubService
     )
     {
         this.gameRoomRepository = gameRoomRepository;
         this.publisher = publisher;
+        this.gameRoomHubService = gameRoomHubService;
     }
 
     public async ValueTask Handle(PlayerTurnEndedNotification notification, CancellationToken cancellationToken)
@@ -33,5 +37,9 @@ public class ServerTickPlayerTurnEndedNotificationHandler : INotificationHandler
             playerGameInfo.ActionsFinished = false;
 
         await gameRoomRepository.Update(gameRoom, cancellationToken);
+
+        await gameRoomHubService.Dispatch(new TurnStartedNotificationDispatch(), cancellationToken);
     }
 }
+
+public record TurnStartedNotificationDispatch();

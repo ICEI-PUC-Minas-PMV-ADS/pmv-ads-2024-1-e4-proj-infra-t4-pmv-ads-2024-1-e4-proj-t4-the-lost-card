@@ -5,8 +5,6 @@ using Mediator;
 
 namespace Application.UseCases.GameRooms.GameEvents;
 
-public record OponentSpawnedNotificationDispatch(long GameId, int MaxLife, int CurrentLife, OponentIntent Intent);
-
 public class OponentSpawnedNotificationHandler : INotificationHandler<OponentSpawnedNotification>
 {
     private readonly IGameRoomHubService gameRoomHubService;
@@ -28,3 +26,5 @@ public class OponentSpawnedNotificationHandler : INotificationHandler<OponentSpa
         await gameRoomHubService.Dispatch(dispatch, cancellationToken);
     }
 }
+
+public record OponentSpawnedNotificationDispatch(long GameId, int MaxLife, int CurrentLife, OponentIntent Intent);
