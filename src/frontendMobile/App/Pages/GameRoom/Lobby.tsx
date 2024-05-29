@@ -49,7 +49,6 @@ export const Lobby: React.FC = () => {
     }, [])
 
     async function onStartRoom() {
-        
         setEvents(map => {
             const joinRoomEventHandler = map.get(joinRoomEventKey)
             if (joinRoomEventHandler) {
@@ -94,6 +93,13 @@ export const Lobby: React.FC = () => {
             "OnClientDispatch",
             roomStartedHandler
         );
+
+        const startGameRoom =
+        {
+            $type: "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequest, Application"
+        };
+
+        await hubConnection!.invoke("OnServerDispatch", JSON.stringify(startGameRoom));
     }
 
     return (

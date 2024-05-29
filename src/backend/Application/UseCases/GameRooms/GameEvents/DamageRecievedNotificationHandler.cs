@@ -33,8 +33,8 @@ public class DamageRecievedNotificationHandler : INotificationHandler<DamageReci
 
         await gameRoomRepository.Update(notification.GameRoom, cancellationToken);
 
-        await gameRoomHubService.Dispatch(new DamageRecievedHubEvent(playerInfo.PlayerName, blockedDamage, lifeDamage, playerInfo.CurrentBlock, playerInfo.Life, playerInfo.Life < 0), cancellationToken);
+        await gameRoomHubService.Dispatch(new DamageRecievedNotificationDispatch(playerInfo.PlayerName, blockedDamage, lifeDamage, playerInfo.CurrentBlock, playerInfo.Life, playerInfo.Life < 0), cancellationToken);
     }
 }
 
-public record DamageRecievedHubEvent(string PlayerName, int BlockDamageAmount, int LifeDamageAmount, int UpdatedCurrentLife, int UpdatedCurrentBlock, bool WasKilled);
+public record DamageRecievedNotificationDispatch(string PlayerName, int BlockDamageAmount, int LifeDamageAmount, int UpdatedCurrentLife, int UpdatedCurrentBlock, bool WasKilled);

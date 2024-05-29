@@ -7,11 +7,33 @@ class GameRoomPlayerData {
         this.name = name;
         this.isMe = isMe;
         this.gameClass = gameClass;
+        this.healthPoints = Number.MIN_SAFE_INTEGER;
+        this.maxHealthPoints = Number.MIN_SAFE_INTEGER;
+        this.hand = [];
+        this.drawPile = [];
+        this.discardPile = [];
     }
 
     name: string;
     gameClass: { name: string, id: number } | null;
     isMe: boolean;
+    healthPoints: number;
+    maxHealthPoints: number;
+    hand: Card[];
+    drawPile: Card[];
+    discardPile: Card[];
+}
+
+interface Card {
+    Id: number;
+    $type: string;
+}
+
+interface OponnentData {
+    id: number;
+    maxHealthPoints: number;
+    healthPoints: number;
+    intent: { $type: string, id: number, type: number } 
 }
 
 interface GameRoomData {
@@ -19,6 +41,7 @@ interface GameRoomData {
     adminName: string;
     hasStarted: boolean;
     players: GameRoomPlayerData[];
+    oponnent: OponnentData | null
 }
 
 interface GameRoomContextData {
@@ -80,12 +103,12 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
     }
 
     return (
-        <GameRoomContext.Provider 
+        <GameRoomContext.Provider
             value={{
-                start, 
-                hubConnection, 
-                room: gameRoom, 
-                setEvents, 
+                start,
+                hubConnection,
+                room: gameRoom,
+                setEvents,
                 setRoom: setGameRoom,
                 events
             }}
