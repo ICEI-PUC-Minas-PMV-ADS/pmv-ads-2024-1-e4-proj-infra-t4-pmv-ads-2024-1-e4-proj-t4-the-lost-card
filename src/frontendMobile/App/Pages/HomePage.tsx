@@ -4,14 +4,14 @@ import {
   Image,
   Platform,
   Pressable,
-  StyleSheet
+  StyleSheet,
+  View,
 } from 'react-native';
 import Anchor from '../Components/Anchor';
 import Background from '../Components/Background';
 import ListItem from '../Components/ListItem';
 
 const HomePage: React.FC = () => {
-
   const exit = () => {
     if (Platform.OS === 'android') {
       if (BackHandler) {
@@ -21,31 +21,26 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <Background style={styles.container}>
-          <Image source={require('../Assets/Logo.png')} style={styles.logo} />
+    <Background>
+      <Image source={require('../Assets/Logo.png')}/>
 
+      <View style={styles.menuOptions}>
         <Anchor text="Entrar" route="SignInPage" />
         <Anchor text="Registrar-se" route="SignUpPage" />
         <Pressable onPress={exit}>
           <ListItem text="Sair" />
         </Pressable>
+      </View>
     </Background>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end'
-  },
-  logo: {
-    position: 'relative',
-    left: 380,
-    top: 50,
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-  },
+  menuOptions: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0
+  }
 });
 
 export default HomePage;
