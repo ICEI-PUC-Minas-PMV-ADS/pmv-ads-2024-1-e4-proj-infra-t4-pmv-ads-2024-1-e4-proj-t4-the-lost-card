@@ -7,11 +7,12 @@ import {
 interface LostCardButtonProps {
   text: string;
   onPress: () => void;
+  disabled? : boolean
 }
 
-const LostCardButton: React.FC<LostCardButtonProps> = ({onPress, text}) => {
+const LostCardButton: React.FC<LostCardButtonProps> = ({onPress, text, disabled}) => {
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
+        <TouchableOpacity style={styles.button} onPress={onPress} disabled={disabled}>
           <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
       );

@@ -1,130 +1,209 @@
-import { Text, View, TextStyle, Button } from "react-native";
-import React, { useContext, useEffect } from 'react';
-import GameRoomContext from "../../Context/gameRoom";
-import AuthContext from "../../Context/auth";
-import { joinRoomEventKey } from "./LobbySearch";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import GameRoomContext from '../../Context/gameRoom';
+import AuthContext from '../../Context/auth';
+import {joinRoomEventKey} from './LobbySearch';
+import Background from '../../Components/Background';
+import Kawasaki from '../../Components/Kawasaki';
+import WarriorIcon from '../../Assets/Warrior.svg';
+import LostCardButton from '../../Components/Button';
 
-const classChoosenEventKey = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application";
+const classChoosenEventKey =
+  'Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application';
 
-const roomStartedEventKey = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
+const roomStartedEventKey =
+  'Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application';
 
 interface ChooseClassGameActionRequestResponse {
-    $type: "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application";
-    Name: string;
-    GameClassId: number;
-    GameClassName: string;
+  $type: 'Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application';
+  Name: string;
+  GameClassId: number;
+  GameClassName: string;
 }
 
 export const Lobby: React.FC = () => {
-    const { room, hubConnection, setEvents, events, setRoom } = useContext(GameRoomContext);
-    const { user } = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
+  const { events, hubConnection, room, setEvents, setRoom } = useContext(GameRoomContext);
+  const [players, setPlayers] = useState(room!.players);
 
-    const canStartRoom = React.useMemo(() => {
-        return room?.adminName == user?.name && (room?.players.length ?? 0) > 1 && room?.players.every(p => p.gameClass != null)
-    }, [room, user]);
+  const canStartRoom = React.useMemo(() => {
+    return (
+      room?.adminName == user?.name &&
+      (room?.players.length ?? 0) > 1 &&
+      room?.players.every(p => p.gameClass != null)
+    );
+  }, [room, user]);
 
-    const classChoosenEventHandler = async (rawEvent: any) => {
-        const anyEvent = JSON.parse(rawEvent);
-        if (anyEvent.$type == classChoosenEventKey) {
-            const chooseClassGameActionRequestResponse = anyEvent as ChooseClassGameActionRequestResponse;
-            setRoom(roomDispatch => {
-                const player = roomDispatch!.players.filter(x => x.name == chooseClassGameActionRequestResponse.Name)[0];
-                player.gameClass = { name: chooseClassGameActionRequestResponse.GameClassName, id: chooseClassGameActionRequestResponse.GameClassId };
-                return roomDispatch;
-            });
-        }
-    }
+  const classChoosenEventHandler = async (rawEvent: any) => {
+    console.log('callback ativo');
+    const anyEvent = JSON.parse(rawEvent);
+    if (anyEvent.$type == classChoosenEventKey) {
+      console.log('chamando evento de classe escolhida');
+      const chooseClassGameActionRequestResponse =
+        anyEvent as ChooseClassGameActionRequestResponse;
 
-    useEffect(() => {
-        if (!events.has(classChoosenEventKey)) {
-            setEvents(map => {
-                map.set(classChoosenEventKey, classChoosenEventHandler)
-                return map;
-            })
-            hubConnection!.on(
-                "OnClientDispatch",
-                classChoosenEventHandler
-            );
-        }
-    }, [])
+      setPlayers(playersDispatch => {
+        const playerTargetDict = playersDispatch.map((anyPlayer, index) => {
+          return {
+            isTarget:
+              anyPlayer.name == chooseClassGameActionRequestResponse.Name,
+            player: anyPlayer,
+            index: index,
+          };
+        });
 
-    async function onStartRoom() {
-        setEvents(map => {
-            const joinRoomEventHandler = map.get(joinRoomEventKey)
-            if (joinRoomEventHandler) {
-                hubConnection!.off(
-                    "OnClientDispatch",
-                    joinRoomEventHandler
-                )
-                map.delete(joinRoomEventKey)
-            }
+        const targetPlayer = playerTargetDict.filter(x => x.isTarget)[0];
 
-            return map;
-        })
-
-        setEvents(map => {
-            map.delete(classChoosenEventKey)
-            return map;
-        })
-
-        hubConnection!.off(
-            "OnClientDispatch",
-            classChoosenEventHandler
-        )
-
-        const roomStartedHandler = async (rawEvent: any) => {
-            const anyEvent = JSON.parse(rawEvent);
-            if (anyEvent.$type == roomStartedEventKey) {
-                setRoom(roomDispatch => {
-                    if (roomDispatch != null)
-                        roomDispatch.hasStarted = true;
-
-                    return roomDispatch;
-                });
-
-                hubConnection!.off(
-                    "OnClientDispatch",
-                    roomStartedHandler
-                )
-            }
-        }
-
-        hubConnection!.on(
-            "OnClientDispatch",
-            roomStartedHandler
-        );
-
-        const startGameRoom =
-        {
-            $type: "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequest, Application"
+        targetPlayer.player.gameClass = {
+          name: chooseClassGameActionRequestResponse.GameClassName,
+          id: chooseClassGameActionRequestResponse.GameClassId,
         };
 
-        await hubConnection!.invoke("OnServerDispatch", JSON.stringify(startGameRoom));
+        return [
+          ...playersDispatch.filter(x => x != targetPlayer.player),
+          targetPlayer.player,
+        ];
+      });
     }
+  };
 
-    return (
-        <View style={{ gap: 10, flexDirection: 'column', alignItems: 'center' }}>
-            <Text style={contrastTextStyle}>{"\u2022 Lobby"}</Text>
-            {
-                room?.players.map((player, index) => <Text key={index} style={textStyle}>{`\u2022${player.name} with class ${player.gameClass?.name ?? "None"}. Is Me? ${player.isMe}`}</Text>)
-            }
-            <Button disabled={!canStartRoom} title={"Começar"} onPress={onStartRoom} />
-        </View>
+  useEffect(() => {
+    if (!events.has(classChoosenEventKey)) {
+      console.log('adicionando callback');
+      setEvents(map => {
+        map.set(classChoosenEventKey, classChoosenEventHandler);
+        return map;
+      });
+      hubConnection!.on('OnClientDispatch', classChoosenEventHandler);
+    }
+  }, []);
+
+  async function onStartRoom() {
+    setEvents(map => {
+      const joinRoomEventHandler = map.get(joinRoomEventKey);
+      if (joinRoomEventHandler) {
+        hubConnection!.off('OnClientDispatch', joinRoomEventHandler);
+        map.delete(joinRoomEventKey);
+      }
+
+      return map;
+    });
+
+    setEvents(map => {
+      map.delete(classChoosenEventKey);
+      return map;
+    });
+
+    hubConnection!.off('OnClientDispatch', classChoosenEventHandler);
+
+    const roomStartedHandler = async (rawEvent: any) => {
+      const anyEvent = JSON.parse(rawEvent);
+      if (anyEvent.$type == roomStartedEventKey) {
+        setRoom(roomDispatch => {
+          if (roomDispatch != null) roomDispatch.hasStarted = true;
+
+          return roomDispatch;
+        });
+
+        hubConnection!.off('OnClientDispatch', roomStartedHandler);
+      }
+    };
+
+    hubConnection!.on('OnClientDispatch', roomStartedHandler);
+
+    const startGameRoom = {
+      $type:
+        'Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequest, Application',
+    };
+
+    await hubConnection!.invoke(
+      'OnServerDispatch',
+      JSON.stringify(startGameRoom),
     );
-}
+  }
 
-const contrastTextStyle: Readonly<TextStyle> = {
-    color: 'red',
-    fontSize: 35,
-    textShadowColor: '#0149BF',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-}
+  const classChoosen = (id: number) => {
+    const chooseClass = {
+      $type:
+        'Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequest, Application',
+      GameClassId: id,
+    };
 
-const textStyle: Readonly<TextStyle> = {
-    color: 'red',
-    fontSize: 12,
-    textShadowColor: '#0149BF',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-}
+    hubConnection?.invoke('OnServerDispatch', JSON.stringify(chooseClass));
+  };
+
+  const Warrior = () => {
+    return (
+      <View style={{justifyContent: 'center'}}>
+        <WarriorIcon width={40} />
+      </View>
+    );
+  };
+
+  const icons = new Map<number, JSX.Element>([[15977656387767, Warrior()]]);
+
+  return (
+    <Background>
+      <View style={styles.container}>
+        <View style={{gap: 15, alignItems: 'flex-start', height: '80%'}}>
+          {players.map((player, index) => (
+            <Kawasaki
+              key={index}
+              text={`${player.name} ${player.isMe ? '<-' : ''}`}>
+              {player.gameClass?.id ? icons.get(player.gameClass?.id) : null}
+            </Kawasaki>
+          ))}
+        </View>
+        <View style={styles.verticleLine} />
+        <View
+          style={{
+            alignItems: 'flex-start',
+            height: '80%',
+            justifyContent: 'space-between',
+          }}>
+          <View>
+            <Text style={{fontSize: 24}}>Escolher classe:</Text>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              <TouchableOpacity onPress={() => classChoosen(15977656387767)}>
+                <Warrior />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <LostCardButton
+            text="Começar"
+            disabled={canStartRoom}
+            onPress={onStartRoom}
+          />
+        </View>
+      </View>
+    </Background>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '80%',
+    height: '75%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#5E5C72',
+    borderRadius: 10,
+    padding: 20,
+  },
+  verticleLine: {
+    height: '90%',
+    width: 1,
+    backgroundColor: '#909090',
+  },
+});

@@ -3,7 +3,7 @@ import {StyleSheet, Text, Touchable, TouchableOpacity, View} from 'react-native'
 
 interface KawasakiProps extends PropsWithChildren {
     text : string,
-    onPress: () => void;
+    onPress?: () => void;
 }
 
 const Kawasaki: React.FC<KawasakiProps> = ({children, text, onPress}) => {

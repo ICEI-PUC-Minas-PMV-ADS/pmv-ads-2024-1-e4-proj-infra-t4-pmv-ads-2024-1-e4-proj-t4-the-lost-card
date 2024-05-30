@@ -36,7 +36,7 @@ interface OponnentData {
     intent: { $type: string, id: number, type: number } 
 }
 
-interface GameRoomData {
+export interface GameRoomData {
     id: string;
     adminName: string;
     hasStarted: boolean;
