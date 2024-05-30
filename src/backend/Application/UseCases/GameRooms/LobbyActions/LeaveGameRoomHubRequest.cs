@@ -45,6 +45,7 @@ public class LeaveGameRoomHubRequestHandler : IGameRoomRequestHandler<LeaveGameR
             return new NotFoundError("Room not found");
 
         request.CurrentRoom.Players.RemoveWhere(p => p.PlayerId == request.Requester.Id);
+        request.CurrentRoom.GameInfo?.PlayersInfo.RemoveWhere(p => p.PlayerId == request.Requester.Id);
 
         if (request.CurrentRoom.Players.Any())
             await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);

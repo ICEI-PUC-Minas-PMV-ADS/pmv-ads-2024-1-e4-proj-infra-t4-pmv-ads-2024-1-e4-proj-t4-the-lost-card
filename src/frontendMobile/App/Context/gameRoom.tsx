@@ -9,6 +9,8 @@ class GameRoomPlayerData {
         this.gameClass = gameClass;
         this.healthPoints = Number.MIN_SAFE_INTEGER;
         this.maxHealthPoints = Number.MIN_SAFE_INTEGER;
+        this.blockPoints = 0;
+        this.isDead = false;
         this.hand = [];
         this.drawPile = [];
         this.discardPile = [];
@@ -19,6 +21,8 @@ class GameRoomPlayerData {
     isMe: boolean;
     healthPoints: number;
     maxHealthPoints: number;
+    blockPoints: number;
+    isDead: boolean;
     hand: Card[];
     drawPile: Card[];
     discardPile: Card[];
@@ -33,7 +37,7 @@ interface OponnentData {
     id: number;
     maxHealthPoints: number;
     healthPoints: number;
-    intent: { $type: string, id: number, type: number } 
+    intent: { $type: string, id: number, type: number, damageAmount: number | undefined } 
 }
 
 export interface GameRoomData {

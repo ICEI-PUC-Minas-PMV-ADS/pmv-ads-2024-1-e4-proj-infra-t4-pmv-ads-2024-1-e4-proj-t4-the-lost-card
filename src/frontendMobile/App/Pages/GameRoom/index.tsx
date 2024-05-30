@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import GameRoomContext from '../../Context/gameRoom';
 import {LobbySearch} from './LobbySearch';
 import {Lobby} from './Lobby';
+import { GameProper } from './GameProper';
 
 export const GameRoomRouter: React.FC = () => {
   const {hubConnection, room, events, setEvents, setRoom} =
@@ -14,5 +15,5 @@ export const GameRoomRouter: React.FC = () => {
       <Lobby />
     );
 
-  return <></>;
+  return <GameProper />;
 };

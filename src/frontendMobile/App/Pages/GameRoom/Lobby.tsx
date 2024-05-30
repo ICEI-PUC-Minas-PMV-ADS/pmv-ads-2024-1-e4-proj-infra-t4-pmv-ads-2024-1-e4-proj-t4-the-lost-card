@@ -4,10 +4,10 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GameRoomContext from '../../Context/gameRoom';
 import AuthContext from '../../Context/auth';
-import {joinRoomEventKey} from './LobbySearch';
+import { joinRoomEventKey } from './LobbySearch';
 import Background from '../../Components/Background';
 import Kawasaki from '../../Components/Kawasaki';
 import WarriorIcon from '../../Assets/Warrior.svg';
@@ -27,17 +27,16 @@ interface ChooseClassGameActionRequestResponse {
 }
 
 export const Lobby: React.FC = () => {
-  const {user} = useContext(AuthContext);
   const { events, hubConnection, room, setEvents, setRoom } = useContext(GameRoomContext);
   const [players, setPlayers] = useState(room!.players);
 
   const canStartRoom = React.useMemo(() => {
     return (
-      room?.adminName == user?.name &&
+      room?.adminName == room?.players.filter(x => x.isMe)[0] &&
       (room?.players.length ?? 0) > 1 &&
       room?.players.every(p => p.gameClass != null)
     );
-  }, [room, user]);
+  }, [room]);
 
   const classChoosenEventHandler = async (rawEvent: any) => {
     console.log('callback ativo');
@@ -50,8 +49,7 @@ export const Lobby: React.FC = () => {
       setPlayers(playersDispatch => {
         const playerTargetDict = playersDispatch.map((anyPlayer, index) => {
           return {
-            isTarget:
-              anyPlayer.name == chooseClassGameActionRequestResponse.Name,
+            isTarget: anyPlayer.name == chooseClassGameActionRequestResponse.Name,
             player: anyPlayer,
             index: index,
           };
@@ -72,49 +70,29 @@ export const Lobby: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (!events.has(classChoosenEventKey)) {
-      console.log('adicionando callback');
+  const roomStartedHandler = async (rawEvent: any) => {
+    const anyEvent = JSON.parse(rawEvent);
+    if (anyEvent.$type == roomStartedEventKey) {
       setEvents(map => {
-        map.set(classChoosenEventKey, classChoosenEventHandler);
+        map.delete(joinRoomEventKey);
         return map;
       });
-      hubConnection!.on('OnClientDispatch', classChoosenEventHandler);
+
+      setRoom(roomDispatch => {
+        return {...roomDispatch!, hasStarted: true};
+      });
+
+      hubConnection!.off('OnClientDispatch', roomStartedHandler);
     }
-  }, []);
+  };
 
   async function onStartRoom() {
-    setEvents(map => {
-      const joinRoomEventHandler = map.get(joinRoomEventKey);
-      if (joinRoomEventHandler) {
-        hubConnection!.off('OnClientDispatch', joinRoomEventHandler);
-        map.delete(joinRoomEventKey);
-      }
-
-      return map;
-    });
-
     setEvents(map => {
       map.delete(classChoosenEventKey);
       return map;
     });
 
     hubConnection!.off('OnClientDispatch', classChoosenEventHandler);
-
-    const roomStartedHandler = async (rawEvent: any) => {
-      const anyEvent = JSON.parse(rawEvent);
-      if (anyEvent.$type == roomStartedEventKey) {
-        setRoom(roomDispatch => {
-          if (roomDispatch != null) roomDispatch.hasStarted = true;
-
-          return roomDispatch;
-        });
-
-        hubConnection!.off('OnClientDispatch', roomStartedHandler);
-      }
-    };
-
-    hubConnection!.on('OnClientDispatch', roomStartedHandler);
 
     const startGameRoom = {
       $type:
@@ -126,6 +104,23 @@ export const Lobby: React.FC = () => {
       JSON.stringify(startGameRoom),
     );
   }
+
+  useEffect(() => {
+    if (!events.has(classChoosenEventKey)) {
+      setEvents(map => {
+        map.set(classChoosenEventKey, classChoosenEventHandler);
+        return map;
+      });
+      hubConnection!.on('OnClientDispatch', classChoosenEventHandler);
+    }
+    if (!events.has(joinRoomEventKey)) {
+      setEvents(map => {
+        map.set(joinRoomEventKey, roomStartedHandler)
+        return map;
+      });
+      hubConnection!.on('OnClientDispatch', roomStartedHandler);
+    }
+  }, []);
 
   const classChoosen = (id: number) => {
     const chooseClass = {
@@ -139,7 +134,7 @@ export const Lobby: React.FC = () => {
 
   const Warrior = () => {
     return (
-      <View style={{justifyContent: 'center'}}>
+      <View style={{ justifyContent: 'center' }}>
         <WarriorIcon width={40} />
       </View>
     );
@@ -150,7 +145,7 @@ export const Lobby: React.FC = () => {
   return (
     <Background>
       <View style={styles.container}>
-        <View style={{gap: 15, alignItems: 'flex-start', height: '80%'}}>
+        <View style={{ gap: 15, alignItems: 'flex-start', height: '80%' }}>
           {players.map((player, index) => (
             <Kawasaki
               key={index}
@@ -167,7 +162,7 @@ export const Lobby: React.FC = () => {
             justifyContent: 'space-between',
           }}>
           <View>
-            <Text style={{fontSize: 24}}>Escolher classe:</Text>
+            <Text style={{ fontSize: 24 }}>Escolher classe:</Text>
             <View
               style={{
                 justifyContent: 'center',
