@@ -49,6 +49,7 @@ export const LobbySearch: React.FC = () => {
               id: joinResponse.RoomId,
               adminName: joinResponse.AdminName,
               hasStarted: false,
+              oponnent: null,
               players: joinResponse.Players.map(x => new GameRoomPlayerData(
                 x.Name,
                 x.Name == user?.name,
