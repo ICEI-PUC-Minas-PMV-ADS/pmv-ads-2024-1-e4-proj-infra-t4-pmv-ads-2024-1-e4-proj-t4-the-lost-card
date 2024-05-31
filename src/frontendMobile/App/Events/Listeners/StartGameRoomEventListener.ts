@@ -4,6 +4,7 @@ import { ChooseClassEventListenerKey } from "./ChooseClassEventListener";
 import { DamagedRecievedEventListener, DamagedRecievedEventListenerContent, TextEffect } from "./DamageRecievedEventListener";
 import { HandShuffledEventListener, HandShuffledEventListenerContent } from "./HandShuffledEventListener";
 import { JoinGameRoomEventListeningKey } from "./JoinGameRoomEventListener";
+import { PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent } from "./PlayerSpawnedEventListener";
 import { OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent } from "./oponnentSpawnedEventListener";
 
 type StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
@@ -32,9 +33,11 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
             removeListener(StartGameRoomEventListenerKey);
             removeListener(ChooseClassEventListenerKey);
 
+            const playerSpawnedEventListener = new PlayerSpawnedEventListener(setRoom)
             const oponnentSpawnedEventListener = new OponnentSpawnedEventListener(setRoom);
             const damagedRecievedEventListener = new DamagedRecievedEventListener(setRoom, setTextEffects);
             const handShuffledEventListener = new HandShuffledEventListener(setRoom);
+            ensureListener<PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent>(playerSpawnedEventListener);
             ensureListener<OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent>(oponnentSpawnedEventListener);
             ensureListener<DamagedRecievedEventListener, DamagedRecievedEventListenerContent>(damagedRecievedEventListener);
             ensureListener<HandShuffledEventListener, HandShuffledEventListenerContent>(handShuffledEventListener);

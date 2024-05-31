@@ -70,6 +70,7 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
 
                     var connectionId = request.CurrentRoom.Players.First(x => x.PlayerId == p.PlayerId).ConnectionId;
 
+                    gameRoomHubService.AddDelayed(new PlayerSpawnedNotification(p));
                     gameRoomHubService.AddDelayed(new HandShuffledNotification(p.PlayerId, connectionId, p.PlayerName, hand, drawPile, discardPile));
 
                     return new GameRoom.RoomGameInfo.RoomEncounterInfo.PlayerGameEncounterInfo

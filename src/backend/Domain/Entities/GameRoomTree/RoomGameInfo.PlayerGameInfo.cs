@@ -14,7 +14,7 @@ public partial class GameRoom
             public long? GameClassId { get; set; }
             public int MaxLife { get; set; }
             public int Life { get; set; }
-            public int CurrentBlock {  get; set; }
+            public int CurrentBlock { get; set; }
             public HashSet<Card> Cards { get; set; } = new HashSet<Card>();
         }
     }
