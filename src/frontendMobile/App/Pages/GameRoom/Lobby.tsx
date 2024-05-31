@@ -14,8 +14,13 @@ import { ChooseClassEventListener, ChooseClassEventListenerContent } from '../..
 import { StartGameRoomEventListener, StartGameRoomEventListenerContent } from '../../Events/Listeners/StartGameRoomEventListener';
 import { StartGameRoomEventDispatch } from '../../Events/Dispatchs/StartGameRoomEventDispatch';
 import { ChooseClassEventDispatch } from '../../Events/Dispatchs/ChooseClassEventDispatch';
+import { TextEffect } from '../../Events/Listeners/DamageRecievedEventListener';
 
-export const Lobby: React.FC = () => {
+interface LobbyProps {
+  setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>
+}
+
+export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
   const { room, setRoom, ensureListener, removeListener, dispatch } = useContext(GameRoomContext);
 
   const canStartRoom = React.useMemo(() => {
@@ -27,7 +32,7 @@ export const Lobby: React.FC = () => {
   }, [room]);
 
   const chooseClassEventListener = new ChooseClassEventListener(setRoom);
-  const roomStartedEventListener = new StartGameRoomEventListener(setRoom, removeListener);
+  const roomStartedEventListener = new StartGameRoomEventListener(setRoom, removeListener, setTextEffects, ensureListener);
 
   useEffect(() => {
     ensureListener<ChooseClassEventListener, ChooseClassEventListenerContent>(chooseClassEventListener);

@@ -1,7 +1,10 @@
 import { GameRoomEventListener } from "..";
-import { GameRoomData } from "../../Context/gameRoom";
+import { EnsureListenerType, GameRoomData } from "../../Context/gameRoom";
 import { ChooseClassEventListenerKey } from "./ChooseClassEventListener";
+import { DamagedRecievedEventListener, DamagedRecievedEventListenerContent, TextEffect } from "./DamageRecievedEventListener";
+import { HandShuffledEventListener, HandShuffledEventListenerContent } from "./HandShuffledEventListener";
 import { JoinGameRoomEventListeningKey } from "./JoinGameRoomEventListener";
+import { OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent } from "./oponnentSpawnedEventListener";
 
 type StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
 const StartGameRoomEventListenerKey: StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
@@ -14,7 +17,12 @@ export interface StartGameRoomEventListenerContent {
 }
 
 export class StartGameRoomEventListener extends GameRoomEventListener<StartGameRoomEventListenerContent> {
-    constructor(setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>, removeListener: (listeningKey: string) => void) {
+    constructor(
+        setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>,
+        removeListener: (listeningKey: string) => void,
+        setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>,
+        ensureListener: EnsureListenerType
+    ) {
         const onTrigger = (eventContet: StartGameRoomEventListenerContent) => {
             setRoom(roomDispatch => {
                 return { ...roomDispatch!, hasStarted: true };
@@ -23,6 +31,13 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
             removeListener(JoinGameRoomEventListeningKey);
             removeListener(StartGameRoomEventListenerKey);
             removeListener(ChooseClassEventListenerKey);
+
+            const oponnentSpawnedEventListener = new OponnentSpawnedEventListener(setRoom);
+            const damagedRecievedEventListener = new DamagedRecievedEventListener(setRoom, setTextEffects);
+            const handShuffledEventListener = new HandShuffledEventListener(setRoom);
+            ensureListener<OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent>(oponnentSpawnedEventListener);
+            ensureListener<DamagedRecievedEventListener, DamagedRecievedEventListenerContent>(damagedRecievedEventListener);
+            ensureListener<HandShuffledEventListener, HandShuffledEventListenerContent>(handShuffledEventListener);
         }
 
         super(StartGameRoomEventListenerKey, onTrigger);

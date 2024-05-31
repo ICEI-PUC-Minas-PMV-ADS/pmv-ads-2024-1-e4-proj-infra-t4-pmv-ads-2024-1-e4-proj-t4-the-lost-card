@@ -1,19 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import GameRoomContext from '../../Context/gameRoom';
 import { LobbySearch } from './LobbySearch';
 import { Lobby } from './Lobby';
 import { GameProper } from './GameProper';
+import { TextEffect } from '../../Events/Listeners/DamageRecievedEventListener';
 
 export const GameRoomRouter: React.FC = () => {
-  const { room } =
-    useContext(GameRoomContext);
+  const { room } = useContext(GameRoomContext);
+  const [textEffects, setTextEffects] = useState<TextEffect[]>([]);
+
 
   if (room === null) return <LobbySearch />;
 
   if (room !== null && !room.hasStarted)
     return (
-      <Lobby />
+      <Lobby setTextEffects={setTextEffects} />
     );
 
-  return <GameProper />;
+  return <GameProper textEffects={textEffects} setTextEffects={setTextEffects} />;
 };

@@ -8,7 +8,7 @@ public abstract class Card : GameObjectBaseClass
 {
     public override string QueryKey { get; } = typeof(Card).FullName!;
 
-    public virtual int? GameClassId { get; } = null;
+    public virtual long? GameClassId { get; } = null;
 
     public virtual string Name { get; } = "Carta padrão";
 

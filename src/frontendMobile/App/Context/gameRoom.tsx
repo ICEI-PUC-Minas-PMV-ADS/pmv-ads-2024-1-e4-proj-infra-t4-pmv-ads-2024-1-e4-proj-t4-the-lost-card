@@ -3,7 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import AuthContext from './auth';
 import { GameRoomEventDispatch, GameRoomEventListener, GameRoomEventListenerBase, Typed } from "../Events"
 
-type ensureListenerType = <TListener extends GameRoomEventListener<TListenerContent>, TListenerContent extends Typed>(listener: TListener) => void;
+export type EnsureListenerType = <TListener extends GameRoomEventListener<TListenerContent>, TListenerContent extends Typed>(listener: TListener) => void;
 class GameRoomPlayerData {
     constructor(name: string, isMe: boolean, gameClass: { name: string, id: number } | null) {
         this.name = name;
@@ -30,7 +30,7 @@ class GameRoomPlayerData {
     discardPile: Card[];
 }
 
-interface Card {
+export interface Card {
     Id: number;
     $type: string;
 }
@@ -55,7 +55,7 @@ interface GameRoomContextData {
     room: GameRoomData | null;
     setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>;
     dispatch<TDispatch extends GameRoomEventDispatch<TDispatchContent>, TDispatchContent extends Typed>(dispatch: TDispatch, connection: signalR.HubConnection | null | undefined): Promise<void>;
-    ensureListener: ensureListenerType;
+    ensureListener: EnsureListenerType;
     removeListener(listeningKey: string): void;
 }
 
@@ -88,7 +88,7 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
         });
     }
 
-    const ensureListener: ensureListenerType = (listener) => {
+    const ensureListener: EnsureListenerType = (listener) => {
         if (eventListeners.every(x => x.listener.listeningKey !== listener.listeningKey))
             setEventListeners(eventListeners => {
                 const actualOnTrigger = (rawEvent: string) => {
