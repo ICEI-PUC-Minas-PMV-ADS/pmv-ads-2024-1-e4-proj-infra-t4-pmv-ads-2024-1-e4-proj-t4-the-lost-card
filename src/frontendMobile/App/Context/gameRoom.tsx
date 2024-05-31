@@ -1,7 +1,9 @@
-import React, { ReactElement, useContext, createContext, useState } from 'react';
+import React, { ReactElement, useContext, createContext, useState, useEffect } from 'react';
 import * as signalR from "@microsoft/signalr";
 import AuthContext from './auth';
+import { GameRoomEventDispatch, GameRoomEventListener, GameRoomEventListenerBase, Typed } from "../Events"
 
+type ensureListenerType = <TListener extends GameRoomEventListener<TListenerContent>, TListenerContent extends Typed>(listener: TListener) => void;
 class GameRoomPlayerData {
     constructor(name: string, isMe: boolean, gameClass: { name: string, id: number } | null) {
         this.name = name;
@@ -37,7 +39,7 @@ interface OponnentData {
     id: number;
     maxHealthPoints: number;
     healthPoints: number;
-    intent: { $type: string, id: number, type: number, damageAmount: number | undefined } 
+    intent: { $type: string, id: number, type: number, damageAmount: number | undefined }
 }
 
 export interface GameRoomData {
@@ -50,11 +52,11 @@ export interface GameRoomData {
 
 interface GameRoomContextData {
     start(): Promise<signalR.HubConnection>;
-    hubConnection: signalR.HubConnection | null;
     room: GameRoomData | null;
     setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>;
-    setEvents: React.Dispatch<React.SetStateAction<Map<string, (...args: any[]) => void>>>;
-    events: Map<string, (...args: any[]) => void>;
+    dispatch<TDispatch extends GameRoomEventDispatch<TDispatchContent>, TDispatchContent extends Typed>(dispatch: TDispatch, connection: signalR.HubConnection | null | undefined): Promise<void>;
+    ensureListener: ensureListenerType;
+    removeListener(listeningKey: string): void;
 }
 
 const GameRoomContext = createContext<GameRoomContextData>({} as GameRoomContextData);
@@ -67,7 +69,63 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
     const { user } = useContext(AuthContext)
     const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null);
     const [gameRoom, setGameRoom] = useState<GameRoomData | null>(null);
-    const [events, setEvents] = useState<Map<string, (...args: any[]) => void>>(new Map<string, (...args: any[]) => void>());
+    const [eventListeners, setEventListeners] = useState<{ listener: GameRoomEventListenerBase, listening: boolean, actualOnTrigger: (event: string) => void }[]>([]);
+
+    function removeListener(listeningKey: string) {
+        setEventListeners(eventListeners => {
+            const eventsToRemoveDict = eventListeners.map((x, index) => {
+                return {
+                    isTarget: x.listener.listeningKey == listeningKey && x.listening,
+                    value: x,
+                    index: index,
+                };
+            });
+
+            if (eventsToRemoveDict.length > 0)
+                hubConnection!.off("OnClientDispatch", eventsToRemoveDict[0].value.actualOnTrigger)
+
+            return eventsToRemoveDict.filter(x => !x.isTarget).map(x => x.value);
+        });
+    }
+
+    const ensureListener: ensureListenerType = (listener) => {
+        if (eventListeners.every(x => x.listener.listeningKey !== listener.listeningKey))
+            setEventListeners(eventListeners => {
+                const actualOnTrigger = (rawEvent: string) => {
+                    const anyEvent = JSON.parse(rawEvent);
+                    if (anyEvent.$type == listener.listeningKey)
+                        listener.onTrigger(anyEvent)
+                }
+                return [...eventListeners, { listener, listening: false, actualOnTrigger }]
+            });
+    }
+
+    useEffect(() => {
+        const eventsNotListened = eventListeners.filter(x => !x.listening);
+        if (eventsNotListened.length > 0) {
+            setEventListeners(eventListeners => {
+                const eventsToListenDict = eventListeners.map((listener, index) => {
+                    return {
+                        isTarget: !listener.listening,
+                        value: listener,
+                        index: index,
+                    };
+                });
+
+                return [
+                    ...eventsToListenDict.filter(x => !x.isTarget).map(x => x.value),
+                    ...eventsToListenDict.filter(x => x.isTarget).map(x => {
+                        hubConnection!.on('OnClientDispatch', x.value.actualOnTrigger)
+                        return { listener: x.value.listener, listening: true, actualOnTrigger: x.value.actualOnTrigger }
+                    })
+                ];
+            });
+        }
+    }, [eventListeners]);
+
+    async function dispatch<TDispatch extends GameRoomEventDispatch<TDispatchContent>, TDispatchContent extends Typed>(dispatch: TDispatch, connection: signalR.HubConnection | null | undefined) {
+        await (connection ? connection : hubConnection!).invoke("OnServerDispatch", JSON.stringify(dispatch.dispatchFactory()));
+    }
 
     async function start(): Promise<signalR.HubConnection> {
         if (!user) {
@@ -75,7 +133,7 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
         }
 
         if (hubConnection) {
-            throw new Error("Already connected");
+            return hubConnection;
         }
 
         console.log(`creating connection... with token: ${user.token}`);
@@ -95,7 +153,7 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
         });
 
         console.log('starting connection...');
-        return await connection.start()
+        return await (connection.start()
             .then(() => {
                 console.log('connected!');
                 setHubConnection(connection);
@@ -103,18 +161,18 @@ export const GameRoomContextProvider: React.FC<GameRoomContextProviderProps> = (
             })
             .catch((err) => {
                 throw err;
-            });
+            }));
     }
 
     return (
         <GameRoomContext.Provider
             value={{
                 start,
-                hubConnection,
                 room: gameRoom,
-                setEvents,
                 setRoom: setGameRoom,
-                events
+                dispatch,
+                ensureListener,
+                removeListener
             }}
         >
             {children}

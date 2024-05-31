@@ -1,14 +1,14 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import GameRoomContext from '../../Context/gameRoom';
-import {LobbySearch} from './LobbySearch';
-import {Lobby} from './Lobby';
+import { LobbySearch } from './LobbySearch';
+import { Lobby } from './Lobby';
 import { GameProper } from './GameProper';
 
 export const GameRoomRouter: React.FC = () => {
-  const {hubConnection, room, events, setEvents, setRoom} =
+  const { room } =
     useContext(GameRoomContext);
 
-  if (hubConnection === null && room === null) return <LobbySearch />;
+  if (room === null) return <LobbySearch />;
 
   if (room !== null && !room.hasStarted)
     return (
