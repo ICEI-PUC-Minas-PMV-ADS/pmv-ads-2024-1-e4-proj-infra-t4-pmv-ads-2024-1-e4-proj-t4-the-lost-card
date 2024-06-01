@@ -22,7 +22,7 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
     private IGroupManager? signalRGroups = default;
     private IHubClients? signalRClients = default;
     public Guid? RoomGuid { get; private set; } = default;
-    public HashSet<INotification> DelayedNotifications { get; private init; } = new HashSet<INotification>();
+    public HashSet<INotification> DelayedNotifications { get; private set; } = new HashSet<INotification>();
     public IRequestMetadata.Metadata? RequestMetadata { get; private set; }
     public bool IsHubRequest { get; private set; } = false;
 
@@ -105,5 +105,9 @@ public class RequestMetadataService : IRequestMetadataService, IGameRoomHubServi
     public void AddDelayed(INotification notification)
     {
         DelayedNotifications.Add(notification);
+    }
+    public void AddDelayed(IEnumerable<INotification> notification)
+    {
+        DelayedNotifications = new HashSet<INotification>(DelayedNotifications.Concat(notification));
     }
 }

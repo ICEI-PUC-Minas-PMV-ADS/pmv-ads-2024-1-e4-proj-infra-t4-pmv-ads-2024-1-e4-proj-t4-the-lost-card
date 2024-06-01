@@ -19,9 +19,9 @@ export class OponnentSpawnedEventListener extends GameRoomEventListener<Oponnent
                 return {
                     ...roomDispatch!,
                     oponnent: {
-                        healthPoints: eventContet.CurrentLife,
+                        CurrentLife: eventContet.CurrentLife,
                         id: eventContet.GameId,
-                        maxHealthPoints: eventContet.MaxLife,
+                        MaxLife: eventContet.MaxLife,
                         intent: { $type: eventContet.Intent.$type, id: eventContet.Intent.Id, type: eventContet.Intent.Type, damageAmount: eventContet.Intent.DamageAmount }
                     }
                 };

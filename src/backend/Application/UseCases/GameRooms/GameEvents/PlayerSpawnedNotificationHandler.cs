@@ -5,7 +5,7 @@ using Mediator;
 
 namespace Application.UseCases.GameRooms.GameEvents;
 
-public record PlayerSpawnedNotificationDispatch(string Name, int CurrentLife, int MaxLife, int CurrentBlock, long GameClassId, string GameClassName);
+public record PlayerSpawnedNotificationDispatch(string Name, int CurrentLife, int MaxLife, int CurrentBlock, long GameClassId, string GameClassName, int CurrentEnergy, int MaxEnergy);
 
 public class PlayerSpawnedNotificationHandler : INotificationHandler<PlayerSpawnedNotification>
 {
@@ -19,12 +19,13 @@ public class PlayerSpawnedNotificationHandler : INotificationHandler<PlayerSpawn
     {
         var dispatch = new PlayerSpawnedNotificationDispatch(
             notification.PlayerGameInfo.PlayerName,
-            notification.PlayerGameInfo.Life,
+            notification.PlayerGameInfo.CurrentLife,
             notification.PlayerGameInfo.MaxLife,
             notification.PlayerGameInfo.CurrentBlock,
             notification.PlayerGameInfo.GameClassId!.Value,
-            GameClasses.Dictionary[notification.PlayerGameInfo.GameClassId!.Value].Name
-
+            GameClasses.Dictionary[notification.PlayerGameInfo.GameClassId!.Value].Name,
+            notification.PlayerGameInfo.CurrentEnergy,
+            notification.PlayerGameInfo.MaxEnergy
         );
 
         await gameRoomHubService.Dispatch(dispatch, cancellationToken);

@@ -7,7 +7,8 @@ public record GameClass(
     string Name,
     IEnumerable<Card> AvailableCards,
     IEnumerable<Card> StartingHand,
-    int StartingLife
+    int StartingMaxLife,
+    int StartingMaxEnergy
 ) : GameObjectBaseRecord(Id)
 {
     public override string QueryKey => typeof(GameClass).FullName!;

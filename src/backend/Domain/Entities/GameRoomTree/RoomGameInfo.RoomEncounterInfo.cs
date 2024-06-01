@@ -8,13 +8,8 @@ public partial class GameRoom
     {
         public partial class RoomEncounterInfo
         {
-            // TODO: Expandir informacoes relacionadas a monstro
-            public int OponentMaxLife { get; set; }
-            public int OponentLife { get; set; }
-            public long OponentGameId { get; set; }
-            public OponentIntent OponentIntent { get; set; } = default!;
-
-            public HashSet<PlayerGameEncounterInfo> PlayersInfo { get; set; } = new();
+            public Oponent? Oponent { get; set; }
+            public int CurrentTurn { get; set; }
         }
     }
 }

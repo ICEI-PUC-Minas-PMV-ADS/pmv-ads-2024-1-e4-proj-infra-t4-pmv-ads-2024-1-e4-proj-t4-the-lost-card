@@ -28,9 +28,9 @@ export class HandShuffledEventListener extends GameRoomEventListener<HandShuffle
 
                 targetedPlayer.player = {
                     ...targetedPlayer.player,
-                    hand: eventContet.Hand,
-                    drawPile: eventContet.DrawPile,
-                    discardPile: eventContet.DiscardPile
+                    Hand: eventContet.Hand,
+                    DrawPile: eventContet.DrawPile,
+                    DiscardPile: eventContet.DiscardPile
                 }
 
                 return {

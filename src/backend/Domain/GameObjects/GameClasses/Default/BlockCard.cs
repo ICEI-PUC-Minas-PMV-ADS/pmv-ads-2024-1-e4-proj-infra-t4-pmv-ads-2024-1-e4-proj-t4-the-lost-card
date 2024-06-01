@@ -1,20 +1,20 @@
 ﻿using Domain.Entities;
+using Domain.Notifications;
+using Mediator;
 
 namespace Domain.GameObjects.GameClasses.Default;
 
 public class BlockCard : Card
 {
-    public int BlockValue { get; } = 5;
-    public override long? GameClassId => DefaultGameClass.Value.Id;
+    public int BlockValue => 5 + (UpgradeAmount > 0 ? 3 : 0);
+    public override long? GameClassId { get; } = IdAssignHelper.CalculateIdHash(nameof(DefaultGameClass));
     public override long Id { get; } = IdAssignHelper.CalculateIdHash(nameof(BlockCard));
-    public override string Name => "Carta de bloqueio";
-    public override string Description => $"Aumenta bloqueio em {BlockValue} pontos";
+    public override string Name { get; } = "Defender";
+    public override string Description { get; } = "Ganhe {BlockValue}🛡️";
+    public override int EnergyCost { get; } = 1;
 
-    public override void OnPlay(GameRoom gameRoom, GameRoom.RoomGameInfo.PlayerGameInfo playerGameInfo)
+    protected override IEnumerable<INotification> InternalOnPlay(GameRoom gameRoom, GameRoom.RoomGameInfo.PlayerGameInfo playerGameInfo)
     {
-        if (gameRoom.GameInfo!.PlayersInfo.TryGetValue(playerGameInfo, out var actualPlayerGameInfo))
-            actualPlayerGameInfo.CurrentBlock += BlockValue;
-
-        base.OnPlay(gameRoom, playerGameInfo);
+        yield return new PlayerStatusUpdatedNotification(gameRoom, playerGameInfo, p => p.CurrentBlock, playerGameInfo.CurrentBlock + BlockValue);
     }
 }

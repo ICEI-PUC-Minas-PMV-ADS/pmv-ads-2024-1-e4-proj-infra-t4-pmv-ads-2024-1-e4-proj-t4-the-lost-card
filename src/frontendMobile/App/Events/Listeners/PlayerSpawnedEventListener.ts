@@ -12,6 +12,8 @@ export interface PlayerSpawnedEventListenerContent extends Typed {
     CurrentBlock: number;
     GameClassId: number;
     GameClassName: string;
+    CurrentEnergy: number;
+    MaxEnergy: number;
 }
 
 export class PlayerSpawnedEventListener extends GameRoomEventListener<PlayerSpawnedEventListenerContent> {
@@ -30,9 +32,11 @@ export class PlayerSpawnedEventListener extends GameRoomEventListener<PlayerSpaw
 
                 targetedPlayer.player = {
                     ...targetedPlayer.player,
-                    healthPoints: eventContet.CurrentLife,
-                    maxHealthPoints: eventContet.MaxLife,
-                    blockPoints: eventContet.CurrentBlock,
+                    CurrentLife: eventContet.CurrentLife,
+                    MaxLife: eventContet.MaxLife,
+                    CurrentBlock: eventContet.CurrentBlock,
+                    CurrentEnergy: eventContet.CurrentEnergy,
+                    MaxEnergy: eventContet.MaxEnergy,
                     gameClass: { id: eventContet.GameClassId, name: eventContet.Name }
                 }
 

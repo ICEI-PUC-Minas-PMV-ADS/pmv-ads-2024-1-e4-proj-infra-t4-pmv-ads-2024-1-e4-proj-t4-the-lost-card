@@ -49,40 +49,37 @@ public class StartGameRoomRequestHandler : IGameRoomRequestHandler<StartGameRoom
         if (request.CurrentRoom.Players.Count > 2)
             return new GameRoomHubRequestError<StartGameRoomHubRequestResponse>("Gamerooms can only start with two people (for now)");
 
-        var randomOponent = Oponents.All.Where(o => o.MinLevel >= 1 && o.MaxLevel <= 1).OrderBy(x => Guid.NewGuid()).First();
+        var randomOponent = Oponents.All.Where(o => o.MinLevel <= 1 && o.MaxLevel > 1).OrderBy(x => Guid.NewGuid()).First();
+        randomOponent.CurrentLife = randomOponent.MaxLife;
+        randomOponent.CurrentIntent = randomOponent.GetNewIntent(request.CurrentRoom);
 
         request.CurrentRoom.GameInfo = new GameRoom.RoomGameInfo
         {
             CurrentLevel = 1,
             EncounterInfo = new GameRoom.RoomGameInfo.RoomEncounterInfo
             {
-                OponentGameId = randomOponent.Id,
-                OponentIntent = randomOponent.GetIntent(request.CurrentRoom),
-                OponentLife = randomOponent.StartingMaxLife,
-                OponentMaxLife = randomOponent.StartingMaxLife,
-                PlayersInfo = request.CurrentRoom.GameInfo!.PlayersInfo.Select(p =>
-                {
-                    var selectedClass = GameClasses.Dictionary[p.GameClassId!.Value];
-
-                    var hand = selectedClass.StartingHand.OrderBy(x => Guid.NewGuid()).Take(5).ToHashSet();
-                    var drawPile = selectedClass.AvailableCards.Where(ac => !hand.Contains(ac)).ToHashSet();
-                    var discardPile = new HashSet<Card>();
-
-                    var connectionId = request.CurrentRoom.Players.First(x => x.PlayerId == p.PlayerId).ConnectionId;
-
-                    gameRoomHubService.AddDelayed(new PlayerSpawnedNotification(p));
-                    gameRoomHubService.AddDelayed(new HandShuffledNotification(p.PlayerId, connectionId, p.PlayerName, hand, drawPile, discardPile));
-
-                    return new GameRoom.RoomGameInfo.RoomEncounterInfo.PlayerGameEncounterInfo
-                    {
-                        DiscardPile = discardPile,
-                        Hand = hand,
-                        DrawPile = drawPile,
-                        PlayerId = p.PlayerId
-                    };
-                }).ToHashSet()
+                Oponent = randomOponent,
+                CurrentTurn = 0
             },
-            PlayersInfo = request.CurrentRoom.GameInfo!.PlayersInfo
+            PlayersInfo = request.CurrentRoom.GameInfo!.PlayersInfo.Select(p =>
+            {
+                var selectedClass = GameClasses.Dictionary[p.GameClassId!.Value];
+
+                var hand = selectedClass.StartingHand.OrderBy(x => Guid.NewGuid()).Take(5).ToHashSet();
+                var drawPile = selectedClass.AvailableCards.Where(ac => !hand.Contains(ac)).ToHashSet();
+                var discardPile = new HashSet<Card>();
+
+                var connectionId = request.CurrentRoom.Players.First(x => x.PlayerId == p.PlayerId).ConnectionId;
+
+                gameRoomHubService.AddDelayed(new PlayerSpawnedNotification(p));
+                gameRoomHubService.AddDelayed(new HandShuffledNotification(p.PlayerId, connectionId, p.PlayerName, hand, drawPile, discardPile));
+
+                p.DiscardPile = discardPile;
+                p.Hand = hand;
+                p.DrawPile = drawPile;
+                p.ActionsFinished = false;
+                return p;
+            }).ToHashSet()
         };
 
         request.CurrentRoom.State = GameRoomState.Started;

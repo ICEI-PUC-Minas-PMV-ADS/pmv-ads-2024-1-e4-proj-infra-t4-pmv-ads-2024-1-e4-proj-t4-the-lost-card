@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 
 namespace Application.UseCases.GameRooms;
 
-
 public class GameRoomHubRequestErrorBase : Error
 {
     public GameRoomHubRequestErrorBase(string message) : base(message)

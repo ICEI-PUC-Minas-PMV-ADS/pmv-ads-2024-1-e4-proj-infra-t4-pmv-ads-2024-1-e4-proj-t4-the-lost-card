@@ -1,11 +1,13 @@
 import { GameRoomEventListener } from "..";
 import { EnsureListenerType, GameRoomData } from "../../Context/gameRoom";
 import { ChooseClassEventListenerKey } from "./ChooseClassEventListener";
-import { DamagedRecievedEventListener, DamagedRecievedEventListenerContent, TextEffect } from "./DamageRecievedEventListener";
 import { HandShuffledEventListener, HandShuffledEventListenerContent } from "./HandShuffledEventListener";
 import { JoinGameRoomEventListeningKey } from "./JoinGameRoomEventListener";
+import { OponentStatusUpdatedEventListener, OponentStatusUpdatedEventListenerContent } from "./OponentStatusUpdatedEventListener";
+import { OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent } from "./OponnentSpawnedEventListener";
+import { PlayCardEventListener, PlayCardEventListenerContent } from "./PlayCardEventListener";
 import { PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent } from "./PlayerSpawnedEventListener";
-import { OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent } from "./oponnentSpawnedEventListener";
+import { PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent, TextEffect } from "./PlayerStatusUpdatedEventListener";
 
 type StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
 const StartGameRoomEventListenerKey: StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
@@ -35,12 +37,16 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
 
             const playerSpawnedEventListener = new PlayerSpawnedEventListener(setRoom)
             const oponnentSpawnedEventListener = new OponnentSpawnedEventListener(setRoom);
-            const damagedRecievedEventListener = new DamagedRecievedEventListener(setRoom, setTextEffects);
+            const playerStatusUpdatedEventListener = new PlayerStatusUpdatedEventListener(setRoom, setTextEffects);
             const handShuffledEventListener = new HandShuffledEventListener(setRoom);
+            const playCardEventListener = new PlayCardEventListener(setRoom);
+            const oponentStatusUpdatedEventListener = new OponentStatusUpdatedEventListener(setRoom, setTextEffects);
             ensureListener<PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent>(playerSpawnedEventListener);
             ensureListener<OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent>(oponnentSpawnedEventListener);
-            ensureListener<DamagedRecievedEventListener, DamagedRecievedEventListenerContent>(damagedRecievedEventListener);
+            ensureListener<PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent>(playerStatusUpdatedEventListener);
             ensureListener<HandShuffledEventListener, HandShuffledEventListenerContent>(handShuffledEventListener);
+            ensureListener<PlayCardEventListener, PlayCardEventListenerContent>(playCardEventListener)
+            ensureListener<OponentStatusUpdatedEventListener, OponentStatusUpdatedEventListenerContent>(oponentStatusUpdatedEventListener)
         }
 
         super(StartGameRoomEventListenerKey, onTrigger);

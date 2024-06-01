@@ -22,7 +22,6 @@ public static class DependencyInjection
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestAuthBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehaviour<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TurnEndingGameRoomActionBehaviour<,>));
 
         services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
 

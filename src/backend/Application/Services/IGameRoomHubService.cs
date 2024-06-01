@@ -5,6 +5,7 @@ namespace Application.Services;
 public interface IGameRoomHubService
 {
     void AddDelayed(INotification notification);
+    void AddDelayed(IEnumerable<INotification> notification);
     Task Dispatch<TDispatchEvent>(string connectionId, TDispatchEvent dispatchEvent, CancellationToken cancellationToken = default);
     Task Dispatch<TDispatchEvent>(TDispatchEvent dispatchEvent, CancellationToken cancellationToken = default);
 

@@ -3,7 +3,7 @@ import GameRoomContext from '../../Context/gameRoom';
 import { LobbySearch } from './LobbySearch';
 import { Lobby } from './Lobby';
 import { GameProper } from './GameProper';
-import { TextEffect } from '../../Events/Listeners/DamageRecievedEventListener';
+import { TextEffect } from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
 
 export const GameRoomRouter: React.FC = () => {
   const { room } = useContext(GameRoomContext);

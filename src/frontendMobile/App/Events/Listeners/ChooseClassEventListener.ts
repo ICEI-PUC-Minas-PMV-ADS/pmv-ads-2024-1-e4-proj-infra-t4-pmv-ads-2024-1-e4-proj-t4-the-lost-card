@@ -1,8 +1,8 @@
 import { GameRoomEventListener } from "..";
 import { GameRoomData } from "../../Context/gameRoom";
 
-type ChooseClassEventListenerKeyType = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application";
-export const ChooseClassEventListenerKey: ChooseClassEventListenerKeyType = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequestResponse, Application";
+type ChooseClassEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.ChooseClassHubRequestResponse, Application";
+export const ChooseClassEventListenerKey: ChooseClassEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.ChooseClassHubRequestResponse, Application";
 
 export interface ChooseClassEventListenerContent {
     Name: string;

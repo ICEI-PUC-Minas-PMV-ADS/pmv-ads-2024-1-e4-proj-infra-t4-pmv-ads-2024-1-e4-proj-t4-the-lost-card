@@ -9,36 +9,43 @@ class GameRoomPlayerData {
         this.name = name;
         this.isMe = isMe;
         this.gameClass = gameClass;
-        this.healthPoints = Number.MIN_SAFE_INTEGER;
-        this.maxHealthPoints = Number.MIN_SAFE_INTEGER;
-        this.blockPoints = 0;
-        this.isDead = false;
-        this.hand = [];
-        this.drawPile = [];
-        this.discardPile = [];
+        this.CurrentLife = Number.MIN_SAFE_INTEGER;
+        this.MaxLife = Number.MIN_SAFE_INTEGER;
+        this.CurrentBlock = 0;
+        this.CurrentEnergy = Number.MIN_SAFE_INTEGER;
+        this.MaxEnergy = Number.MIN_SAFE_INTEGER;
+        this.Hand = [];
+        this.DrawPile = [];
+        this.DiscardPile = [];
     }
 
+    [key: string]: any;
     name: string;
     gameClass: { name: string, id: number } | null;
     isMe: boolean;
-    healthPoints: number;
-    maxHealthPoints: number;
-    blockPoints: number;
-    isDead: boolean;
-    hand: Card[];
-    drawPile: Card[];
-    discardPile: Card[];
+    CurrentLife: number;
+    MaxLife: number;
+    CurrentBlock: number;
+    CurrentEnergy: number;
+    MaxEnergy: number;
+    Hand: Card[];
+    DrawPile: Card[];
+    DiscardPile: Card[];
 }
 
 export interface Card {
     Id: number;
+    Name: string;
     $type: string;
 }
 
-interface OponnentData {
+export interface OponnentData {
+    [key: string]: any;
+
     id: number;
-    maxHealthPoints: number;
-    healthPoints: number;
+    MaxLife: number;
+    CurrentLife: number;
+    CurrentBlock: number;
     intent: { $type: string, id: number, type: number, damageAmount: number | undefined }
 }
 

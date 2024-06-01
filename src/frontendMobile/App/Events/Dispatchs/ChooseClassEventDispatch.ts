@@ -1,7 +1,7 @@
 import { GameRoomEventDispatch, Typed } from ".."
 
-type ChooseClassEventDispatchType = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequest, Application";
-const ChooseClassEventDispatchKey: ChooseClassEventDispatchType = "Application.UseCases.GameRooms.GameActions.ChooseClassGameActionRequest, Application";
+type ChooseClassEventDispatchType = "Application.UseCases.GameRooms.LobbyActions.ChooseClassHubRequest, Application";
+const ChooseClassEventDispatchKey: ChooseClassEventDispatchType = "Application.UseCases.GameRooms.LobbyActions.ChooseClassHubRequest, Application";
 
 export interface ChooseClassEventDispatchContent extends Typed
 {

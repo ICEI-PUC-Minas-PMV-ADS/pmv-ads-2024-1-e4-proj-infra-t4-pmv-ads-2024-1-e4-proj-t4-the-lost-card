@@ -15,9 +15,12 @@ public class Oponents
 public abstract class Oponent : GameObjectBaseClass
 {
     public override string QueryKey { get; } = typeof(Oponent).FullName!;
-
-    public abstract int StartingMaxLife { get; }
+    public abstract int MaxLife { get; set; }
+    public int CurrentLife { get; set; }
+    public int CurrentBlock { get; set; }
     public abstract int MinLevel { get; }
     public abstract int MaxLevel { get; }
-    public abstract OponentIntent GetIntent(GameRoom gameRoom);
+
+    public OponentIntent? CurrentIntent { get; set; }
+    public abstract OponentIntent GetNewIntent(GameRoom gameRoom);
 }
