@@ -14,7 +14,7 @@ import { ChooseClassEventListener, ChooseClassEventListenerContent } from '../..
 import { StartGameRoomEventListener, StartGameRoomEventListenerContent } from '../../Events/Listeners/StartGameRoomEventListener';
 import { StartGameRoomEventDispatch } from '../../Events/Dispatchs/StartGameRoomEventDispatch';
 import { ChooseClassEventDispatch } from '../../Events/Dispatchs/ChooseClassEventDispatch';
-import { TextEffect } from '../../Events/Listeners/DamageRecievedEventListener';
+import { TextEffect } from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
 
 interface LobbyProps {
   setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>

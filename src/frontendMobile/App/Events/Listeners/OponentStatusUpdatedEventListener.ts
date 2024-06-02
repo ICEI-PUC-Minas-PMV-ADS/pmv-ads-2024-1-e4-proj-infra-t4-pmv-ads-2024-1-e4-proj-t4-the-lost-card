@@ -1,5 +1,6 @@
 import { GameRoomEventListener, Typed } from "..";
 import { GameRoomData, OponnentData } from "../../Context/gameRoom";
+import { TextEffect } from "./PlayerStatusUpdatedEventListener";
 
 type OponentStatusUpdatedEventListenerKeyType = "Application.UseCases.GameRooms.GameEvents.OponentStatusUpdatedNotificationDispatch, Application";
 export const OponentStatusUpdatedEventListenerKey: OponentStatusUpdatedEventListenerKeyType = "Application.UseCases.GameRooms.GameEvents.OponentStatusUpdatedNotificationDispatch, Application"
@@ -14,14 +15,6 @@ export interface OponentStatusUpdatedEventListenerContent extends Typed {
     StatusName: string;
     StaleValue: number;
     FreshValue: number;
-}
-
-export interface TextEffect {
-    xCord: number | null;
-    yCord: number | null;
-    text: string;
-    color: string;
-    isShowing: boolean;
 }
 
 export class OponentStatusUpdatedEventListener extends GameRoomEventListener<OponentStatusUpdatedEventListenerContent> {

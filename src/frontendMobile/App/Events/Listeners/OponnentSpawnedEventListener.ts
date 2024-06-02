@@ -20,6 +20,7 @@ export class OponnentSpawnedEventListener extends GameRoomEventListener<Oponnent
                     ...roomDispatch!,
                     oponnent: {
                         CurrentLife: eventContet.CurrentLife,
+                        CurrentBlock: 0,
                         id: eventContet.GameId,
                         MaxLife: eventContet.MaxLife,
                         intent: { $type: eventContet.Intent.$type, id: eventContet.Intent.Id, type: eventContet.Intent.Type, damageAmount: eventContet.Intent.DamageAmount }
