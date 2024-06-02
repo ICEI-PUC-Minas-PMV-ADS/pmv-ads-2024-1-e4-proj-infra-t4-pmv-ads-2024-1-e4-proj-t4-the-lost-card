@@ -34,11 +34,22 @@ class GameRoomPlayerData {
 }
 
 export interface Card {
+    [key: string]: any;
+
     Id: number;
     Name: string;
     EnergyCost: number;
     Description: string;
     $type: string;
+}
+
+export function GetActualDescription(card: Card) {
+    return card.Description.replace(
+        /{(\w+)}/g,
+        (placeholderWithDelimiters, placeholderWithoutDelimiters) =>
+            card.hasOwnProperty(placeholderWithoutDelimiters) ?
+                card[placeholderWithoutDelimiters] : placeholderWithDelimiters
+    );
 }
 
 export interface OponnentData {
