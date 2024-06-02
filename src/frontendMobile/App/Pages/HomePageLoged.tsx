@@ -25,7 +25,8 @@ const HomePageLoged: React.FC = () => {
       <Image source={require('../Assets/Logo.png')} />
 
       <View style={styles.menuOptions}>
-        <Anchor text="Buscar salas" route="GameRoomRouter" />
+        <Anchor text='Criar Sala' route='CreateRoomRouter'/>
+        <Anchor text="Buscar Salas" route="GameRoomRouter"/>
         <Pressable onPress={exit}>
           <ListItem text="Sair" />
         </Pressable>
