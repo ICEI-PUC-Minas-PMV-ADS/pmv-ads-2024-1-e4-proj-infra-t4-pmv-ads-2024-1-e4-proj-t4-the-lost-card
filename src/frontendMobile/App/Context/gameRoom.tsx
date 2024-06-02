@@ -36,6 +36,8 @@ class GameRoomPlayerData {
 export interface Card {
     Id: number;
     Name: string;
+    EnergyCost: number;
+    Description: string;
     $type: string;
 }
 
