@@ -1,27 +1,29 @@
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect} from 'react';
 import GameRoomContext from '../../Context/gameRoom';
 import Background from '../../Components/Background';
 import Kawasaki from '../../Components/Kawasaki';
-import WarriorIcon from '../../Assets/Warrior.svg';
 import LostCardButton from '../../Components/Button';
-import { ChooseClassEventListener, ChooseClassEventListenerContent } from '../../Events/Listeners/ChooseClassEventListener';
-import { StartGameRoomEventListener, StartGameRoomEventListenerContent } from '../../Events/Listeners/StartGameRoomEventListener';
-import { StartGameRoomEventDispatch } from '../../Events/Dispatchs/StartGameRoomEventDispatch';
-import { ChooseClassEventDispatch } from '../../Events/Dispatchs/ChooseClassEventDispatch';
-import { TextEffect } from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
+import {
+  ChooseClassEventListener,
+  ChooseClassEventListenerContent,
+} from '../../Events/Listeners/ChooseClassEventListener';
+import {
+  StartGameRoomEventListener,
+  StartGameRoomEventListenerContent,
+} from '../../Events/Listeners/StartGameRoomEventListener';
+import {StartGameRoomEventDispatch} from '../../Events/Dispatchs/StartGameRoomEventDispatch';
+import {ChooseClassEventDispatch} from '../../Events/Dispatchs/ChooseClassEventDispatch';
+import {TextEffect} from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
+import icons from '../../Components/ClassIcon';
 
 interface LobbyProps {
-  setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>
+  setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>;
 }
 
 export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
-  const { room, setRoom, ensureListener, removeListener, dispatch } = useContext(GameRoomContext);
+  const {room, setRoom, ensureListener, removeListener, dispatch} =
+    useContext(GameRoomContext);
 
   const canStartRoom = React.useMemo(() => {
     return (
@@ -32,12 +34,22 @@ export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
   }, [room]);
 
   const chooseClassEventListener = new ChooseClassEventListener(setRoom);
-  const roomStartedEventListener = new StartGameRoomEventListener(setRoom, removeListener, setTextEffects, ensureListener);
+  const roomStartedEventListener = new StartGameRoomEventListener(
+    setRoom,
+    removeListener,
+    setTextEffects,
+    ensureListener,
+  );
 
   useEffect(() => {
-    ensureListener<ChooseClassEventListener, ChooseClassEventListenerContent>(chooseClassEventListener);
-    ensureListener<StartGameRoomEventListener, StartGameRoomEventListenerContent>(roomStartedEventListener);
-  }, [])
+    ensureListener<ChooseClassEventListener, ChooseClassEventListenerContent>(
+      chooseClassEventListener,
+    );
+    ensureListener<
+      StartGameRoomEventListener,
+      StartGameRoomEventListenerContent
+    >(roomStartedEventListener);
+  }, []);
 
   async function onStartRoom() {
     const startRoomDispatch = new StartGameRoomEventDispatch();
@@ -49,22 +61,12 @@ export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
     const chooseClassDispatch = new ChooseClassEventDispatch(id);
 
     await dispatch(chooseClassDispatch, null);
-  };
-
-  const Warrior = () => {
-    return (
-      <View style={{ justifyContent: 'center' }}>
-        <WarriorIcon width={40} />
-      </View>
-    );
-  };
-
-  const icons = new Map<number, JSX.Element>([[15977656387767, Warrior()]]);
+  }
 
   return (
     <Background>
       <View style={styles.container}>
-        <View style={{ gap: 15, alignItems: 'flex-start', height: '80%' }}>
+        <View style={{gap: 15, alignItems: 'flex-start', height: '80%'}}>
           {room?.players.map((player, index) => (
             <Kawasaki
               key={index}
@@ -81,16 +83,20 @@ export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
             justifyContent: 'space-between',
           }}>
           <View>
-            <Text style={{ fontSize: 24 }}>Escolher classe:</Text>
+            <Text style={{fontSize: 24}}>Escolher classe:</Text>
             <View
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'row',
               }}>
-              <TouchableOpacity onPress={() => classChoosen(15977656387767)}>
-                <Warrior />
-              </TouchableOpacity>
+              {[...icons].map(value => (
+                <TouchableOpacity
+                  key={value[0]}
+                  onPress={() =>
+                    classChoosen(value[0])
+                  }>{value[1]}</TouchableOpacity>
+              ))}
             </View>
           </View>
           <LostCardButton
