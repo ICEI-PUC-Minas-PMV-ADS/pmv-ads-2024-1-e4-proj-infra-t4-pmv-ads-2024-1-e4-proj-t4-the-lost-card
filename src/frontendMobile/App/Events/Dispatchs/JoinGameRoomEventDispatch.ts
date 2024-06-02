@@ -6,11 +6,11 @@ const JoinGameRoomEventDispatchKey: JoinGameRoomEventDispatchType = "Application
 export interface JoinGameRoomEventDispatchContent extends Typed {
     $type: JoinGameRoomEventDispatchType;
     roomGuid: string | null;
-    creationOptions: { RoomName: string }
+    creationOptions: { RoomName: string } | null
 }
 
 export class JoinGameRoomEventDispatch implements GameRoomEventDispatch<JoinGameRoomEventDispatchContent> {
-    constructor(roomGuid: string | null, creationOptions: { RoomName: string }) {
+    constructor(roomGuid: string | null, creationOptions: { RoomName: string } | null) {
         this.dispatchKey = JoinGameRoomEventDispatchKey;
         this.dispatchFactory = () => {
             return {
