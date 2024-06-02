@@ -12,16 +12,33 @@ O diagrama apresenta o estudo do fluxo de interação do usuário com o sistema 
 O diagrama de fluxo pode ser desenvolvido com “boxes” que possuem internamente a indicação dos principais elementos de interface - tais como menus e acessos - e funcionalidades, tais como editar, pesquisar, filtrar, configurar - e a conexão entre esses boxes a partir do processo de interação.
 
 ### Diagrama de fluxo - Login
-![Diagrama Login](img/Telas/Diagrama_Login.png)
+![Diagrama Login](img/Diagramas/Diagrama_Login.png)
 
 ### Diagrama de fluxo - Cadastro
-![Diagrama Cadastro](img/Telas/Diagrama_Cadastro.png)
+![Diagrama Cadastro](img/Diagramas/Diagrama_Cadastro.png)
 
 ### Diagrama de fluxo - Cartas
-![Diagrama Cartas](img/Telas/Diagrama_Cartas.png)
+![Diagrama Cartas](img/Diagramas/Diagrama_Cartas.png)
 
 ### Diagrama de fluxo - Progresso
-![Diagrama Progresso](img/Telas/Diagrama_Progresso.png)
+![Diagrama Progresso](img/Diagramas/Diagrama_Progresso.png)
+
+## Diagrama Mobile
+
+### Diagrama de fluxo - Home
+![Diagrama Home](img/Diagramas/Diagrama_Home.png)
+
+### Diagrama de fluxo - Home Logado
+![Diagrama Home Logado](img/Diagramas/Diagrama_HomeLogado.png)
+
+### Diagrama de fluxo - Buscar Sala
+![Diagrama Buscar Sala](img/Diagramas/Diagrama_BuscarSala.png)
+
+### Diagrama de fluxo - Lobby
+![Diagrama Lobby](img/Diagramas/Diagrama_Lobby.png)
+
+### Diagrama de fluxo - Jogo
+![Diagrama Jogo](img/Diagramas/Diagrama_Jogo.png)
 
 
 # Wireframes
