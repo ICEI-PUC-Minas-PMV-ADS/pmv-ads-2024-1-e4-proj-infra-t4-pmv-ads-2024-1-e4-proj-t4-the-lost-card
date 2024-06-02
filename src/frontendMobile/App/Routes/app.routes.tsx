@@ -5,7 +5,7 @@ import { Lobby } from '../Pages/GameRoom/Lobby';
 import HomePageLoged from '../Pages/HomePageLoged';
 // import MainMenuPage from '../Pages/MainMenuPage';
 // import QueryRoomsPage from '../Pages/QueryRooms';
-// import CreateRoom from '../Pages/CreateRoom';
+import CreateRoom from '../Pages/CreateRoom';
 
 const { Screen, Navigator } = createNativeStackNavigator();
 
@@ -15,6 +15,7 @@ const AppRoutes = () => {
       <Screen name="LobbySearch" component={LobbySearch} />
       <Screen name="GameRoomRouter" component={GameRoomRouter} />
       <Screen name="HomePage" component={HomePageLoged} />
+      <Screen name='CreateRoomRouter' component={CreateRoom}/>
     </Navigator>
   );
 };
