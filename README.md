@@ -32,6 +32,11 @@ O código-fonte do backend está na Solution "LostCard". Lá, você encontrará 
 FrontEnd Web:
 O desenvolvimento em React os arquivos da interface do jogo estão na pasta "frontend-web". Aqui, você pode visualizar a interface para o processamento de dados do game na aplicação The Lost Cards.
 
+
+FrontEnd Mobile:
+A aplicação em react native esta na pasta "src\frontendMobile". A partir daqui, apos instalar as dependencias com "npm i", o jogo pode ser construido e depurado usando as propias ferramentas do react native, como "npx react-native run-android --mode debug".
+Uma versão do aplicativo esta disponivel em "presentation\app-debug.apk".
+
 # Documentação
 
 <ol>
