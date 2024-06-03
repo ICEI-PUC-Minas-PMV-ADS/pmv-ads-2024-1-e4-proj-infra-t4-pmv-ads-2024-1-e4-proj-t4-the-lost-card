@@ -61,6 +61,7 @@ export const GameProper: React.FC<GameProperProps> = ({
         {me ? (
           <>
             <CardBase>
+              <Text>Pilha</Text>
               <Text>{me.DiscardPile.length}</Text>
             </CardBase>
             <View style={styles.deck}>
@@ -80,6 +81,7 @@ export const GameProper: React.FC<GameProperProps> = ({
             </View>
 
             <CardBase>
+              <Text>Descarte</Text>
               <Text>{me.DrawPile.length}</Text>
             </CardBase>
           </>
