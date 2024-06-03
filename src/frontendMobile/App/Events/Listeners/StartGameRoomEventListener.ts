@@ -23,7 +23,6 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
     constructor(
         setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>,
         removeListener: (listeningKey: string) => void,
-        setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>,
         ensureListener: EnsureListenerType
     ) {
         const onTrigger = (eventContet: StartGameRoomEventListenerContent) => {
@@ -37,10 +36,10 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
 
             const playerSpawnedEventListener = new PlayerSpawnedEventListener(setRoom)
             const oponnentSpawnedEventListener = new OponnentSpawnedEventListener(setRoom);
-            const playerStatusUpdatedEventListener = new PlayerStatusUpdatedEventListener(setRoom, setTextEffects);
+            const playerStatusUpdatedEventListener = new PlayerStatusUpdatedEventListener(setRoom);
             const handShuffledEventListener = new HandShuffledEventListener(setRoom);
             const playCardEventListener = new PlayCardEventListener(setRoom);
-            const oponentStatusUpdatedEventListener = new OponentStatusUpdatedEventListener(setRoom, setTextEffects);
+            const oponentStatusUpdatedEventListener = new OponentStatusUpdatedEventListener(setRoom);
             ensureListener<PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent>(playerSpawnedEventListener);
             ensureListener<OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent>(oponnentSpawnedEventListener);
             ensureListener<PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent>(playerStatusUpdatedEventListener);

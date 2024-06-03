@@ -18,21 +18,10 @@ export interface OponentStatusUpdatedEventListenerContent extends Typed {
 }
 
 export class OponentStatusUpdatedEventListener extends GameRoomEventListener<OponentStatusUpdatedEventListenerContent> {
-    constructor(setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>, setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>) {
+    constructor(setRoom: React.Dispatch<React.SetStateAction<GameRoomData | null>>) {
         const onTrigger = (eventContet: OponentStatusUpdatedEventListenerContent) => {
             setRoom(roomDispatch => {
                 roomDispatch!.oponnent![eventContet.StatusName as keyof OponnentData] = eventContet.FreshValue;
-
-                setTextEffects(currentEffects => [
-                    ...currentEffects,
-                    {
-                        xCord: null,
-                        yCord: null,
-                        text: `Oponent's ${statusEmojiDict.get(eventContet.StatusName)!.emoji} went from ${eventContet.StaleValue} to ${eventContet.FreshValue}`,
-                        color: statusEmojiDict.get(eventContet.StatusName)!.color,
-                        isShowing: false
-                    }
-                ])
 
                 return {
                     ...roomDispatch!,

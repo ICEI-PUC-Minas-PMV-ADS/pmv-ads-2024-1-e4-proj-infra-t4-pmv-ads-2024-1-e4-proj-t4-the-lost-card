@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import {PropsWithChildren} from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { PropsWithChildren } from 'react';
 
 interface PlayerProps extends PropsWithChildren {
   name: string;
@@ -19,21 +19,22 @@ const Player: React.FC<PlayerProps> = ({
   energyCurrent,
   maxEnergy
 }) => {
-  console.log((100 * currentLife) / maxLife);
   return (
     <View style={styles.container}>
       <Text>{name}</Text>
       {children}
       <View style={styles.lifeBar}>
-        {maxEnergy ? <Text>{energyCurrent}/{maxEnergy}⚡</Text> :  null}
+        {maxEnergy ? <Text>{energyCurrent}/{maxEnergy}⚡</Text> : null}
 
         <Text style={styles.lifeText}>HP</Text>
         <View
           style={[
             styles.lifeFulfillment,
-            {width: `${(100 * currentLife) / maxLife - 15}%`},
+            { width: `${(100 * currentLife) / maxLife - 15}%` },
           ]}
-        />
+        >
+          <Text>{`${currentLife}/${maxLife}`}</Text>
+        </View>
         {currentBlock > 0 ? <Text>🛡️{currentBlock}</Text> : null}
       </View>
     </View>

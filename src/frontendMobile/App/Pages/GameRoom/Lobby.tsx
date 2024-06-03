@@ -14,14 +14,9 @@ import {
 } from '../../Events/Listeners/StartGameRoomEventListener';
 import {StartGameRoomEventDispatch} from '../../Events/Dispatchs/StartGameRoomEventDispatch';
 import {ChooseClassEventDispatch} from '../../Events/Dispatchs/ChooseClassEventDispatch';
-import {TextEffect} from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
 import icons from '../../Components/ClassIcon';
 
-interface LobbyProps {
-  setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>;
-}
-
-export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
+export const Lobby: React.FC = () => {
   const {room, setRoom, ensureListener, removeListener, dispatch} =
     useContext(GameRoomContext);
 
@@ -37,7 +32,6 @@ export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
   const roomStartedEventListener = new StartGameRoomEventListener(
     setRoom,
     removeListener,
-    setTextEffects,
     ensureListener,
   );
 

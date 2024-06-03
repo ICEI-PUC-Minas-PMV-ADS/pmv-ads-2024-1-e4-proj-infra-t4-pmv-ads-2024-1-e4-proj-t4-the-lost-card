@@ -1,32 +1,20 @@
 import {
   Text,
   View,
-  TextStyle,
-  Button,
   Pressable,
   StyleSheet,
 } from 'react-native';
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import GameRoomContext, {GetActualDescription} from '../../Context/gameRoom';
-import {TextEffect} from '../../Events/Listeners/PlayerStatusUpdatedEventListener';
-import {PlayCardEventDispatch} from '../../Events/Dispatchs/PlayCardEventDispatch';
+import React, { useContext } from 'react';
+import GameRoomContext, { GetActualDescription } from '../../Context/gameRoom';
+import { PlayCardEventDispatch } from '../../Events/Dispatchs/PlayCardEventDispatch';
 import Player from '../../Components/Player';
 import Background from '../../Components/Background';
 import Icons from '../../Components/ClassIcon';
 import Card from '../../Components/Card';
 import CardBase from '../../Components/CardBase';
 
-interface GameProperProps {
-  textEffects: TextEffect[];
-  setTextEffects: React.Dispatch<React.SetStateAction<TextEffect[]>>;
-}
-
-export const GameProper: React.FC<GameProperProps> = ({
-  textEffects,
-  setTextEffects,
-}) => {
-  const firstRender = useRef(true);
-  const {room, dispatch} = useContext(GameRoomContext);
+export const GameProper: React.FC = () => {
+  const { room, dispatch } = useContext(GameRoomContext);
 
   const me = room?.players.find(player => player.isMe);
 
@@ -51,7 +39,13 @@ export const GameProper: React.FC<GameProperProps> = ({
             currentLife={room.oponnent.CurrentLife}
             maxLife={room.oponnent.MaxLife}
             currentBlock={room.oponnent.CurrentBlock}>
-            <Text style={styles.enimy}>💀</Text>
+            <View style={{flexDirection:'row'}}>
+              <Text style={styles.enimy}>💀</Text>
+              {room.oponnent.intent.type == 1 ? <>
+                <Text style={styles.enimy}>{`${room.oponnent.intent.damageAmount}x`}</Text>
+                <Text style={styles.enimy}>🗡️</Text>
+              </> : <></>}
+            </View>
           </Player>
         ) : (
           <></>
