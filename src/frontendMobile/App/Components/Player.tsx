@@ -6,6 +6,8 @@ interface PlayerProps extends PropsWithChildren {
   currentLife: number;
   maxLife: number;
   currentBlock: number;
+  energyCurrent?: number;
+  maxEnergy?: number;
 }
 
 const Player: React.FC<PlayerProps> = ({
@@ -14,6 +16,8 @@ const Player: React.FC<PlayerProps> = ({
   maxLife,
   children,
   currentBlock,
+  energyCurrent,
+  maxEnergy
 }) => {
   console.log((100 * currentLife) / maxLife);
   return (
@@ -21,6 +25,8 @@ const Player: React.FC<PlayerProps> = ({
       <Text>{name}</Text>
       {children}
       <View style={styles.lifeBar}>
+        {maxEnergy ? <Text>{energyCurrent}/{maxEnergy}⚡</Text> :  null}
+
         <Text style={styles.lifeText}>HP</Text>
         <View
           style={[
@@ -39,7 +45,7 @@ export default Player;
 const styles = StyleSheet.create({
   container: {
     width: 200,
-    height: 140,
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },
