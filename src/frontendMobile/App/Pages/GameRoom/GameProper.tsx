@@ -53,7 +53,9 @@ export const GameProper: React.FC<GameProperProps> = ({
             <Player
               name={player.name}
               currentLife={player.CurrentLife}
-              maxLife={player.MaxLife}>
+              maxLife={player.MaxLife}
+              currentBlock={player.CurrentBlock}
+            >
               {Icons.get(player.gameClass!.id)}
             </Player>
             {player.isMe ? (

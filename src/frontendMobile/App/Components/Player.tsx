@@ -5,13 +5,15 @@ interface PlayerProps extends PropsWithChildren {
   name: string;
   currentLife: number;
   maxLife: number;
+  currentBlock: number;
 }
 
 const Player: React.FC<PlayerProps> = ({
   name,
   currentLife,
   maxLife,
-  children
+  children,
+  currentBlock,
 }) => {
   console.log((100 * currentLife) / maxLife);
   return (
@@ -24,7 +26,9 @@ const Player: React.FC<PlayerProps> = ({
           style={[
             styles.lifeFulfillment,
             {width: `${(100 * currentLife) / maxLife - 15}%`},
-          ]}></View>
+          ]}
+        />
+        {currentBlock > 0 ? <Text>🛡️{currentBlock}</Text> : null}
       </View>
     </View>
   );
