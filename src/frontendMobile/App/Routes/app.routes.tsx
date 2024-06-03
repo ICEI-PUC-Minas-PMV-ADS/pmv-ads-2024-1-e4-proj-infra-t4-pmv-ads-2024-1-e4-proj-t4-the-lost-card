@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GameRoomRouter } from "../Pages/GameRoom"
 import { LobbySearch } from '../Pages/GameRoom/LobbySearch';
 import { Lobby } from '../Pages/GameRoom/Lobby';
@@ -7,7 +7,16 @@ import HomePageLoged from '../Pages/HomePageLoged';
 // import QueryRoomsPage from '../Pages/QueryRooms';
 import CreateRoom from '../Pages/CreateRoom';
 
-const { Screen, Navigator } = createNativeStackNavigator();
+export type StackParamList = {
+  HomePage: undefined;
+  LobbySearch: undefined;
+  GameRoomRouter: undefined;
+  CreateRoomRouter: undefined;
+};
+
+export type StackNavigation = NativeStackNavigationProp<StackParamList>;
+
+const { Screen, Navigator } = createNativeStackNavigator<StackParamList>();
 
 const AppRoutes = () => {
   return (
