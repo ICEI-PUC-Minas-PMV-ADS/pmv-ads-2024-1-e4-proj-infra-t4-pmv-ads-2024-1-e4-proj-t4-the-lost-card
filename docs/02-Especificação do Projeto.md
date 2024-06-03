@@ -119,32 +119,109 @@ Com base na análise das personas forma identificadas as seguintes histórias de
 
 ### Análise da Situação Atual
 
-Apresente aqui os problemas existentes que viabilizam sua proposta. Apresente o modelo do sistema como ele funciona hoje. Caso sua proposta seja inovadora e não existam processos claramente definidos, apresente como as tarefas que o seu sistema pretende implementar são executadas atualmente, mesmo que não se utilize tecnologia computacional. 
+#### Problemas Existentes:
+
+* Os jogadores precisam estar fisicamente presentes para jogar.
+* É difícil gerenciar pontuações e regras complexas manualmente.
+* Cartas físicas podem ser perdidas ou danificadas.
+* Tempo e esforço são gastos na organização de jogos.
+
+#### Modelo do Sistema Atual:
+
+* *Funcionamento* atual: Os jogadores se reúnem fisicamente, embaralham e distribuem as cartas manualmente, e utilizam papel e caneta para manter pontuações.
+* *Tecnologia e Ferramentas:* Não há uso de tecnologia; tudo é feito manualmente.
+* *Exemplos Práticos:* Em uma partida, os jogadores precisam embaralhar e distribuir cartas em cada rodada e manter um registro disico e contínuo dos status e pontuações de cada jogador.
+
+#### Proposta Inovadora:
+
+* *Tarefas e Objetivos:* O novo sistema digitaliza o baralho, permite partidas online, automatiza a pontuação e as regras, e oferece uma interface gráfica para uma experiência de jogo mais fluida.
+* *Métodos Atuais:* Atualmente, esses jogos são organizados e jogados manualmente, exigindo coordenação e esforço significativos dos participantes.
+
+Com base nos problemas mencionados anteriormente, identificam-se os fatores que geram oportunidades de melhoria. Assim, por meio do mapeamento dos processos de negócios, é possível compreender o fluxo e o funcionamento da cadeia de ações a serem realizadas, o que contribuirá para a implementação do software. A seguir, apresenta-se o mapeamento do modelo de negócio.
 
 ### Descrição Geral da Proposta
 
-Apresente aqui uma descrição da sua proposta abordando seus limites e suas ligações com as estratégias e objetivos do negócio. Apresente aqui as oportunidades de melhorias.
+Visão Geral:
+Nossa proposta é desenvolver um jogo de cartas digital que permitirá aos jogadores desfrutarem de partidas online, com uma interface intuitiva. O jogo será acessível via dispositivos móveis e desktop, oferecendo uma experiência integrada e conveniente.
 
-### Processo 1 – NOME DO PROCESSO
+##### Funcionalidades:
 
-Apresente aqui o nome e as oportunidades de melhorias para o processo 1. Em seguida, apresente o modelo do processo 1, descrito no padrão BPMN. 
+* Partidas online multiplayer.
+* Modos de jogo personalizáveis.
+* Sistema de pontuação automática.
 
-![Processo 1](img/02-bpmn-proc1.png)
+##### Restrições Técnicas:
 
-### Processo 2 – NOME DO PROCESSO
+* Requisitos mínimos de hardware e software para execução do jogo.
+* Limitações de performance em dispositivos mais antigos.
 
-Apresente aqui o nome e as oportunidades de melhorias para o processo 2. Em seguida, apresente o modelo do processo 2, descrito no padrão BPMN.
+##### Desafios e Riscos:
 
-![Processo 2](img/02-bpmn-proc2.png)
+* Garantir estabilidade e performance em cenários de alta carga.
+* Manter a segurança e privacidade dos dados dos usuários.
+
+##### Eficiência e Produtividade:
+* A digitalização do jogo automatiza a contagem de pontos e gestão de regras, reduzindo o tempo e esforço dos jogadores.
+
+### Processo  
+![Processo 1](img/Diagramas/Diagrama_Fluxo_BPMN.png)
 
 ## Indicadores de Desempenho
 
-Apresente aqui os principais indicadores de desempenho e algumas metas para o processo. Atenção: as informações necessárias para gerar os indicadores devem estar contempladas no diagrama de classe. Colocar no mínimo 5 indicadores. 
-
-Usar o seguinte modelo: 
-
-![Indicadores de Desempenho](img/02-indic-desemp.png)
-Obs.: todas as informações para gerar os indicadores devem estar no diagrama de classe a ser apresentado a posteriori. 
+<table>
+<thead>
+  <tr>
+    <th>Indicador</th>
+    <th>Objetivos</th>
+    <th>Descrição</th>
+    <th>Cálculo</th>
+    <th>Fonte Dados</th>
+    <th>Perpectiva</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Quantidade de Partidas jogadas.</td>
+    <td>Verificar como esta o engajamento dos jogadores.</td>
+    <td>Observar quantidade de registros das salas.</td>
+    <td></td>
+    <td>Registros de dados das partidas abertas</td>
+    <td>Clientes</td>
+  </tr>
+  <tr>
+    <td>Classe mais selecionada</td>
+    <td>Verrificar se exites uma classe que esta sendo mais selecionada que as outras.</td>
+    <td>Observar os registros de picks de cada classe</td>
+    <td></td>
+    <td>Registros de dados dos personages em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Carta mais jogada</td>
+    <td>Verrificar se exites uma carta que esta sendo mais selecionada que as outras.</td>
+    <td>Observar os registros de cartas mais usadas nas partidas</td>
+    <td></td>
+    <td>Registros de dados dos decks usado em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Media de jogadores por partida</td>
+    <td>Verrificar qual a media de jogadores por partida.</td>
+    <td>Observar os registros de jogadores por partidas</td>
+    <td></td>
+    <td>Registros de dados de jogadores em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Percentual de jogadores que Platinaram o jogo</td>
+    <td>Verrificar quanto jogadores conseguiram desbloquear todas as conquistas disponiveis.</td>
+    <td>Observar os registros das conquistas por jogadores</td>
+    <td></td>
+    <td>Registros de dados das conquistas de cada jogador</td>
+    <td>Processos internos.</td>
+  </tr>
+</tbody>
+</table>
 
 ## Requisitos
 
@@ -189,19 +266,6 @@ Enumere as restrições à sua solução. Lembre-se de que as restrições geral
 ## Diagrama de Casos de Uso
 
 ![diagrama de casos de uso](./img/casos-de-uso.drawio.png)
-
-# Matriz de Rastreabilidade
-
-A matriz de rastreabilidade é uma ferramenta usada para facilitar a visualização dos relacionamento entre requisitos e outros artefatos ou objetos, permitindo a rastreabilidade entre os requisitos e os objetivos de negócio. 
-
-A matriz deve contemplar todos os elementos relevantes que fazem parte do sistema, conforme a figura meramente ilustrativa apresentada a seguir.
-
-![Exemplo de matriz de rastreabilidade](img/02-matriz-rastreabilidade.png)
-
-> **Links Úteis**:
-> - [Artigo Engenharia de Software 13 - Rastreabilidade](https://www.devmedia.com.br/artigo-engenharia-de-software-13-rastreabilidade/12822/)
-> - [Verificação da rastreabilidade de requisitos usando a integração do IBM Rational RequisitePro e do IBM ClearQuest Test Manager](https://developer.ibm.com/br/tutorials/requirementstraceabilityverificationusingrrpandcctm/)
-> - [IBM Engineering Lifecycle Optimization – Publishing](https://www.ibm.com/br-pt/products/engineering-lifecycle-optimization/publishing/)
 
 
 # Gerenciamento de Projeto
