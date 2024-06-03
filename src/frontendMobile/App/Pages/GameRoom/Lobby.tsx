@@ -101,7 +101,7 @@ export const Lobby: React.FC<LobbyProps> = ({setTextEffects}) => {
           </View>
           <LostCardButton
             text="Começar"
-            disabled={canStartRoom}
+            disabled={!canStartRoom}
             onPress={onStartRoom}
           />
         </View>
