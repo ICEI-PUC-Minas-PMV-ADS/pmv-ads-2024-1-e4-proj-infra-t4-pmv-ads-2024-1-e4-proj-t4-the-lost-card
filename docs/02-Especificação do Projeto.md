@@ -139,12 +139,60 @@ Apresente aqui o nome e as oportunidades de melhorias para o processo 2. Em segu
 
 ## Indicadores de Desempenho
 
-Apresente aqui os principais indicadores de desempenho e algumas metas para o processo. Atenção: as informações necessárias para gerar os indicadores devem estar contempladas no diagrama de classe. Colocar no mínimo 5 indicadores. 
-
-Usar o seguinte modelo: 
-
-![Indicadores de Desempenho](img/02-indic-desemp.png)
-Obs.: todas as informações para gerar os indicadores devem estar no diagrama de classe a ser apresentado a posteriori. 
+<table>
+<thead>
+  <tr>
+    <th>Indicador</th>
+    <th>Objetivos</th>
+    <th>Descrição</th>
+    <th>Cálculo</th>
+    <th>Fonte Dados</th>
+    <th>Perpectiva</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Quantidade de Partidas jogadas.</td>
+    <td>Verificar como esta o engajamento dos jogadores.</td>
+    <td>Observar quantidade de registros das salas.</td>
+    <td></td>
+    <td>Registros de dados das partidas abertas</td>
+    <td>Clientes</td>
+  </tr>
+  <tr>
+    <td>Classe mais selecionada</td>
+    <td>Verrificar se exites uma classe que esta sendo mais selecionada que as outras.</td>
+    <td>Observar os registros de picks de cada classe</td>
+    <td></td>
+    <td>Registros de dados dos personages em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Carta mais jogada</td>
+    <td>Verrificar se exites uma carta que esta sendo mais selecionada que as outras.</td>
+    <td>Observar os registros de cartas mais usadas nas partidas</td>
+    <td></td>
+    <td>Registros de dados dos decks usado em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Media de jogadores por partida</td>
+    <td>Verrificar qual a media de jogadores por partida.</td>
+    <td>Observar os registros de jogadores por partidas</td>
+    <td></td>
+    <td>Registros de dados de jogadores em cada partida aberta</td>
+    <td>Processos internos.</td>
+  </tr>
+  <tr>
+    <td>Percentual de jogadores que Platinaram o jogo</td>
+    <td>Verrificar quanto jogadores conseguiram desbloquear todas as conquistas disponiveis.</td>
+    <td>Observar os registros das conquistas por jogadores</td>
+    <td></td>
+    <td>Registros de dados das conquistas de cada jogador</td>
+    <td>Processos internos.</td>
+  </tr>
+</tbody>
+</table>
 
 ## Requisitos
 
