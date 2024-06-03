@@ -119,23 +119,52 @@ Com base na análise das personas forma identificadas as seguintes histórias de
 
 ### Análise da Situação Atual
 
-Apresente aqui os problemas existentes que viabilizam sua proposta. Apresente o modelo do sistema como ele funciona hoje. Caso sua proposta seja inovadora e não existam processos claramente definidos, apresente como as tarefas que o seu sistema pretende implementar são executadas atualmente, mesmo que não se utilize tecnologia computacional. 
+#### Problemas Existentes:
+
+* Os jogadores precisam estar fisicamente presentes para jogar.
+* É difícil gerenciar pontuações e regras complexas manualmente.
+* Cartas físicas podem ser perdidas ou danificadas.
+* Tempo e esforço são gastos na organização de jogos.
+
+#### Modelo do Sistema Atual:
+
+* *Funcionamento* atual: Os jogadores se reúnem fisicamente, embaralham e distribuem as cartas manualmente, e utilizam papel e caneta para manter pontuações.
+* *Tecnologia e Ferramentas:* Não há uso de tecnologia; tudo é feito manualmente.
+* *Exemplos Práticos:* Em uma partida, os jogadores precisam embaralhar e distribuir cartas em cada rodada e manter um registro disico e contínuo dos status e pontuações de cada jogador.
+
+#### Proposta Inovadora:
+
+* *Tarefas e Objetivos:* O novo sistema digitaliza o baralho, permite partidas online, automatiza a pontuação e as regras, e oferece uma interface gráfica para uma experiência de jogo mais fluida.
+* *Métodos Atuais:* Atualmente, esses jogos são organizados e jogados manualmente, exigindo coordenação e esforço significativos dos participantes.
+
+Com base nos problemas mencionados anteriormente, identificam-se os fatores que geram oportunidades de melhoria. Assim, por meio do mapeamento dos processos de negócios, é possível compreender o fluxo e o funcionamento da cadeia de ações a serem realizadas, o que contribuirá para a implementação do software. A seguir, apresenta-se o mapeamento do modelo de negócio.
 
 ### Descrição Geral da Proposta
 
-Apresente aqui uma descrição da sua proposta abordando seus limites e suas ligações com as estratégias e objetivos do negócio. Apresente aqui as oportunidades de melhorias.
+Visão Geral:
+Nossa proposta é desenvolver um jogo de cartas digital que permitirá aos jogadores desfrutarem de partidas online, com uma interface intuitiva. O jogo será acessível via dispositivos móveis e desktop, oferecendo uma experiência integrada e conveniente.
 
-### Processo 1 – NOME DO PROCESSO
+##### Funcionalidades:
 
-Apresente aqui o nome e as oportunidades de melhorias para o processo 1. Em seguida, apresente o modelo do processo 1, descrito no padrão BPMN. 
+* Partidas online multiplayer.
+* Modos de jogo personalizáveis.
+* Sistema de pontuação automática.
 
-![Processo 1](img/02-bpmn-proc1.png)
+##### Restrições Técnicas:
 
-### Processo 2 – NOME DO PROCESSO
+* Requisitos mínimos de hardware e software para execução do jogo.
+* Limitações de performance em dispositivos mais antigos.
 
-Apresente aqui o nome e as oportunidades de melhorias para o processo 2. Em seguida, apresente o modelo do processo 2, descrito no padrão BPMN.
+##### Desafios e Riscos:
 
-![Processo 2](img/02-bpmn-proc2.png)
+* Garantir estabilidade e performance em cenários de alta carga.
+* Manter a segurança e privacidade dos dados dos usuários.
+
+##### Eficiência e Produtividade:
+* A digitalização do jogo automatiza a contagem de pontos e gestão de regras, reduzindo o tempo e esforço dos jogadores.
+
+### Processo  
+![Processo 1](img/Diagramas/Diagrama_Fluxo_BPMN.png)
 
 ## Indicadores de Desempenho
 
