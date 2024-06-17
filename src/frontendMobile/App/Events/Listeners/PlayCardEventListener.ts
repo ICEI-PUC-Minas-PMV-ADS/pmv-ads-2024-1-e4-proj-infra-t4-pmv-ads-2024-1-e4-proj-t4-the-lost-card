@@ -22,8 +22,11 @@ export class PlayCardEventListener extends GameRoomEventListener<PlayCardEventLi
                         index: index,
                     };
                 });
-
+                
                 const targetedPlayer = playerTargetDict.filter(x => x.isTarget)[0];
+                console.log('hand for targetedPlayer: ')
+                console.log( targetedPlayer.player.Hand)
+
                 const cardTargetDict = targetedPlayer.player.Hand.map((anyCard, index) => {
                     return {
                         isTarget: anyCard.Id == eventContet.CardId,
@@ -31,6 +34,9 @@ export class PlayCardEventListener extends GameRoomEventListener<PlayCardEventLi
                         index: index,
                     };
                 });
+
+                console.log('card dict for card played: ')
+                console.log(cardTargetDict)
 
                 const targetedCard = cardTargetDict.filter(x => x.isTarget)[0];
 
@@ -40,8 +46,10 @@ export class PlayCardEventListener extends GameRoomEventListener<PlayCardEventLi
                         ...roomDispatch!.players.filter((_, index) => index != targetedPlayer.index),
                         {
                             ...targetedPlayer.player,
-                            Hand: [...targetedPlayer.player.Hand.filter((_, index) => index != targetedCard.index)],
-                            DiscardPile: [...targetedPlayer.player.DiscardPile, targetedCard.card]
+                            ...(targetedPlayer.player.isMe ? {
+                                Hand: [...targetedPlayer.player.Hand.filter((_, index) => index != targetedCard.index)],
+                                DiscardPile: [...targetedPlayer.player.DiscardPile, targetedCard.card]
+                            } : {})
                         }
                     ]
                 };

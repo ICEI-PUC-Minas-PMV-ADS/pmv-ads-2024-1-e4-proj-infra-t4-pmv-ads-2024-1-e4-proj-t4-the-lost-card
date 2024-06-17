@@ -9,7 +9,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({description, energy, title}) => {
   return (
-    <CardBase>
+    <CardBase scaleFactor={1}>
       <Text style={styles.energy}>{energy}</Text>
       <Text style={styles.image}>{title}</Text>
       <Text>{description}</Text>

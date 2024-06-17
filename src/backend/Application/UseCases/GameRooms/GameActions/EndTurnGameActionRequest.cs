@@ -14,9 +14,7 @@ public record EndTurnGameActionRequest() : GameRoomHubRequest<EndTurnGameActionR
     public override bool RequiresAuthorization => true;
 }
 
-public record TurnStartedNotificationDispatch();
-
-public record EndTurnGameActionRequestResponse : GameRoomHubRequestResponse;
+public record EndTurnGameActionRequestResponse(string PlayerName) : GameRoomHubRequestResponse;
 
 public class EndTurnGameActionRequestHandler : IGameRoomRequestHandler<EndTurnGameActionRequest, EndTurnGameActionRequestResponse>
 {
@@ -35,38 +33,12 @@ public class EndTurnGameActionRequestHandler : IGameRoomRequestHandler<EndTurnGa
     public async ValueTask<Result<GameRoomHubRequestResponse>> Handle(EndTurnGameActionRequest request, CancellationToken cancellationToken)
     {
         request.RequesterPlayerInfo!.ActionsFinished = true;
-        request.RequesterPlayerInfo!.CurrentEnergy = request.RequesterPlayerInfo!.MaxEnergy;
+
+        await gameRoomRepository.Update(request.CurrentRoom!, cancellationToken);
 
         if (request.CurrentRoom?.GameInfo?.PlayersInfo.All(x => x.ActionsFinished) is true)
-        {
-            if (request.CurrentRoom.GameInfo!.EncounterInfo!.Oponent!.CurrentLife <= 0)
-            {
-                request.CurrentRoom.GameInfo!.CurrentLevel++;
+            gameRoomHubService.AddDelayed(new TurnStartedNotifcation(request.CurrentRoom));
 
-                var randomOponent = Oponents.All.Where(o => o.MinLevel <= request.CurrentRoom.GameInfo!.CurrentLevel && o.MaxLevel > request.CurrentRoom.GameInfo!.CurrentLevel).OrderBy(x => Guid.NewGuid()).First();
-                randomOponent.CurrentLife = randomOponent.MaxLife;
-                randomOponent.CurrentIntent = randomOponent.GetNewIntent(request.CurrentRoom);
-                request.CurrentRoom.GameInfo!.EncounterInfo.Oponent = randomOponent;
-                request.CurrentRoom.GameInfo!.EncounterInfo.CurrentTurn = 0;
-                gameRoomHubService.AddDelayed(new OponentSpawnedNotification(request.CurrentRoom.GameInfo!.EncounterInfo));
-            }
-            else
-            {
-                var currentIntent = request.CurrentRoom.GameInfo!.EncounterInfo!.Oponent!.CurrentIntent;
-                var notifcations = currentIntent!.OnPlay(request.CurrentRoom);
-                gameRoomHubService.AddDelayed(notifcations);
-                request.CurrentRoom.GameInfo!.EncounterInfo!.Oponent!.CurrentIntent = request.CurrentRoom.GameInfo!.EncounterInfo!.Oponent!.GetNewIntent(request.CurrentRoom);
-
-                foreach (var playerGameInfo in request.CurrentRoom.GameInfo?.PlayersInfo as IEnumerable<GameRoom.RoomGameInfo.PlayerGameInfo> ?? Array.Empty<GameRoom.RoomGameInfo.PlayerGameInfo>())
-                    playerGameInfo.ActionsFinished = false;
-                request.CurrentRoom.GameInfo!.EncounterInfo!.CurrentTurn++;
-            }
-
-            await gameRoomRepository.Update(request.CurrentRoom, cancellationToken);
-
-            await gameRoomHubService.Dispatch(new TurnStartedNotificationDispatch(), cancellationToken);
-        }
-
-        return new EndTurnGameActionRequestResponse();
+        return new EndTurnGameActionRequestResponse(request.RequesterPlayerInfo!.PlayerName);
     }
 }

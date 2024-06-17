@@ -18,6 +18,8 @@ export class OponnentSpawnedEventListener extends GameRoomEventListener<Oponnent
             setRoom(roomDispatch => {
                 return {
                     ...roomDispatch!,
+                    currentLevel: roomDispatch!.currentLevel + 1,
+                    currentTurn: 0,
                     oponnent: {
                         CurrentLife: eventContet.CurrentLife,
                         CurrentBlock: 0,

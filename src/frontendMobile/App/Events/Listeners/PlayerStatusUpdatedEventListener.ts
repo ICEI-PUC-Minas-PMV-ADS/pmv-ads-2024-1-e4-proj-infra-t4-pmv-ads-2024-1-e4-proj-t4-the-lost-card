@@ -4,12 +4,6 @@ import { GameRoomData } from "../../Context/gameRoom";
 type PlayerStatusUpdatedEventListenerKeyType = "Application.UseCases.GameRooms.GameEvents.PlayerStatusUpdatedNotificationDispatch, Application";
 export const PlayerStatusUpdatedEventListenerKey: PlayerStatusUpdatedEventListenerKeyType = "Application.UseCases.GameRooms.GameEvents.PlayerStatusUpdatedNotificationDispatch, Application"
 
-const statusEmojiDict = new Map<string, { emoji: string, color: string }>([
-    ["CurrentEnergy", { emoji: "⚡", color: "yellow" }],
-    ["CurrentLife", { emoji: "🩸", color: "red" }],
-    ["CurrentBlock", { emoji: "🛡️", color: "grey" }]
-])
-
 export interface PlayerStatusUpdatedEventListenerContent extends Typed {
     $type: PlayerStatusUpdatedEventListenerKeyType;
     PlayerName: string;

@@ -21,6 +21,8 @@ export class JoinGameRoomEventListener extends GameRoomEventListener<JoinGameRoo
                     adminName: eventContet.AdminName,
                     hasStarted: false,
                     oponnent: null,
+                    currentLevel: 0,
+                    currentTurn: 0,
                     players: eventContet.Players.map(x => new GameRoomPlayerData(
                         x.Name,
                         x.Name == currentUserName,

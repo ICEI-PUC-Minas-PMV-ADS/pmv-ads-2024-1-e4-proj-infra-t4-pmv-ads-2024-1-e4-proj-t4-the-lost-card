@@ -57,14 +57,17 @@ public class EventHub : ServerlessHub
             await requestMetadataService.Dispatch(responseResult.Value, cancellationToken);
         else
         {
+            // TODO: Adicionar tratamento de erro
             if (responseResult.Errors.FirstOrDefault(e => e is GameRoomHubRequestErrorBase) is GameRoomHubRequestErrorBase error)
                 await requestMetadataService.Dispatch(error, cancellationToken);
         }
 
-        // TODO: Adicionar tratamento de erro
-
-        foreach (var delayedNotification in requestMetadataService.DelayedNotifications)
+        while (requestMetadataService.DelayedNotifications.Count > 0)
+        {
+            var delayedNotification = requestMetadataService.DelayedNotifications.First();
             await mediator.Publish(delayedNotification, cancellationToken);
+            requestMetadataService.DelayedNotifications.Remove(delayedNotification);
+        }
     }
 
     [FunctionName(nameof(OnDisconnected))]

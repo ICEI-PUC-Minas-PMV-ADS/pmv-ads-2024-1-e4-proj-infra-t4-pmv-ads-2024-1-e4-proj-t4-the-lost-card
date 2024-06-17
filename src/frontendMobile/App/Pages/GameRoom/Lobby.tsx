@@ -22,7 +22,7 @@ export const Lobby: React.FC = () => {
 
   const canStartRoom = React.useMemo(() => {
     return (
-      room?.adminName == room?.players.filter(x => x.isMe)[0] &&
+      room?.adminName == room?.players.filter(x => x.isMe)[0].name &&
       (room?.players.length ?? 0) > 1 &&
       room?.players.every(p => p.gameClass != null)
     );

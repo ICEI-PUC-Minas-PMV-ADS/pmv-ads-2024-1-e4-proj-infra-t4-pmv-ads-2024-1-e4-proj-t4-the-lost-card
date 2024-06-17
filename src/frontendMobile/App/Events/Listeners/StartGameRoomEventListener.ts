@@ -7,7 +7,9 @@ import { OponentStatusUpdatedEventListener, OponentStatusUpdatedEventListenerCon
 import { OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent } from "./OponnentSpawnedEventListener";
 import { PlayCardEventListener, PlayCardEventListenerContent } from "./PlayCardEventListener";
 import { PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent } from "./PlayerSpawnedEventListener";
-import { PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent, TextEffect } from "./PlayerStatusUpdatedEventListener";
+import { PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent } from "./PlayerStatusUpdatedEventListener";
+import { EndTurnEventListener, EndTurnEventListenerContent } from "./EndTurnEventListener";
+import { TurnStartedEventListener, TurnStartedEventListenerContent } from "./TurnStartedEventListener";
 
 type StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
 const StartGameRoomEventListenerKey: StartGameRoomEventListenerKeyType = "Application.UseCases.GameRooms.LobbyActions.StartGameRoomHubRequestResponse, Application";
@@ -40,12 +42,17 @@ export class StartGameRoomEventListener extends GameRoomEventListener<StartGameR
             const handShuffledEventListener = new HandShuffledEventListener(setRoom);
             const playCardEventListener = new PlayCardEventListener(setRoom);
             const oponentStatusUpdatedEventListener = new OponentStatusUpdatedEventListener(setRoom);
+            const turnStartedEventListener = new TurnStartedEventListener(setRoom);
+            const endTurnEventListener = new EndTurnEventListener(setRoom);
             ensureListener<PlayerSpawnedEventListener, PlayerSpawnedEventListenerContent>(playerSpawnedEventListener);
             ensureListener<OponnentSpawnedEventListener, OponnentSpawnedEventListenerContent>(oponnentSpawnedEventListener);
             ensureListener<PlayerStatusUpdatedEventListener, PlayerStatusUpdatedEventListenerContent>(playerStatusUpdatedEventListener);
             ensureListener<HandShuffledEventListener, HandShuffledEventListenerContent>(handShuffledEventListener);
             ensureListener<PlayCardEventListener, PlayCardEventListenerContent>(playCardEventListener)
             ensureListener<OponentStatusUpdatedEventListener, OponentStatusUpdatedEventListenerContent>(oponentStatusUpdatedEventListener)
+            ensureListener<TurnStartedEventListener, TurnStartedEventListenerContent>(turnStartedEventListener)
+            ensureListener<EndTurnEventListener, EndTurnEventListenerContent>(endTurnEventListener)
+        
         }
 
         super(StartGameRoomEventListenerKey, onTrigger);

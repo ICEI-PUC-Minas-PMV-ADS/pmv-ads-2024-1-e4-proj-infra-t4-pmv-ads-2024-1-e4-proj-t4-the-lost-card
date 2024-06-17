@@ -14,6 +14,7 @@ class GameRoomPlayerData {
         this.CurrentBlock = 0;
         this.CurrentEnergy = Number.MIN_SAFE_INTEGER;
         this.MaxEnergy = Number.MIN_SAFE_INTEGER;
+        this.ActionsFinished = false;
         this.Hand = [];
         this.DrawPile = [];
         this.DiscardPile = [];
@@ -25,6 +26,7 @@ class GameRoomPlayerData {
     isMe: boolean;
     CurrentLife: number;
     MaxLife: number;
+    ActionsFinished: boolean;
     CurrentBlock: number;
     CurrentEnergy: number;
     MaxEnergy: number;
@@ -67,6 +69,8 @@ export interface GameRoomData {
     adminName: string;
     hasStarted: boolean;
     players: GameRoomPlayerData[];
+    currentTurn: number;
+    currentLevel: number;
     oponnent: OponnentData | null
 }
 

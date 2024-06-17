@@ -1,8 +1,16 @@
 import {PropsWithChildren} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-const CardBase: React.FC<PropsWithChildren> = ({children}) => {
-  return <View style={styles.container}>{children}</View>;
+interface CardBaseProps extends PropsWithChildren
+{
+  scaleFactor: number;
+}
+
+const CardBase: React.FC<CardBaseProps> = ({scaleFactor,children}) => {
+  return <View style={{...styles.container,
+    height: styles.container.height * scaleFactor,
+    width: styles.container.width * scaleFactor
+  }}>{children}</View>;
 };
 
 export default CardBase;
