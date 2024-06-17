@@ -24,8 +24,6 @@ export class PlayCardEventListener extends GameRoomEventListener<PlayCardEventLi
                 });
                 
                 const targetedPlayer = playerTargetDict.filter(x => x.isTarget)[0];
-                console.log('hand for targetedPlayer: ')
-                console.log( targetedPlayer.player.Hand)
 
                 const cardTargetDict = targetedPlayer.player.Hand.map((anyCard, index) => {
                     return {
@@ -34,9 +32,6 @@ export class PlayCardEventListener extends GameRoomEventListener<PlayCardEventLi
                         index: index,
                     };
                 });
-
-                console.log('card dict for card played: ')
-                console.log(cardTargetDict)
 
                 const targetedCard = cardTargetDict.filter(x => x.isTarget)[0];
 
