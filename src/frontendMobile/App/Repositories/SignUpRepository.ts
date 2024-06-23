@@ -4,7 +4,7 @@ import api from "./api";
 
 
 export interface SignUpRequest {
-    username: string;
+    name: string;
     email: string;
     plainTextPassword: string;
   }
