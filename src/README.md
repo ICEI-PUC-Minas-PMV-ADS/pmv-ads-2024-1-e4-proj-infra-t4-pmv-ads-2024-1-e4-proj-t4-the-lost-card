@@ -1,11 +1,15 @@
 # Instruções de utilização
 
-## Instalação do Site
+Instruções para Visualização da Solução The lost :
 
-O site em HTML/CSS/JS é um projeto estático, logo pode ser utilizado tanto em servidores...
+Para explorar a solução completa, o código-fonte final está disponível na branch "master" deste repositório. Siga as instruções abaixo para acessar componentes específicos da solução:
 
-## Histórico de versões
+BackEnd(The Lost Cards):
+O código-fonte do backend está na Solution "LostCard". Lá, você encontrará a construção das APIs e o arquivo de testes.
 
-### [0.1.0] - DD/MM/AAAA
-#### Adicionado
-- Adicionado ...
+FrontEnd Web:
+O desenvolvimento em React os arquivos da interface do jogo estão na pasta "frontend-web". Aqui, você pode visualizar a interface para o processamento de dados do game na aplicação The Lost Cards.
+
+FrontEnd Mobile:
+A aplicação em react native esta na pasta "src\frontendMobile". A partir daqui, apos instalar as dependencias com "npm i", o jogo pode ser construido e depurado usando as propias ferramentas do react native, como "npx react-native run-android --mode debug".
+Uma versão do aplicativo esta disponivel em "presentation\app-release.apk".

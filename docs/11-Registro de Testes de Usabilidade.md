@@ -15,3 +15,6 @@ Após realizar os testes de usabilidade, obtém-se um relatório a partir das an
 ![Parte 10](testing_evidence/ctu001/part10.png)
 ![Parte 11](testing_evidence/ctu001/part11.png)
 ![Parte 12](testing_evidence/ctu001/part12.png)
+
+Video em testing_evidence/ctu001/video.mp4
+![Parte 12](testing_evidence/ctu001/video.mp4)

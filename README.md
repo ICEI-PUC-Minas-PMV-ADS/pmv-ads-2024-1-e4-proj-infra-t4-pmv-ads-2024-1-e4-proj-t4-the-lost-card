@@ -35,7 +35,7 @@ O desenvolvimento em React os arquivos da interface do jogo estão na pasta "fro
 
 FrontEnd Mobile:
 A aplicação em react native esta na pasta "src\frontendMobile". A partir daqui, apos instalar as dependencias com "npm i", o jogo pode ser construido e depurado usando as propias ferramentas do react native, como "npx react-native run-android --mode debug".
-Uma versão do aplicativo esta disponivel em "presentation\app-debug.apk".
+Uma versão do aplicativo esta disponivel em "presentation\app-release.apk".
 
 # Documentação
 
@@ -52,7 +52,6 @@ Uma versão do aplicativo esta disponivel em "presentation\app-debug.apk".
 <li><a href="docs/10-Plano de Testes de Usabilidade.md"> Plano de Testes de Usabilidade</a></li>
 <li><a href="docs/11-Registro de Testes de Usabilidade.md"> Registro de Testes de Usabilidade</a></li>
 <li><a href="docs/12-Apresentação do Projeto.md"> Apresentação do Projeto</a></li>
-<li><a href="docs/13-Referências.md"> Referências</a></li>
 </ol>
 
 # Código
