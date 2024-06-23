@@ -22,21 +22,59 @@ The Lost Cards é mais do que apenas um jogo de cartas single player - é uma jo
 
 ## Instruções de utilização
 
-Instruções para Visualização da Solução The lost :
+### Abra o terminal e clone o repositório:
 
-Para explorar a solução completa, o código-fonte final está disponível na branch "master" deste repositório. Siga as instruções abaixo para acessar componentes específicos da solução:
+```shell
+git clone https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e4-proj-infra-t4-pmv-ads-2024-1-e4-proj-t4-the-lost-card.git
 
-BackEnd(The Lost Cards):
-O código-fonte do backend está na Solution "LostCard". Lá, você encontrará a construção das APIs e o arquivo de testes.
+cd ./pmv-ads-2024-1-e4-proj-infra-t4-pmv-ads-2024-1-e4-proj-t4-the-lost-card/src
+```
 
-FrontEnd Web:
-O desenvolvimento em React os arquivos da interface do jogo estão na pasta "frontend-web". Aqui, você pode visualizar a interface para o processamento de dados do game na aplicação The Lost Cards.
+#### executar o backend:
+
+Instale o [dotnet na versão 6](https://dotnet.microsoft.com/pt-br/download/dotnet/6.0)<br/>
+Instale o [Azure Functions Core Tools](https://learn.microsoft.com/pt-br/azure/azure-functions/create-first-function-cli-csharp?tabs=windows%2Cazure-cli)<br/>
 
 
-FrontEnd Mobile:
-A aplicação em react native esta na pasta "src\frontendMobile". A partir daqui, apos instalar as dependencias com "npm i", o jogo pode ser construido e depurado usando as propias ferramentas do react native, como "npx react-native run-android --mode debug".
-Uma versão do aplicativo esta disponivel em "presentation\app-release.apk".
+```shell
+dotnet restore
+func start
+```
 
+#### executar o frontendWeb:
+
+Instale o [node na versão 18](https://nodejs.org/pt/blog/release/v18.12.1)
+
+```shell
+cd ./src/frontend-web
+
+npm i
+npm run dev
+```
+
+#### executar o frontendMobile
+
+Instale o [node na versão 18](https://nodejs.org/pt/blog/release/v18.12.1)<br/>
+Instale o [Platform tools (Adb)](https://developer.android.com/tools/releases/platform-tools)<br/>
+Instale o [Jdk 17](https://www.oracle.com/br/java/technologies/downloads/#java17)<br/>
+
+Ative o modo densenvolvedor no celular e ligue a depuração USB.<br/>
+Conecte o celular na porta USB do computador.<br/>
+
+```shell
+cd ./src/frontendMobile
+
+npm i
+adb reverse tcp:8081 tcp:8081
+adb devices
+```
+
+Após a execução do ultimo comando você pode visualizar os hashes que identificam seu dispositivo conectado ao computador, use ele no próximo comando para identificar em qual celular instalar a aplicação.
+
+```shell
+# cole o hashIdentificador sem as chaves
+npx react-native run-android - mode debug - deviceId {hashIdentificador}
+```
 # Documentação
 
 <ol>
