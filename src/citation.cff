@@ -1,0 +1,36 @@
+message: Please cite this software using these metadata.
+title: The Lost Cards
+authors:
+  - family-names: Farias Junior
+    given-names: Adeilton Rodrigues
+  - family-names: Mendonça Vasconcelos
+    given-names: Carlos Alberto
+  - family-names: de Jesus Almeida
+    given-names: Gustavo Henrique
+  - family-names: de Jesus Santana
+    given-names: Luiz Eduardo
+  - family-names: da Cruz Almeida
+    given-names: Pedro Rafael
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: Alves de Oliveira
+    given-names: Pedro
+keywords:
+  - Jogo
+  - Game
+  - Cartas
+  - Cards
+  - Mobile
+  - React
+  - React.js
+  - React Native
+  - Realtime
+  - Tempo real
+  - SignalR
+  - Serverless
+  - Asp.NET
+  - dotnet
+  - C#
+repository-code: https://github.com/ICEI-PUC-Minas-PMV-ADS/pmv-ads-2024-1-e4-proj-infra-t4-pmv-ads-2024-1-e4-proj-t4-the-lost-card
+version: 1.0.0
+date-released: 2023-06-23
